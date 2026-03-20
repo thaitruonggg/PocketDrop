@@ -1,0 +1,52 @@
+﻿<Window x:Class="PocketDrop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PocketDrop" Height="200" Width="200"
+        AllowsTransparency="True" WindowStyle="None" Topmost="True" Background="Transparent">
+
+    <Border x:Name="MainContainer" Margin="10" Background="#FFEBEBEB" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="8"
+            AllowDrop="True" Drop="Window_Drop" PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown" MouseMove="Window_MouseMove">
+
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="0"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="10,5,10,10" x:Name="TopBar" Background="Transparent" 
+                  MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+
+                <Line x:Name="DragHandle" X1="0" Y1="0" X2="40" Y2="0" Stroke="Black" StrokeThickness="2" 
+                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="CloseButton" Text="✕" FontSize="16" Foreground="Black" FontWeight="Bold" 
+                           HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" 
+                           MouseLeftButtonDown="CloseButton_Click"/>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="10">
+                <TextBlock x:Name="StatusText" Text="Drop items here" FontSize="18" Foreground="#FF6F6F6F" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
+
+                <Image x:Name="FileIcon" Visibility="Collapsed" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" 
+                       MaxWidth="160" MaxHeight="100" 
+                       Stretch="Uniform" 
+                       RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.Effect>
+                        <DropShadowEffect BlurRadius="5" Color="Black" Opacity="0.3" Direction="270" ShadowDepth="2"/>
+                    </Image.Effect>
+                </Image>
+            </Grid>
+
+            <ComboBox Grid.Row="2" x:Name="ItemsDropdown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" Padding="10,3,10,3">
+                <ComboBoxItem x:Name="CountItem" Content="0 items" IsSelected="True" Foreground="#FF6F6F6F"/>
+            </ComboBox>
+        </Grid>
+    </Border>
+</Window>
