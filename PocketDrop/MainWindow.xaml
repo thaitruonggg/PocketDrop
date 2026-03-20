@@ -3,177 +3,265 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PocketDrop" Height="200" Width="200"
         AllowsTransparency="True" WindowStyle="None" Topmost="True" Background="Transparent"
-        UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality">
+        UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
+        FontFamily="Segoe UI Variable Text, Segoe UI" TextOptions.TextFormattingMode="Display">
 
     <Window.Resources>
-        <DataTemplate x:Key="GridTemplate">
-            <StackPanel Margin="10,10,20,10" Width="120" UseLayoutRounding="True">
-                <Grid Width="100" Height="100">
-                    <!-- Shadow is a SIBLING to Image, never an ancestor.
-                         This is the only way to avoid WPF rasterizing the Image. -->
+        <!-- ══ Fluent 2 Color Tokens — Acrylic/frosted glass ══ -->
+        <!-- Force Segoe UI Variable on ALL TextBlocks (including inside Popup's separate HwndSource) -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+        </Style>
+        <SolidColorBrush x:Key="MicaBase"             Color="#FFF3F3F3"/>
+        <!-- 98% → full opaque, same grey on both panels -->
+        <SolidColorBrush x:Key="LayerDefault"          Color="#FAFFFFFF"/>
+        <!-- 98% white -->
+        <SolidColorBrush x:Key="LayerAlt"              Color="#FAF9F9F9"/>
+        <!-- 98% off-white -->
+        <SolidColorBrush x:Key="StrokeCardDefault"     Color="#33000000"/>
+        <!-- 20% black -->
+        <SolidColorBrush x:Key="StrokeControlDefault"  Color="#29000000"/>
+        <!-- 16% black -->
+        <SolidColorBrush x:Key="TextPrimary"           Color="#FF1A1A1A"/>
+        <!-- full black -->
+        <SolidColorBrush x:Key="TextSecondary"         Color="#CC3B3B3B"/>
+        <!-- 80% dark grey -->
+        <SolidColorBrush x:Key="AccentDefault"         Color="#0078D4"/>
 
+        <!-- ══ Grid Item Template ══ -->
+        <DataTemplate x:Key="GridTemplate">
+            <StackPanel Margin="8" Width="110" UseLayoutRounding="True">
+                <Border CornerRadius="6" Background="Transparent"
+                        Width="100" Height="100" ClipToBounds="True">
                     <Image Source="{Binding Icon}" Stretch="Uniform"
                            UseLayoutRounding="True" SnapsToDevicePixels="True"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Grid>
-
-                <TextBlock Text="{Binding FileName}" FontSize="12" Foreground="#FF333333" 
-                   TextAlignment="Center" TextTrimming="CharacterEllipsis" 
-                   Margin="0,8,0,0" FontWeight="Medium"/>
+                </Border>
+                <TextBlock Text="{Binding FileName}" FontSize="12"
+                           Foreground="{StaticResource TextPrimary}"
+                           TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Margin="0,6,0,0"/>
             </StackPanel>
         </DataTemplate>
 
+        <!-- ══ List Item Template ══ -->
         <DataTemplate x:Key="ListTemplate">
-            <Grid Margin="5,5" Width="410">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Image Source="{Binding Icon}" Width="50" Height="50" HorizontalAlignment="Center"
-               UseLayoutRounding="True" SnapsToDevicePixels="True"
-               RenderOptions.BitmapScalingMode="HighQuality">
-                    <Image.Effect>
-                        <DropShadowEffect BlurRadius="4" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="1"/>
-                    </Image.Effect>
-                </Image>
-
-                <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center" 
-                   FontSize="13" Foreground="#FF333333" Margin="15,0,0,0" 
-                   TextTrimming="CharacterEllipsis" FontWeight="Medium"/>
-            </Grid>
+            <Border Margin="0,3" CornerRadius="8" Padding="12,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border CornerRadius="6" Width="48" Height="48"
+                            Background="Transparent" BorderThickness="0"
+                            HorizontalAlignment="Center" ClipToBounds="True">
+                        <Image Source="{Binding Icon}"
+                               UseLayoutRounding="True" SnapsToDevicePixels="True"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{Binding FileName}"
+                               VerticalAlignment="Center" FontSize="14"
+                               Foreground="{StaticResource TextPrimary}"
+                               Margin="14,0,0,0" TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Border>
         </DataTemplate>
     </Window.Resources>
 
-    <Border x:Name="MainContainer" Margin="10" Background="#FFEBEBEB" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="8"
-            AllowDrop="True" Drop="Window_Drop" PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
-            PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp" MouseMove="Window_MouseMove">
-
+    <!-- ══ Main card — Mica base surface ══ -->
+    <Border x:Name="MainContainer" Margin="12"
+            Background="{StaticResource MicaBase}"
+            BorderBrush="{StaticResource StrokeCardDefault}" BorderThickness="1"
+            CornerRadius="12"
+            AllowDrop="True" Drop="Window_Drop"
+            PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+            PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp"
+            MouseMove="Window_MouseMove">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="0"/>
+            <DropShadowEffect BlurRadius="16" Color="#000000" Opacity="0.12"
+                              Direction="270" ShadowDepth="4"/>
         </Border.Effect>
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="36"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="10,5,10,10" x:Name="TopBar" Background="Transparent" MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
-                <Line x:Name="DragHandle" X1="0" Y1="0" X2="40" Y2="0" Stroke="Black" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock x:Name="CloseButton" Text="✕" FontSize="16" Foreground="Black" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Cursor="Hand" MouseLeftButtonDown="CloseButton_Click"/>
+            <!-- ══ Title bar ══ -->
+            <Grid Grid.Row="0" x:Name="TopBar" Background="Transparent"
+                  MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+                <Rectangle x:Name="DragHandle" Width="32" Height="4" RadiusX="2" RadiusY="2"
+                           Fill="#66000000" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="CloseButton" Text="✕" FontSize="12"
+                           Foreground="{StaticResource TextSecondary}"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           Margin="0,0,12,0" Cursor="Hand"
+                           MouseLeftButtonDown="CloseButton_Click"/>
             </Grid>
 
-            <Grid Grid.Row="1" Margin="10">
-                <TextBlock x:Name="StatusText" Text="Drop items here" FontSize="18" Foreground="#FF6F6F6F" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
-                <!-- Shadow Border is a SIBLING to Image in a Grid, never an ancestor.
-                     FileIconContainer controls overall visibility. -->
-                <Grid x:Name="FileIconContainer" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
-                      Margin="10" MaxWidth="160" MaxHeight="100" UseLayoutRounding="True">
-
+            <!-- ══ Drop zone ══ -->
+            <Grid Grid.Row="1" Margin="12,0">
+                <TextBlock x:Name="StatusText" Text="Drop items here"
+                           FontSize="14" Foreground="{StaticResource TextSecondary}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           TextWrapping="Wrap" TextAlignment="Center"/>
+                <Grid x:Name="FileIconContainer" Visibility="Collapsed"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                      MaxWidth="160" MaxHeight="100" UseLayoutRounding="True">
                     <Image x:Name="FileIcon" Stretch="Uniform"
                            UseLayoutRounding="True" SnapsToDevicePixels="True"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Grid>
             </Grid>
 
-            <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
-                <ToggleButton x:Name="ExpandButton" Cursor="Hand" Background="White" BorderBrush="#FFD0D0D0" BorderThickness="1">
+            <!-- ══ Expand toggle button ══ -->
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom" Margin="0,8,0,12">
+                <ToggleButton x:Name="ExpandButton" Cursor="Hand">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
-                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="5" Padding="10,3,10,3">
+                            <Border Background="{StaticResource LayerDefault}"
+                                    BorderBrush="{StaticResource StrokeControlDefault}"
+                                    BorderThickness="1" CornerRadius="6" Padding="14,5">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </ControlTemplate>
                     </ToggleButton.Template>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="CountText" Text="0 Items" Foreground="#FF6F6F6F" Margin="0,0,10,0"/>
-                        <TextBlock Text="v" Foreground="#FF6F6F6F" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CountText" Text="0 Items"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="13" Margin="0,0,8,0"/>
+                        <Path Data="M0,0 L4,4 L8,0"
+                              Stroke="{StaticResource TextSecondary}"
+                              StrokeThickness="1.5" StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                              VerticalAlignment="Center"/>
                     </StackPanel>
                 </ToggleButton>
 
-                <Popup IsOpen="{Binding IsChecked, ElementName=ExpandButton}" PlacementTarget="{Binding ElementName=ExpandButton}" Placement="Bottom" AllowsTransparency="True" StaysOpen="False" HorizontalOffset="-215" VerticalOffset="20">
-                    <Border Width="500" Height="300" Background="#FFEBEBEB" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="8" Margin="15"
-                            PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp" MouseMove="Window_MouseMove">
+                <!-- ══ Popup panel ══ -->
+                <Popup IsOpen="{Binding IsChecked, ElementName=ExpandButton}"
+                       PlacementTarget="{Binding ElementName=ExpandButton}"
+                       Placement="Bottom" AllowsTransparency="True"
+                       StaysOpen="False" HorizontalOffset="-210" VerticalOffset="20">
+                    <Border Width="500" Height="300"
+                            Background="{StaticResource MicaBase}"
+                            BorderBrush="{StaticResource StrokeCardDefault}"
+                            BorderThickness="1" CornerRadius="12" Margin="16"
+                            PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+                            PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp"
+                            MouseMove="Window_MouseMove">
                         <Border.Effect>
-                            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="0"/>
+                            <DropShadowEffect BlurRadius="28" Color="#000000" Opacity="0.14"
+                                              Direction="270" ShadowDepth="8"/>
                         </Border.Effect>
-                        <Grid>
+                        <Grid TextElement.FontFamily="Segoe UI Variable Text, Segoe UI"
+                              TextOptions.TextFormattingMode="Display">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="48"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="20,10,20,0">
-                                <TextBlock Text="⚙" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FF6F6F6F" FontSize="18" Cursor="Hand"/>
-                                <TextBlock x:Name="PopupCountText" Text="0 items" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF6F6F6F" FontWeight="SemiBold"/>
+                            <!-- Popup header bar -->
+                            <Border Grid.Row="0"
+                                    BorderBrush="{StaticResource StrokeCardDefault}"
+                                    BorderThickness="0,0,0,1">
+                                <Grid Margin="16,0">
+                                    <!-- Settings cog icon as Path -->
+                                    <Path Width="16" Height="16" Stretch="Uniform"
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                                          Fill="{StaticResource TextSecondary}"
+                                          Data="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.3.07-.62.07-.93s-.03-.63-.07-.93l2-1.57c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.36.95c-.49-.37-1.01-.68-1.58-.9l-.35-2.51c-.04-.24-.24-.41-.48-.41H9.34c-.24 0-.43.17-.47.41l-.36 2.51c-.56.22-1.08.53-1.57.9l-2.36-.95c-.22-.08-.47 0-.59.22L2.07 9.14c-.12.2-.07.47.12.61l2 1.57c-.04.3-.07.62-.07.94s.03.63.07.93l-2 1.57c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.36-.95c.49.38 1.01.68 1.57.91l.36 2.51c.04.24.23.41.47.41h3.84c.24 0 .44-.17.47-.41l.36-2.51c.57-.23 1.09-.53 1.58-.91l2.36.95c.21.07.47 0 .59-.22l1.92-3.32c.12-.2.07-.47-.12-.61z"/>
 
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Border Tag="List" MouseLeftButtonDown="ViewMode_Click" Cursor="Hand" Padding="10,6" CornerRadius="3,0,0,3" BorderBrush="#FFD0D0D0" BorderThickness="1">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="White"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding CurrentViewMode}" Value="List">
-                                                        <Setter Property="Background" Value="#FFE0E0E0"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <!-- list.svg (Feather) converted to WPF Path -->
-                                        <Viewbox Width="16" Height="16">
-                                            <Canvas Width="24" Height="24">
-                                                <Path StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                                                      Data="M8,6 L21,6 M8,12 L21,12 M8,18 L21,18 M2.5,6 L3.5,6 M2.5,12 L3.5,12 M2.5,18 L3.5,18">
-                                                    <Path.Style>
-                                                        <Style TargetType="Path">
-                                                            <Setter Property="Stroke" Value="#FF6F6F6F"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding CurrentViewMode}" Value="List">
-                                                                    <Setter Property="Stroke" Value="#FF0056D2"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Path.Style>
-                                                </Path>
-                                            </Canvas>
-                                        </Viewbox>
-                                    </Border>
-                                    <Border Tag="Grid" MouseLeftButtonDown="ViewMode_Click" Cursor="Hand" Padding="10,6" CornerRadius="0,3,3,0" BorderBrush="#FFD0D0D0" BorderThickness="0,1,1,1">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="White"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding CurrentViewMode}" Value="Grid">
-                                                        <Setter Property="Background" Value="#FFE0E0E0"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <!-- grid.svg (Feather) converted to WPF Path -->
-                                        <Viewbox Width="16" Height="16">
-                                            <Canvas Width="24" Height="24">
-                                                <Path StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                                                      Data="M3,3 h7 v7 h-7 Z M14,3 h7 v7 h-7 Z M14,14 h7 v7 h-7 Z M3,14 h7 v7 h-7 Z">
-                                                    <Path.Style>
-                                                        <Style TargetType="Path">
-                                                            <Setter Property="Stroke" Value="#FF6F6F6F"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding CurrentViewMode}" Value="Grid">
-                                                                    <Setter Property="Stroke" Value="#FF0056D2"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Path.Style>
-                                                </Path>
-                                            </Canvas>
-                                        </Viewbox>
-                                    </Border>
-                                </StackPanel>
-                            </Grid>
+                                    <TextBlock x:Name="PopupCountText" Text="0 Items"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontFamily="Segoe UI Variable Text, Segoe UI"
+                                               FontSize="13" FontWeight="SemiBold"/>
 
-                            <ScrollViewer Grid.Row="1" Margin="10,0,10,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <!-- Fluent segmented view toggle -->
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="{StaticResource MicaBase}"
+                                            BorderBrush="{StaticResource StrokeControlDefault}"
+                                            BorderThickness="1" CornerRadius="6" Padding="2">
+                                        <StackPanel Orientation="Horizontal">
+
+                                            <Border Tag="List" MouseLeftButtonDown="ViewMode_Click"
+                                                    Cursor="Hand" CornerRadius="4" Padding="8,5" Width="34">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="List">
+                                                                <Setter Property="Background" Value="{StaticResource LayerDefault}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                              Data="M8,6 L21,6 M8,12 L21,12 M8,18 L21,18 M2.5,6 L3.5,6 M2.5,12 L3.5,12 M2.5,18 L3.5,18">
+                                                            <Path.Style>
+                                                                <Style TargetType="Path">
+                                                                    <Setter Property="Stroke" Value="{StaticResource TextSecondary}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding CurrentViewMode}" Value="List">
+                                                                            <Setter Property="Stroke" Value="{StaticResource AccentDefault}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Viewbox>
+                                            </Border>
+
+                                            <Border Tag="Grid" MouseLeftButtonDown="ViewMode_Click"
+                                                    Cursor="Hand" CornerRadius="4" Padding="8,5" Width="34">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="Grid">
+                                                                <Setter Property="Background" Value="{StaticResource LayerDefault}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path StrokeThickness="2" StrokeStartLineCap="Round"
+                                                              StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                              Data="M3,3 h7 v7 h-7 Z M14,3 h7 v7 h-7 Z M14,14 h7 v7 h-7 Z M3,14 h7 v7 h-7 Z">
+                                                            <Path.Style>
+                                                                <Style TargetType="Path">
+                                                                    <Setter Property="Stroke" Value="{StaticResource TextSecondary}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding CurrentViewMode}" Value="Grid">
+                                                                            <Setter Property="Stroke" Value="{StaticResource AccentDefault}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Viewbox>
+                                            </Border>
+
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- Item list -->
+                            <ScrollViewer Grid.Row="1" Margin="8,6,8,8"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
                                 <ItemsControl ItemsSource="{Binding PocketedItems}">
                                     <ItemsControl.Style>
                                         <Style TargetType="ItemsControl">
