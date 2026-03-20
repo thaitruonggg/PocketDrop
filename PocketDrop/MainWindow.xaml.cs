@@ -1,109 +1,156 @@
 ﻿using System;
 using System.IO;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Runtime.InteropServices;
-// Add the new NuGet package reference
+using System.Collections.ObjectModel;
 using Microsoft.WindowsAPICodePack.Shell;
-using System.IO;
 
 namespace PocketDrop
 {
     public partial class MainWindow : Window
     {
-        private string[] pocketedFiles = null;
-        private System.Windows.Point startPoint;
+        // --- NEW MEMORY: Holds multiple items and updates the UI automatically ---
+        public ObservableCollection<PocketItem> PocketedItems { get; set; } = new ObservableCollection<PocketItem>();
+
+        private Point? startPoint = null;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            // This tells the window to use itself for data binding (crucial for Phase 2's UI)
+            this.DataContext = this;
         }
 
+        // --- CATCHING THE FILES (Dropping In) ---
         private void Window_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                pocketedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                if (pocketedFiles != null && pocketedFiles.Length > 0)
+                if (droppedFiles != null && droppedFiles.Length > 0)
                 {
-                    string firstFilePath = pocketedFiles[0];
-                    string fileName = Path.GetFileName(firstFilePath);
-
-                    try
+                    // Loop through EVERY file dropped
+                    foreach (string filePath in droppedFiles)
                     {
-                        // Check if the file is an actual image type
-                        string ext = Path.GetExtension(firstFilePath).ToLower();
-                        string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
+                        string fileName = Path.GetFileName(filePath);
+                        System.Windows.Media.ImageSource fileIcon = null;
 
-                        if (Array.Exists(imageExts, x => x == ext))
+                        try
                         {
-                            // IF IT IS AN IMAGE: Load the real file directly in crisp HD
-                            BitmapImage img = new BitmapImage();
-                            img.BeginInit();
-                            img.UriSource = new Uri(firstFilePath);
-                            img.CacheOption = BitmapCacheOption.OnLoad;
+                            string ext = Path.GetExtension(filePath).ToLower();
+                            string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
 
-                            // REMOVED the DecodePixelWidth line so it loads the full quality!
-
-                            img.EndInit();
-
-                            FileIcon.Source = img;
+                            if (Array.Exists(imageExts, x => x == ext))
+                            {
+                                // Load real image in full quality
+                                BitmapImage img = new BitmapImage();
+                                img.BeginInit();
+                                img.UriSource = new Uri(filePath);
+                                img.CacheOption = BitmapCacheOption.OnLoad;
+                                img.EndInit();
+                                fileIcon = img;
+                            }
+                            else
+                            {
+                                // Load Windows icon
+                                ShellFile shellFile = ShellFile.FromFilePath(filePath);
+                                fileIcon = shellFile.Thumbnail.ExtraLargeBitmapSource;
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            // IF IT IS A DOC/APP: Use the Windows Shell icon
-                            ShellFile shellFile = ShellFile.FromFilePath(firstFilePath);
-                            FileIcon.Source = shellFile.Thumbnail.ExtraLargeBitmapSource;
+                            Console.WriteLine($"Could not load icon for {fileName}: {ex.Message}");
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Could not load icon: {ex.Message}");
+
+                        // Package the file up and add it to our new list!
+                        PocketedItems.Add(new PocketItem
+                        {
+                            FileName = fileName,
+                            FilePath = filePath,
+                            Icon = fileIcon
+                        });
                     }
 
+                    // Update the simple UI elements
                     StatusText.Visibility = Visibility.Collapsed;
                     FileIcon.Visibility = Visibility.Visible;
 
-                    if (fileName.Length > 15)
-                        CountItem.Content = fileName.Substring(0, 15) + "...";
-                    else
-                        CountItem.Content = fileName;
+                    // Show the icon of the LAST item added
+                    FileIcon.Source = PocketedItems[PocketedItems.Count - 1].Icon;
+
+                    // Update the button text and the popup header text
+                    CountText.Text = $"{PocketedItems.Count} Items";
+                    PopupCountText.Text = $"{PocketedItems.Count} Items";
                 }
             }
         }
 
+        // --- TRACKING THE CLICK (Preparing to drag a file out) ---
         private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Do not start a file drag if the user clicks the close button, dropdown, or the top drag bar
-            if (e.Source == CloseButton || e.Source == ItemsDropdown || e.Source == TopBar || e.Source == DragHandle)
+            // Ignore clicks on UI controls
+            if (e.Source == CloseButton || e.Source == ExpandButton || e.Source == TopBar || e.Source == DragHandle)
                 return;
 
+            // Record the exact start point
             startPoint = e.GetPosition(null);
         }
 
+        // --- THE MISSING PIECE: RESET ON RELEASE ---
+        private void Window_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // THE FIX: As soon as you let go of the mouse, we "forget" the start point.
+            // This prevents the "stuck" cursor and accidental dragging.
+            startPoint = null;
+        }
+
+        // --- RELEASING THE FILES (Dragging Out) ---
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton != MouseButtonState.Pressed || pocketedFiles == null)
+            // FIX: If the mouse isn't pressed, or we don't have a valid start point, 
+            // or the pocket is empty, QUIT immediately.
+            if (e.LeftButton != MouseButtonState.Pressed || startPoint == null || PocketedItems.Count == 0)
+            {
+                startPoint = null; // Extra safety reset
                 return;
+            }
 
-            System.Windows.Point mousePos = e.GetPosition(null);
-            Vector diff = startPoint - mousePos;
+            Point mousePos = e.GetPosition(null);
+            Vector diff = (Point)startPoint - mousePos;
 
+            // Only start if the mouse has moved significantly (Drag Threshold)
             if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                 Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
             {
-                DataObject dragData = new DataObject(DataFormats.FileDrop, pocketedFiles);
-                DragDrop.DoDragDrop(MainContainer, dragData, DragDropEffects.Copy);
+                string[] pathsToDrag = new string[PocketedItems.Count];
+                for (int i = 0; i < PocketedItems.Count; i++)
+                {
+                    pathsToDrag[i] = PocketedItems[i].FilePath;
+                }
 
-                pocketedFiles = null;
-                StatusText.Visibility = Visibility.Visible;
-                FileIcon.Visibility = Visibility.Collapsed;
-                FileIcon.Source = null;
-                CountItem.Content = "0 items";
+                DataObject dragData = new DataObject(DataFormats.FileDrop, pathsToDrag);
+
+                // We set the startPoint to null BEFORE calling DoDragDrop
+                // This breaks the loop so the cursor doesn't get "stuck"
+                Point tempStart = (Point)startPoint;
+                startPoint = null;
+
+                DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)sender, dragData, DragDropEffects.Copy);
+
+                if (result != DragDropEffects.None)
+                {
+                    // Successful drop cleanup
+                    PocketedItems.Clear();
+                    StatusText.Visibility = Visibility.Visible;
+                    FileIcon.Visibility = Visibility.Collapsed;
+                    FileIcon.Source = null;
+                    CountText.Text = "0 Items";
+                    PopupCountText.Text = "0 Items";
+                    ExpandButton.IsChecked = false;
+                }
             }
         }
 
@@ -121,9 +168,18 @@ namespace PocketDrop
             }
         }
 
+        // --- CLOSING THE WINDOW ---
         private void CloseButton_Click(object sender, MouseButtonEventArgs e)
         {
             this.Close();
         }
+    }
+
+    // --- The blueprint for a dropped item ---
+    public class PocketItem
+    {
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public System.Windows.Media.ImageSource Icon { get; set; }
     }
 }

@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F3E358F2-18DF-4725-89F2-BA370378497E}|PocketDrop\\PocketDrop.csproj|c:\\users\\sherl\\onedrive - naofunyan\\documents\\github\\pocketdrop\\pocketdrop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{F3E358F2-18DF-4725-89F2-BA370378497E}|PocketDrop\\PocketDrop.csproj|solutionrelative:pocketdrop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{3FAAEB61-59FD-7558-CE52-AC4E51563525}|PocketDrop\\PocketDrop.csproj|c:\\users\\sherl\\onedrive - naofunyan\\documents\\github\\pocketdrop\\pocketdrop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{3FAAEB61-59FD-7558-CE52-AC4E51563525}|PocketDrop\\PocketDrop.csproj|solutionrelative:pocketdrop\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F3E358F2-18DF-4725-89F2-BA370378497E}|PocketDrop\\PocketDrop.csproj|c:\\users\\sherl\\onedrive - naofunyan\\documents\\github\\pocketdrop\\pocketdrop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F3E358F2-18DF-4725-89F2-BA370378497E}|PocketDrop\\PocketDrop.csproj|solutionrelative:pocketdrop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FAAEB61-59FD-7558-CE52-AC4E51563525}|PocketDrop\\PocketDrop.csproj|c:\\users\\sherl\\onedrive - naofunyan\\documents\\github\\pocketdrop\\pocketdrop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FAAEB61-59FD-7558-CE52-AC4E51563525}|PocketDrop\\PocketDrop.csproj|solutionrelative:pocketdrop\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "PocketDrop\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml.cs",
               "RelativeToolTip": "PocketDrop\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAYwFUAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAswJoAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-20T12:37:51.394Z",
               "EditorCaption": ""

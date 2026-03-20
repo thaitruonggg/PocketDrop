@@ -5,7 +5,8 @@
         AllowsTransparency="True" WindowStyle="None" Topmost="True" Background="Transparent">
 
     <Border x:Name="MainContainer" Margin="10" Background="#FFEBEBEB" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="8"
-            AllowDrop="True" Drop="Window_Drop" PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown" MouseMove="Window_MouseMove">
+            AllowDrop="True" Drop="Window_Drop" PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+            PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp" MouseMove="Window_MouseMove">
 
         <Border.Effect>
             <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="0"/>
@@ -44,9 +45,91 @@
                 </Image>
             </Grid>
 
-            <ComboBox Grid.Row="2" x:Name="ItemsDropdown" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" Padding="10,3,10,3">
-                <ComboBoxItem x:Name="CountItem" Content="0 items" IsSelected="True" Foreground="#FF6F6F6F"/>
-            </ComboBox>
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
+
+                <ToggleButton x:Name="ExpandButton" Cursor="Hand"
+                              Background="White" BorderBrush="#FFD0D0D0" BorderThickness="1">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="1" 
+                                    CornerRadius="5" Padding="10,3,10,3">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="CountText" Text="0 Items" Foreground="#FF6F6F6F" Margin="0,0,10,0"/>
+                        <TextBlock Text="v" Foreground="#FF6F6F6F" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <Popup IsOpen="{Binding IsChecked, ElementName=ExpandButton}" 
+                        PlacementTarget="{Binding ElementName=ExpandButton}" 
+                        Placement="Bottom" 
+                        AllowsTransparency="True" 
+                        StaysOpen="False" 
+                        HorizontalOffset="-125" 
+                        VerticalOffset="20">
+
+                    <Border Width="320" Height="250" Background="#FFEBEBEB" BorderBrush="#FFD0D0D0" BorderThickness="1" CornerRadius="8" Margin="15"
+                            PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
+                            PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp"
+                            MouseMove="Window_MouseMove">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" Direction="270" ShadowDepth="0"/>
+                        </Border.Effect>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="15,10,15,0">
+                                <TextBlock Text="⚙" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FF6F6F6F" FontSize="18" Cursor="Hand"/>
+
+                                <TextBlock x:Name="PopupCountText" Text="0 items" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF6F6F6F" FontWeight="SemiBold"/>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Border Background="#FFE0E0E0" Padding="5,2" CornerRadius="3,0,0,3" BorderBrush="#FFD0D0D0" BorderThickness="1">
+                                        <TextBlock Text="≡" Foreground="#FF6F6F6F" FontSize="14"/>
+                                    </Border>
+                                    <Border Background="White" Padding="5,2" CornerRadius="0,3,3,0" BorderBrush="#FFD0D0D0" BorderThickness="0,1,1,1">
+                                        <TextBlock Text="⊞" Foreground="#FF0056D2" FontSize="14"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1" Margin="10,0,10,10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <ItemsControl ItemsSource="{Binding PocketedItems}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="5,5,15,5" Width="64">
+                                                <Image Source="{Binding Icon}" Width="48" Height="48" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality">
+                                                    <Image.Effect>
+                                                        <DropShadowEffect BlurRadius="3" Color="Black" Opacity="0.2" Direction="270" ShadowDepth="1"/>
+                                                    </Image.Effect>
+                                                </Image>
+                                                <TextBlock Text="{Binding FileName}" FontSize="11" Foreground="#FF333333" 
+                                                           TextAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0" ToolTip="{Binding FileName}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Popup>
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

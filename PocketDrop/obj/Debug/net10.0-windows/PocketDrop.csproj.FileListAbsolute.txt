@@ -21,3 +21,4 @@ C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\bin\D
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\bin\Debug\net10.0-windows\Microsoft.WindowsAPICodePack.Shell.dll
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows\PocketDrop.csproj.AssemblyReference.cache
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows\PocketDrop.csproj.Up2Date
+C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows\PocketDrop.sourcelink.json
