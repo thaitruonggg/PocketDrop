@@ -1,15 +1,40 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Shell;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using Microsoft.WindowsAPICodePack.Shell;
 
 namespace PocketDrop
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        // --- VIEW MODE LOGIC ---
+        private string _currentViewMode = "Grid"; // Default to Grid
+        public string CurrentViewMode
+        {
+            get => _currentViewMode;
+            set
+            {
+                _currentViewMode = value;
+                OnPropertyChanged(nameof(CurrentViewMode));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void ViewMode_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.Tag != null)
+            {
+                CurrentViewMode = border.Tag.ToString();
+            }
+        }
+
         // --- NEW MEMORY: Holds multiple items and updates the UI automatically ---
         public ObservableCollection<PocketItem> PocketedItems { get; set; } = new ObservableCollection<PocketItem>();
 
@@ -76,7 +101,7 @@ namespace PocketDrop
 
                     // Update the simple UI elements
                     StatusText.Visibility = Visibility.Collapsed;
-                    FileIcon.Visibility = Visibility.Visible;
+                    FileIconContainer.Visibility = Visibility.Visible;
 
                     // Show the icon of the LAST item added
                     FileIcon.Source = PocketedItems[PocketedItems.Count - 1].Icon;
@@ -145,7 +170,7 @@ namespace PocketDrop
                     // Successful drop cleanup
                     PocketedItems.Clear();
                     StatusText.Visibility = Visibility.Visible;
-                    FileIcon.Visibility = Visibility.Collapsed;
+                    FileIconContainer.Visibility = Visibility.Collapsed;
                     FileIcon.Source = null;
                     CountText.Text = "0 Items";
                     PopupCountText.Text = "0 Items";
