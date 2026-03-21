@@ -263,6 +263,9 @@ namespace PocketDrop
                     CountText.Text = "0 Items";
                     PopupCountText.Text = "0 Items";
                     ExpandButton.IsChecked = false;
+                    // NEW: Also uncheck the box after a successful drag!
+                    if (SelectAllCheckBox != null)
+                        SelectAllCheckBox.IsChecked = false;
                 }
             }
         }
@@ -494,6 +497,9 @@ namespace PocketDrop
             CountText.Text = "0 Items";
             PopupCountText.Text = "0 Items";
             ExpandButton.IsChecked = false;
+            // NEW: Force the Select All checkbox to uncheck so it's fresh next time!
+            if (SelectAllCheckBox != null)
+                SelectAllCheckBox.IsChecked = false;
 
             HidePocketDrop();
         }
@@ -610,6 +616,66 @@ namespace PocketDrop
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
             fadeOut.Completed += (s, e) => { this.IsHitTestVisible = false; };
             this.BeginAnimation(OpacityProperty, fadeOut);
+        }
+
+        // --- SELECT ALL LOGIC ---
+        private void SelectAll_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ItemsListBox != null)
+                ItemsListBox.SelectAll();
+        }
+
+        private void SelectAll_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (ItemsListBox != null)
+                ItemsListBox.UnselectAll();
+        }
+
+        // --- SELECTION CHANGED LOGIC (Updates Header Text) ---
+        private void ItemsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int selectedCount = ItemsListBox.SelectedItems.Count;
+
+            if (selectedCount > 0)
+            {
+                long totalBytes = 0;
+
+                // Add up the file size of everything selected
+                foreach (PocketItem item in ItemsListBox.SelectedItems)
+                {
+                    if (File.Exists(item.FilePath))
+                    {
+                        totalBytes += new FileInfo(item.FilePath).Length;
+                    }
+                }
+
+                // Determine if we should say "file" or "files"
+                string fileWord = selectedCount == 1 ? "file" : "files";
+
+                // Update the text block with the new info!
+                PopupCountText.Text = $"{selectedCount} {fileWord} selected  ({FormatBytes(totalBytes)})";
+            }
+            else
+            {
+                // If nothing is selected (or we unselected everything), revert to the total count
+                PopupCountText.Text = $"{PocketedItems.Count} Items";
+            }
+        }
+
+        // --- HELPER: Formats raw bytes into readable KB/MB/GB ---
+        private string FormatBytes(long bytes)
+        {
+            if (bytes == 0) return "0 B";
+
+            string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
+
+            // Figure out the scale of the file size mathematically
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+
+            // Round it to one decimal place (e.g., 4.2 MB)
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+
+            return $"{num} {suffixes[place]}";
         }
     }
 
