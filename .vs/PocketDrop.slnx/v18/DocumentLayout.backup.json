@@ -26,8 +26,8 @@
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml",
               "RelativeDocumentMoniker": "PocketDrop\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml",
-              "RelativeToolTip": "PocketDrop\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml*",
+              "RelativeToolTip": "PocketDrop\\MainWindow.xaml*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-03-20T12:37:55.008Z",
               "EditorCaption": ""
@@ -40,9 +40,10 @@
               "RelativeDocumentMoniker": "PocketDrop\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml.cs",
               "RelativeToolTip": "PocketDrop\\MainWindow.xaml.cs",
-              "ViewState": "AgIAALkAAAAAAAAAAAAswNEAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAUBAAAAAAAAAAAswB0BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T12:37:51.394Z"
+              "WhenOpened": "2026-03-20T12:37:51.394Z",
+              "EditorCaption": ""
             }
           ]
         }

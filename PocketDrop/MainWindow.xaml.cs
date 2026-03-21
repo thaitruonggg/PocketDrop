@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace PocketDrop
@@ -103,8 +104,8 @@ namespace PocketDrop
                     StatusText.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
 
-                    // Show the icon of the LAST item added
-                    FileIcon.Source = PocketedItems[PocketedItems.Count - 1].Icon;
+                    // Update the stacked card preview
+                    UpdateStackPreview();
 
                     // Update the button text and the popup header text
                     CountText.Text = $"{PocketedItems.Count} Items";
@@ -171,11 +172,86 @@ namespace PocketDrop
                     PocketedItems.Clear();
                     StatusText.Visibility = Visibility.Visible;
                     FileIconContainer.Visibility = Visibility.Collapsed;
-                    FileIcon.Source = null;
+                    StackContainer.Children.Clear();
                     CountText.Text = "0 Items";
                     PopupCountText.Text = "0 Items";
                     ExpandButton.IsChecked = false;
                 }
+            }
+        }
+
+        // --- UPDATE STACK PREVIEW ---
+        // Rebuilds the card stack from scratch every time items change.
+        // Bottom cards are oldest; top card is always the latest dropped item.
+        private void UpdateStackPreview()
+        {
+            StackContainer.Children.Clear();
+
+            int count = PocketedItems.Count;
+            if (count == 0) return;
+
+            // Rotation pattern — alternates sides, shrinks toward the top card.
+            // Index 0 = bottom-most (oldest), last index = top (latest).
+            // We cap visible cards at a reasonable spread; deeper cards reuse the last angle.
+            double[] angles = { -11, 8, -7, 6, -5, 4, -4, 3, -3, 2, -2, 1, -1 };
+            double[] offsetsX = { -7, 6, -5, 4, -4, 3, -3, 2, -2, 1, -1, 1, 0 };
+            double[] offsetsY = { 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0 };
+
+            for (int i = 0; i < count; i++)
+            {
+                // i=0 is oldest (bottom), i=count-1 is newest (top)
+                int patternIndex = Math.Min(count - 1 - i, angles.Length - 1);
+                bool isTop = (i == count - 1);
+
+                double angle = isTop ? 0 : angles[patternIndex];
+                double offsetX = isTop ? 0 : offsetsX[patternIndex];
+                double offsetY = isTop ? 0 : offsetsY[patternIndex];
+
+                var img = new System.Windows.Controls.Image
+                {
+                    Source = PocketedItems[i].Icon,
+                    Stretch = System.Windows.Media.Stretch.Uniform,
+                    Margin = new Thickness(4),
+                    UseLayoutRounding = true,
+                    SnapsToDevicePixels = true
+                };
+                System.Windows.Media.RenderOptions.SetBitmapScalingMode(
+                    img, System.Windows.Media.BitmapScalingMode.HighQuality);
+
+                var card = new Border
+                {
+                    Width = 108,
+                    Height = 88,
+                    CornerRadius = new CornerRadius(8),
+                    Background = System.Windows.Media.Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Child = img,
+                    RenderTransform = new TransformGroup
+                    {
+                        Children = new TransformCollection
+                        {
+                            new RotateTransform(angle, 54, 44),
+                            new TranslateTransform(offsetX, offsetY)
+                        }
+                    }
+                };
+
+                // Add drop shadow only on the top card
+                if (isTop)
+                {
+                    card.Effect = new System.Windows.Media.Effects.DropShadowEffect
+                    {
+                        BlurRadius = 10,
+                        Color = System.Windows.Media.Colors.Black,
+                        Opacity = 0.18,
+                        Direction = 270,
+                        ShadowDepth = 3
+                    };
+                }
+
+                StackContainer.Children.Add(card);
             }
         }
 

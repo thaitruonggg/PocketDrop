@@ -109,12 +109,11 @@
                            FontSize="14" Foreground="{StaticResource TextSecondary}"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            TextWrapping="Wrap" TextAlignment="Center"/>
+                <!-- Dynamic stacked card preview — built in code-behind -->
                 <Grid x:Name="FileIconContainer" Visibility="Collapsed"
                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                      MaxWidth="160" MaxHeight="100" UseLayoutRounding="True">
-                    <Image x:Name="FileIcon" Stretch="Uniform"
-                           UseLayoutRounding="True" SnapsToDevicePixels="True"
-                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                      Width="150" Height="120" UseLayoutRounding="True">
+                    <Grid x:Name="StackContainer"/>
                 </Grid>
             </Grid>
 
@@ -147,8 +146,8 @@
                 <Popup IsOpen="{Binding IsChecked, ElementName=ExpandButton}"
                        PlacementTarget="{Binding ElementName=ExpandButton}"
                        Placement="Bottom" AllowsTransparency="True"
-                       StaysOpen="False" HorizontalOffset="-210" VerticalOffset="20">
-                    <Border Width="500" Height="300"
+                       StaysOpen="False" HorizontalOffset="-230" VerticalOffset="20">
+                    <Border Width="540" Height="300"
                             Background="{StaticResource MicaBase}"
                             BorderBrush="{StaticResource StrokeCardDefault}"
                             BorderThickness="1" CornerRadius="12" Margin="16"
