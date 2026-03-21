@@ -1,19 +1,73 @@
 ﻿using Microsoft.WindowsAPICodePack.Shell;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace PocketDrop
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        // ══════════════════════════════════════════════════════
+        // P/INVOKE — Low-level global mouse hook
+        // ══════════════════════════════════════════════════════
+        private const int WH_MOUSE_LL = 14;
+        private const int WM_MOUSEMOVE = 0x0200;
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_LBUTTONUP = 0x0202;
+        private const int VK_LBUTTON = 0x01;
+
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSLLHOOKSTRUCT
+        {
+            public System.Drawing.Point pt;
+            public uint mouseData, flags, time;
+            public IntPtr dwExtraInfo;
+        }
+
+        private IntPtr _hookHandle = IntPtr.Zero;
+        private LowLevelMouseProc _hookProc; // Keep reference — prevents GC
+
+        // ══════════════════════════════════════════════════════
+        // SHAKE DETECTION PARAMETERS
+        // ══════════════════════════════════════════════════════
+        private const int MIN_SWING_PX = 40;   // min horizontal pixels per swing direction
+        private const int REQUIRED_SWINGS = 3;    // number of direction reversals needed
+        private const int SHAKE_WINDOW_MS = 1000; // all reversals must happen within this ms window
+
+        private bool _leftButtonHeld = false;
+        private int _lastX = 0;
+        private int _currentDir = 0;       // +1 = right, -1 = left, 0 = none
+        private int _swingOriginX = 0;       // X where current swing started
+        private readonly Queue<long> _swingTimestamps = new Queue<long>();
+
+        // ══════════════════════════════════════════════════════
         // --- VIEW MODE LOGIC ---
         private string _currentViewMode = "Grid"; // Default to Grid
         public string CurrentViewMode
@@ -47,9 +101,25 @@ namespace PocketDrop
         public MainWindow()
         {
             InitializeComponent();
-
-            // This tells the window to use itself for data binding (crucial for Phase 2's UI)
             this.DataContext = this;
+
+            // Start hidden — shake to reveal
+            this.Opacity = 0;
+            this.IsHitTestVisible = false;
+
+            // Install global mouse hook
+            _hookProc = HookCallback;
+            using (var proc = Process.GetCurrentProcess())
+            using (var mod = proc.MainModule)
+                _hookHandle = SetWindowsHookEx(WH_MOUSE_LL, _hookProc, GetModuleHandle(mod.ModuleName), 0);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            // Uninstall hook when app exits
+            if (_hookHandle != IntPtr.Zero)
+                UnhookWindowsHookEx(_hookHandle);
+            base.OnClosed(e);
         }
 
         // --- CATCHING THE FILES (Dropping In) ---
@@ -364,10 +434,170 @@ namespace PocketDrop
             }
         }
 
-        // --- CLOSING THE WINDOW ---
+        // --- SMART POPUP PLACEMENT ---
+        private CustomPopupPlacement[] Popup_PlacementCallback(
+            Size popupSize, Size targetSize, Point offset)
+        {
+            const double gap = 25;
+            const double extraX = 0; // ← nudge left (negative) or right (positive)
+
+            // Use PointToScreen for EVERYTHING — consistent physical pixel coords
+            var buttonScreen = ExpandButton.PointToScreen(new Point(0, 0));
+            var windowScreen = this.PointToScreen(new Point(0, 0));
+
+            double screenH = SystemParameters.PrimaryScreenHeight;
+            double windowScreenBottom = windowScreen.Y + this.ActualHeight;
+            double windowScreenTop = windowScreen.Y;
+            double windowScreenCenterX = windowScreen.X + this.ActualWidth / 2;
+
+            // X: center popup horizontally over main window + optional nudge
+            double xOffset = (windowScreenCenterX - popupSize.Width / 2) - buttonScreen.X + extraX;
+
+            double spaceBelow = screenH - windowScreenBottom;
+
+            if (spaceBelow >= popupSize.Height + gap)
+            {
+                // Enough room below — popup top = window bottom + gap
+                double yOffset = (windowScreenBottom + gap) - buttonScreen.Y;
+                return new[] { new CustomPopupPlacement(
+                    new Point(xOffset, yOffset), PopupPrimaryAxis.Horizontal) };
+            }
+            else
+            {
+                // Not enough below — popup bottom = window top - gap
+                double yOffset = (windowScreenTop - gap - popupSize.Height) - buttonScreen.Y;
+                return new[] { new CustomPopupPlacement(
+                    new Point(xOffset, yOffset), PopupPrimaryAxis.Horizontal) };
+            }
+        }
+
+        // --- CLOSING THE WINDOW — clears items and hides ---
         private void CloseButton_Click(object sender, MouseButtonEventArgs e)
         {
-            this.Close();
+            // Clear all pocketed items
+            PocketedItems.Clear();
+            StackContainer.Children.Clear();
+            StatusText.Visibility = Visibility.Visible;
+            FileIconContainer.Visibility = Visibility.Collapsed;
+            CountText.Text = "0 Items";
+            PopupCountText.Text = "0 Items";
+            ExpandButton.IsChecked = false;
+
+            HidePocketDrop();
+        }
+
+        // ══════════════════════════════════════════════════════
+        // GLOBAL MOUSE HOOK CALLBACK
+        // ══════════════════════════════════════════════════════
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0)
+            {
+                var hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                int msg = wParam.ToInt32();
+
+                if (msg == WM_LBUTTONDOWN)
+                {
+                    _leftButtonHeld = true;
+                    _lastX = hookStruct.pt.X;
+                    _swingOriginX = hookStruct.pt.X;
+                    _currentDir = 0;
+                    _swingTimestamps.Clear();
+                }
+                else if (msg == WM_LBUTTONUP)
+                {
+                    _leftButtonHeld = false;
+                    _currentDir = 0;
+                    _swingTimestamps.Clear();
+                }
+                else if (msg == WM_MOUSEMOVE && _leftButtonHeld)
+                {
+                    int x = hookStruct.pt.X;
+                    int dx = x - _lastX;
+                    _lastX = x;
+
+                    if (Math.Abs(dx) < 2) goto done; // ignore micro-jitter
+
+                    int newDir = dx > 0 ? 1 : -1;
+
+                    // Direction reversal detected
+                    if (_currentDir != 0 && newDir != _currentDir)
+                    {
+                        int swingSize = Math.Abs(x - _swingOriginX);
+                        if (swingSize >= MIN_SWING_PX)
+                        {
+                            long now = Environment.TickCount64;
+                            _swingTimestamps.Enqueue(now);
+
+                            // Evict old timestamps outside the shake window
+                            while (_swingTimestamps.Count > 0 &&
+                                   now - _swingTimestamps.Peek() > SHAKE_WINDOW_MS)
+                                _swingTimestamps.Dequeue();
+
+                            if (_swingTimestamps.Count >= REQUIRED_SWINGS)
+                            {
+                                _swingTimestamps.Clear();
+                                _currentDir = 0;
+
+                                // Marshal to UI thread — hook runs on a background thread
+                                Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                                    ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y)));
+                            }
+                        }
+                        _swingOriginX = x;
+                    }
+
+                    if (newDir != 0) _currentDir = newDir;
+                }
+            }
+        done:
+            return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
+        }
+
+        // ══════════════════════════════════════════════════════
+        // SHOW / HIDE WITH ANIMATION
+        // ══════════════════════════════════════════════════════
+        private void ShowPocketDrop(int cursorX, int cursorY)
+        {
+            // Position near cursor, nudge away from screen edges
+            double wx = cursorX - this.ActualWidth / 2;
+            double wy = cursorY - this.ActualHeight - 20;
+
+            double screenW = SystemParameters.PrimaryScreenWidth;
+            double screenH = SystemParameters.PrimaryScreenHeight;
+            wx = Math.Max(8, Math.Min(wx, screenW - this.ActualWidth - 8));
+            wy = Math.Max(8, Math.Min(wy, screenH - this.ActualHeight - 8));
+
+            this.Left = wx;
+            this.Top = wy;
+            this.IsHitTestVisible = true;
+
+            // Fade + scale in
+            var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(180))
+            { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
+
+            var scaleX = new DoubleAnimation(0.88, 1, TimeSpan.FromMilliseconds(200))
+            { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
+            var scaleY = new DoubleAnimation(0.88, 1, TimeSpan.FromMilliseconds(200))
+            { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
+
+            var st = new ScaleTransform(1, 1, this.ActualWidth / 2, this.ActualHeight / 2);
+            MainContainer.RenderTransform = st;
+            MainContainer.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            st.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
+            st.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
+            this.BeginAnimation(OpacityProperty, fadeIn);
+
+            this.Activate();
+        }
+
+        private void HidePocketDrop()
+        {
+            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150))
+            { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
+            fadeOut.Completed += (s, e) => { this.IsHitTestVisible = false; };
+            this.BeginAnimation(OpacityProperty, fadeOut);
         }
     }
 

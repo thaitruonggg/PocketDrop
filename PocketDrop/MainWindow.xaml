@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="PocketDrop" Height="200" Width="200"
         AllowsTransparency="True" WindowStyle="None" Topmost="True" Background="Transparent"
+        ShowInTaskbar="False"
         UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
         FontFamily="Segoe UI Variable Text, Segoe UI" TextOptions.TextFormattingMode="Display">
 
@@ -73,6 +74,7 @@
             Background="{StaticResource MicaBase}"
             BorderBrush="{StaticResource StrokeCardDefault}" BorderThickness="1"
             CornerRadius="12"
+            RenderTransformOrigin="0.5,0.5"
             AllowDrop="True" Drop="Window_Drop"
             PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
             PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp"
@@ -143,8 +145,9 @@
                 <!-- ══ Popup panel ══ -->
                 <Popup IsOpen="{Binding IsChecked, ElementName=ExpandButton}"
                        PlacementTarget="{Binding ElementName=ExpandButton}"
-                       Placement="Bottom" AllowsTransparency="True"
-                       StaysOpen="False" HorizontalOffset="-203" VerticalOffset="25">
+                       Placement="Custom" AllowsTransparency="True"
+                       StaysOpen="False"
+                       CustomPopupPlacementCallback="Popup_PlacementCallback">
                     <Border Width="490" Height="300"
                             Background="{StaticResource MicaBase}"
                             BorderBrush="{StaticResource StrokeCardDefault}"
