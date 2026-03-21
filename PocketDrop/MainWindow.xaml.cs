@@ -128,7 +128,7 @@ namespace PocketDrop
         // --- CATCHING THE FILES (Dropping In) ---
         private void Window_Drop(object sender, DragEventArgs e)
         {
-            // NEW: If the user dropped the files back onto the app itself, cancel everything!
+            // SAFETY: If the user dropped the files back onto the app itself, cancel everything!
             if (_isDraggingFromApp)
             {
                 e.Effects = DragDropEffects.None;
@@ -136,13 +136,13 @@ namespace PocketDrop
                 return;
             }
 
+            // 1. HANDLE STANDARD FILES (.png, .pdf, .txt, etc.)
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 if (droppedFiles != null && droppedFiles.Length > 0)
                 {
-                    // Loop through EVERY file dropped
                     foreach (string filePath in droppedFiles)
                     {
                         string fileName = Path.GetFileName(filePath);
@@ -153,9 +153,9 @@ namespace PocketDrop
                             string ext = Path.GetExtension(filePath).ToLower();
                             string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
 
+                            // If it's an image, load the actual picture
                             if (Array.Exists(imageExts, x => x == ext))
                             {
-                                // Load real image in full quality
                                 BitmapImage img = new BitmapImage();
                                 img.BeginInit();
                                 img.UriSource = new Uri(filePath);
@@ -163,9 +163,9 @@ namespace PocketDrop
                                 img.EndInit();
                                 fileIcon = img;
                             }
+                            // If it's literally ANY other file type, ask Windows for its icon
                             else
                             {
-                                // Load Windows icon
                                 ShellFile shellFile = ShellFile.FromFilePath(filePath);
                                 fileIcon = shellFile.Thumbnail.ExtraLargeBitmapSource;
                             }
@@ -175,7 +175,6 @@ namespace PocketDrop
                             Console.WriteLine($"Could not load icon for {fileName}: {ex.Message}");
                         }
 
-                        // Package the file up and add it to our new list!
                         PocketedItems.Add(new PocketItem
                         {
                             FileName = fileName,
@@ -184,16 +183,63 @@ namespace PocketDrop
                         });
                     }
 
-                    // Update the simple UI elements
+                    // Update UI
                     StatusText.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
-
-                    // Update the stacked card preview
                     UpdateStackPreview();
 
-                    // Update the button text and the popup header text
                     CountText.Text = $"{PocketedItems.Count} Items";
-                    PopupCountText.Text = $"{PocketedItems.Count} Items";
+                    if (ItemsListBox != null && ItemsListBox.SelectedItems.Count == 0)
+                    {
+                        PopupCountText.Text = $"{PocketedItems.Count} Items";
+                    }
+                }
+            }
+
+            // 2. HANDLE DRAGGED URLS FROM WEB BROWSERS
+            else if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                string droppedText = (string)e.Data.GetData(DataFormats.Text);
+
+                // Check if the text is a valid web link (http or https)
+                if (Uri.TryCreate(droppedText, UriKind.Absolute, out Uri uriResult) &&
+                   (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                {
+                    try
+                    {
+                        string domain = uriResult.Host.Replace("www.", "");
+                        string tempFolder = Path.GetTempPath();
+                        string fileName = $"{domain} Link_{DateTime.Now.Ticks}.url";
+                        string filePath = Path.Combine(tempFolder, fileName);
+
+                        // Generate the physical shortcut file
+                        File.WriteAllText(filePath, $"[InternetShortcut]\nURL={droppedText}");
+
+                        ShellFile shellFile = ShellFile.FromFilePath(filePath);
+                        System.Windows.Media.ImageSource fileIcon = shellFile.Thumbnail.ExtraLargeBitmapSource;
+
+                        PocketedItems.Add(new PocketItem
+                        {
+                            FileName = domain,
+                            FilePath = filePath,
+                            Icon = fileIcon
+                        });
+
+                        // Update UI
+                        StatusText.Visibility = Visibility.Collapsed;
+                        FileIconContainer.Visibility = Visibility.Visible;
+                        UpdateStackPreview();
+
+                        CountText.Text = $"{PocketedItems.Count} Items";
+                        if (ItemsListBox != null && ItemsListBox.SelectedItems.Count == 0)
+                        {
+                            PopupCountText.Text = $"{PocketedItems.Count} Items";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Could not save URL: {ex.Message}");
+                    }
                 }
             }
         }

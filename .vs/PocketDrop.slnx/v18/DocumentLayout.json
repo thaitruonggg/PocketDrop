@@ -18,8 +18,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -40,7 +44,7 @@
               "RelativeDocumentMoniker": "PocketDrop\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\sherl\\OneDrive - Naofunyan\\Documents\\Github\\PocketDrop\\PocketDrop\\MainWindow.xaml.cs",
               "RelativeToolTip": "PocketDrop\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAN0BAAAAAAAAAAAcwPIBAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAHMAAAAAAAAAAAAkwH8AAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-20T12:37:51.394Z",
               "EditorCaption": ""
