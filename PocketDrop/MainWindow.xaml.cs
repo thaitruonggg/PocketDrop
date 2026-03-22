@@ -759,6 +759,57 @@ namespace PocketDrop
             // Opens the Windows File Explorer directly to where your dragged URLs and web images are saved!
             System.Diagnostics.Process.Start("explorer.exe", Path.GetTempPath());
         }
+
+        // --- NATIVE WINDOWS APP PICKER API ---
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern int SHOpenWithDialog(IntPtr hwndParent, ref OPENASINFO poainfo);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct OPENASINFO
+        {
+            public string pcszFile;
+            public string pcszClass;
+            public int oaUIAction;
+        }
+
+        // --- MENU ACTION: Open With ---
+        private void Menu_OpenWith_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Determine which file to open 
+            string targetFilePath = null;
+
+            if (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
+            {
+                targetFilePath = ((PocketItem)ItemsListBox.SelectedItems[0]).FilePath;
+            }
+            else if (PocketedItems.Count > 0)
+            {
+                targetFilePath = PocketedItems[0].FilePath;
+            }
+
+            // 2. Trigger the native Windows app picker dialog
+            if (!string.IsNullOrEmpty(targetFilePath) && File.Exists(targetFilePath))
+            {
+                // THE FIX: Push the heavy Windows Shell call to a background thread!
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    try
+                    {
+                        OPENASINFO info = new OPENASINFO();
+                        info.pcszFile = targetFilePath;
+                        info.pcszClass = null;
+                        info.oaUIAction = 7;
+
+                        // This now runs in the background, freeing up your UI instantly
+                        SHOpenWithDialog(IntPtr.Zero, ref info);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Could not open file picker: {ex.Message}");
+                    }
+                });
+            }
+        }
     }
 
     // --- The blueprint for a dropped item ---

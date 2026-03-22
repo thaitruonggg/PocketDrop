@@ -146,9 +146,11 @@
                                                     <Border.Effect>
                                                         <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="Black" Opacity="0.15"/>
                                                     </Border.Effect>
-                                                    <ScrollViewer>
+
+                                                    <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                                         <ItemsPresenter/>
                                                     </ScrollViewer>
+
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -188,6 +190,7 @@
                                 </Style>
                             </ContextMenu.Resources>
 
+                            <MenuItem Header="Open with..." Click="Menu_OpenWith_Click" />
                             <MenuItem Header="Clear all items" Click="Menu_ClearItems_Click" />
                             <MenuItem Header="Open Temp Folder" Click="Menu_OpenTemp_Click" />
                             <Separator />
