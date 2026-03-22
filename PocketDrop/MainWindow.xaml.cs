@@ -490,7 +490,7 @@ namespace PocketDrop
         private void TopBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Prevent the window from dragging if they actually clicked the 'X' button
-            if (e.OriginalSource == CloseButton)
+            if (e.OriginalSource == CloseButton || e.Source == MoreButton)
                 return;
 
             // Tell Windows to take over and drag the physical app window!
@@ -722,6 +722,42 @@ namespace PocketDrop
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
 
             return $"{num} {suffixes[place]}";
+        }
+
+        // --- MORE BUTTON DROPDOWN MENU ---
+        private void MoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MoreButton.ContextMenu != null)
+            {
+                // Align the menu directly under the 3-dots icon
+                MoreButton.ContextMenu.PlacementTarget = MoreButton;
+                MoreButton.ContextMenu.Placement = PlacementMode.Bottom;
+                MoreButton.ContextMenu.VerticalOffset = 4;
+
+                // Open it!
+                MoreButton.ContextMenu.IsOpen = true;
+            }
+        }
+
+        // --- MENU ACTION: Clear All ---
+        private void Menu_ClearItems_Click(object sender, RoutedEventArgs e)
+        {
+            PocketedItems.Clear();
+            StackContainer.Children.Clear();
+            StatusText.Visibility = Visibility.Visible;
+            FileIconContainer.Visibility = Visibility.Collapsed;
+            CountText.Text = "0 Items";
+            PopupCountText.Text = "0 Items";
+
+            if (SelectAllCheckBox != null)
+                SelectAllCheckBox.IsChecked = false;
+        }
+
+        // --- MENU ACTION: Open Temp Folder ---
+        private void Menu_OpenTemp_Click(object sender, RoutedEventArgs e)
+        {
+            // Opens the Windows File Explorer directly to where your dragged URLs and web images are saved!
+            System.Diagnostics.Process.Start("explorer.exe", Path.GetTempPath());
         }
     }
 

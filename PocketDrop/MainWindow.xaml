@@ -110,22 +110,92 @@
                                MouseLeftButtonDown="CloseButton_Click"/>
                 </Grid>
 
-                <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0" Width="24" Height="24" Cursor="Hand">
+                <Button x:Name="MoreButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0" Width="24" Height="24" Cursor="Hand" Click="MoreButton_Click">
 
-                    <Border CornerRadius="12" Background="#1A000000" />
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid Background="Transparent">
+                                <Border CornerRadius="12" Background="#1A000000" />
 
-                    <Border Padding="0,0,0,0">
-                        <Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Canvas Width="24" Height="24">
-                                <Path Fill="{StaticResource TextSecondary}"
-                                      Data="M5,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z M12,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z M19,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z"/>
-                            </Canvas>
-                        </Viewbox>
-                    </Border>
+                                <Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,1,0,0">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Fill="{StaticResource TextSecondary}"
+                                              Data="M5,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z M12,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z M19,10 a2,2 0 1,1 0,4 a2,2 0 1,1 0,-4 z"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
 
-                    <Border x:Name="MoreButton" Background="Transparent" 
-                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                </Grid>
+                    <Button.ContextMenu>
+                        <ContextMenu FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13" Foreground="{StaticResource TextPrimary}">
+
+                            <ContextMenu.Resources>
+                                <Style TargetType="ContextMenu">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ContextMenu">
+                                                <Border Background="{StaticResource LayerDefault}" 
+                                                        BorderBrush="{StaticResource StrokeCardDefault}" 
+                                                        BorderThickness="1" 
+                                                        CornerRadius="8" 
+                                                        Padding="0,4"
+                                                        Margin="12">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="Black" Opacity="0.15"/>
+                                                    </Border.Effect>
+                                                    <ScrollViewer>
+                                                        <ItemsPresenter/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Padding" Value="12,6"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="MenuItem">
+                                                <Border x:Name="BgBorder" Background="Transparent" CornerRadius="4" Margin="4,2">
+                                                    <ContentPresenter Content="{TemplateBinding Header}" 
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsHighlighted" Value="True">
+                                                        <Setter TargetName="BgBorder" Property="Background" Value="#0F000000"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+
+                                <Style TargetType="Separator">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Separator">
+                                                <Rectangle Height="1" Fill="{StaticResource StrokeControlDefault}" Margin="0,4"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ContextMenu.Resources>
+
+                            <MenuItem Header="Clear all items" Click="Menu_ClearItems_Click" />
+                            <MenuItem Header="Open Temp Folder" Click="Menu_OpenTemp_Click" />
+                            <Separator />
+                            <MenuItem Header="Settings" />
+
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
             </Grid>
 
             <!-- ══ Drop zone ══ -->
