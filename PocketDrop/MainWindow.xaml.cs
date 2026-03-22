@@ -142,7 +142,7 @@ namespace PocketDrop
         }
 
         // --- CATCHING THE FILES (Dropping In) ---
-        private void Window_Drop(object sender, DragEventArgs e)
+        private async void Window_Drop(object sender, DragEventArgs e)
         {
             // SAFETY: If the user dropped the files back onto the app itself, cancel everything!
             if (_isDraggingFromApp)
@@ -162,44 +162,52 @@ namespace PocketDrop
                     foreach (string filePath in droppedFiles)
                     {
                         string fileName = Path.GetFileName(filePath);
-                        System.Windows.Media.ImageSource fileIcon = null;
 
-                        try
+                        // THE FIX: Push the heavy image downscaling to a background worker thread!
+                        System.Windows.Media.ImageSource fileIcon = await System.Threading.Tasks.Task.Run(() =>
                         {
-                            string ext = Path.GetExtension(filePath).ToLower();
-                            string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
-
-                            // If it's an image, load the actual picture
-                            if (Array.Exists(imageExts, x => x == ext))
+                            try
                             {
-                                BitmapImage img = new BitmapImage();
-                                img.BeginInit();
-                                img.UriSource = new Uri(filePath);
-                                img.CacheOption = BitmapCacheOption.OnLoad;
-                                img.EndInit();
-                                fileIcon = img;
-                            }
-                            // If it's literally ANY other file type, ask Windows for its icon
-                            else
-                            {
-                                ShellFile shellFile = ShellFile.FromFilePath(filePath);
-                                fileIcon = shellFile.Thumbnail.ExtraLargeBitmapSource;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Could not load icon for {fileName}: {ex.Message}");
-                        }
+                                string ext = Path.GetExtension(filePath).ToLower();
+                                string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
 
-                        PocketedItems.Add(new PocketItem
-                        {
-                            FileName = fileName,
-                            FilePath = filePath,
-                            Icon = fileIcon
+                                if (Array.Exists(imageExts, x => x == ext))
+                                {
+                                    BitmapImage img = new BitmapImage();
+                                    img.BeginInit();
+                                    img.CacheOption = BitmapCacheOption.OnLoad; // CRITICAL for background loading
+                                    img.CreateOptions = BitmapCreateOptions.IgnoreColorProfile; // Bonus speed boost! Ignores heavy color correction profiles.
+                                    img.UriSource = new Uri(filePath);
+                                    img.DecodePixelWidth = 120;
+                                    img.EndInit();
+
+                                    // Freeze makes it read-only, allowing it to cross over to the UI thread!
+                                    img.Freeze();
+                                    return img;
+                                }
+                                else
+                                {
+                                    // Handle PDFs, text files, EXEs, etc.
+                                    ShellFile shellFile = ShellFile.FromFilePath(filePath);
+
+                                    // THE FIX: Request the Large icon instead of ExtraLarge to completely avoid the 256px padding bug
+                                    var thumb = shellFile.Thumbnail.LargeBitmapSource;
+
+                                    thumb.Freeze();
+                                    return thumb;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Icon error: {ex.Message}");
+                                return null;
+                            }
                         });
+
+                        PocketedItems.Add(new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon });
                     }
 
-                    // Update UI
+                    // Update UI after the items are loaded
                     StatusText.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
                     UpdateStackPreview();
@@ -232,7 +240,10 @@ namespace PocketDrop
                         File.WriteAllText(filePath, $"[InternetShortcut]\nURL={droppedText}");
 
                         ShellFile shellFile = ShellFile.FromFilePath(filePath);
-                        System.Windows.Media.ImageSource fileIcon = shellFile.Thumbnail.ExtraLargeBitmapSource;
+
+                        // THE FIX: Use LargeBitmapSource here too, and remove the cropper wrapper
+                        var fileIcon = shellFile.Thumbnail.LargeBitmapSource;
+                        fileIcon.Freeze();
 
                         PocketedItems.Add(new PocketItem
                         {
@@ -692,7 +703,21 @@ namespace PocketDrop
         {
             var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150))
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
-            fadeOut.Completed += (s, e) => { this.IsHitTestVisible = false; };
+
+            fadeOut.Completed += (s, e) =>
+            {
+                this.IsHitTestVisible = false;
+
+                // THE FIX: Flush the RAM when the app goes to sleep empty!
+                if (PocketedItems.Count == 0)
+                {
+                    // Forces .NET to clean up destroyed windows, cleared lists, and unused bitmaps immediately
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                }
+            };
+
             this.BeginAnimation(OpacityProperty, fadeOut);
         }
 
