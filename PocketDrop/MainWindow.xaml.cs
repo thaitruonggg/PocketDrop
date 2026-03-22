@@ -67,8 +67,8 @@ namespace PocketDrop
             public IntPtr dwExtraInfo;
         }
 
-        private IntPtr _hookHandle = IntPtr.Zero;
-        private LowLevelMouseProc _hookProc; // Keep reference — prevents GC
+        private static IntPtr _hookHandle = IntPtr.Zero;
+        private static LowLevelMouseProc _hookProc; // Keep reference — prevents GC
 
         // ══════════════════════════════════════════════════════
         // SHAKE DETECTION PARAMETERS
@@ -77,11 +77,11 @@ namespace PocketDrop
         private const int REQUIRED_SWINGS = 3;    // number of direction reversals needed
         private const int SHAKE_WINDOW_MS = 1000; // all reversals must happen within this ms window
 
-        private bool _leftButtonHeld = false;
-        private int _lastX = 0;
-        private int _currentDir = 0;       // +1 = right, -1 = left, 0 = none
-        private int _swingOriginX = 0;       // X where current swing started
-        private readonly Queue<long> _swingTimestamps = new Queue<long>();
+        private static bool _leftButtonHeld = false;
+        private static int _lastX = 0;
+        private static int _currentDir = 0;       // +1 = right, -1 = left, 0 = none
+        private static int _swingOriginX = 0;       // X where current swing started
+        private static readonly Queue<long> _swingTimestamps = new Queue<long>();
 
         // ══════════════════════════════════════════════════════
         // --- VIEW MODE LOGIC ---
@@ -126,18 +126,20 @@ namespace PocketDrop
             this.Opacity = 0;
             this.IsHitTestVisible = false;
 
-            // Install global mouse hook
-            _hookProc = HookCallback;
-            using (var proc = Process.GetCurrentProcess())
-            using (var mod = proc.MainModule)
-                _hookHandle = SetWindowsHookEx(WH_MOUSE_LL, _hookProc, GetModuleHandle(mod.ModuleName), 0);
+            // THE FIX: Only install the global hook ONCE for the entire application!
+            if (_hookHandle == IntPtr.Zero)
+            {
+                _hookProc = HookCallback;
+                using (var proc = Process.GetCurrentProcess())
+                using (var mod = proc.MainModule)
+                    _hookHandle = SetWindowsHookEx(WH_MOUSE_LL, _hookProc, GetModuleHandle(mod.ModuleName), 0);
+            }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            // Uninstall hook when app exits
-            if (_hookHandle != IntPtr.Zero)
-                UnhookWindowsHookEx(_hookHandle);
+            // THE FIX: We no longer uninstall the hook here! 
+            // The Master Listener stays alive until you right-click the tray and hit "Quit"
             base.OnClosed(e);
         }
 
@@ -572,31 +574,46 @@ namespace PocketDrop
         // --- CLOSING THE WINDOW — clears items and hides ---
         private void CloseButton_Click(object sender, MouseButtonEventArgs e)
         {
-            // NEW: Clean up temp files before closing
+            // 1. Log all current items to the Global History
             foreach (var item in PocketedItems)
             {
-                CleanupTempFile(item.FilePath);
+                // Prevent duplicate entries in the history
+                if (!App.SessionHistory.Exists(x => x.FilePath == item.FilePath))
+                {
+                    App.SessionHistory.Add(item);
+                }
             }
 
-            // Clear all pocketed items
+            // 2. Clear this pocket's internal data list and reset the UI
             PocketedItems.Clear();
             StackContainer.Children.Clear();
             StatusText.Visibility = Visibility.Visible;
             FileIconContainer.Visibility = Visibility.Collapsed;
             CountText.Text = "0 Items";
-            PopupCountText.Text = "0 Items";
-            ExpandButton.IsChecked = false;
-            // NEW: Force the Select All checkbox to uncheck so it's fresh next time!
-            if (SelectAllCheckBox != null)
-                SelectAllCheckBox.IsChecked = false;
+            if (PopupCountText != null) PopupCountText.Text = "0 Items";
 
-            HidePocketDrop();
+            if (SelectAllCheckBox != null)
+            {
+                SelectAllCheckBox.IsChecked = false;
+            }
+
+            // 3. THE FIX: Never kill the very last window! 
+            // If this is the last window, fade it out so the mouse hook stays alive.
+            // If you have 2 or 3 windows open, it's safe to completely destroy the extras.
+            if (Application.Current.Windows.Count <= 1)
+            {
+                HidePocketDrop();
+            }
+            else
+            {
+                this.Close();
+            }
         }
 
         // ══════════════════════════════════════════════════════
         // GLOBAL MOUSE HOOK CALLBACK
         // ══════════════════════════════════════════════════════
-        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
             {
@@ -623,11 +640,10 @@ namespace PocketDrop
                     int dx = x - _lastX;
                     _lastX = x;
 
-                    if (Math.Abs(dx) < 2) goto done; // ignore micro-jitter
+                    if (Math.Abs(dx) < 2) goto done;
 
                     int newDir = dx > 0 ? 1 : -1;
 
-                    // Direction reversal detected
                     if (_currentDir != 0 && newDir != _currentDir)
                     {
                         int swingSize = Math.Abs(x - _swingOriginX);
@@ -636,7 +652,6 @@ namespace PocketDrop
                             long now = Environment.TickCount64;
                             _swingTimestamps.Enqueue(now);
 
-                            // Evict old timestamps outside the shake window
                             while (_swingTimestamps.Count > 0 &&
                                    now - _swingTimestamps.Peek() > SHAKE_WINDOW_MS)
                                 _swingTimestamps.Dequeue();
@@ -646,9 +661,24 @@ namespace PocketDrop
                                 _swingTimestamps.Clear();
                                 _currentDir = 0;
 
-                                // Marshal to UI thread — hook runs on a background thread
-                                Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                                    ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y)));
+                                // THE ULTIMATE FIX: Dynamically find a hidden window, or spawn a new one!
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
+                                {
+                                    // Search all open windows for one that is currently asleep
+                                    var hiddenPocket = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault(w => !w.IsHitTestVisible);
+
+                                    if (hiddenPocket != null)
+                                    {
+                                        hiddenPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
+                                    }
+                                    else
+                                    {
+                                        // If every single pocket on screen is actively being used, spawn a new one!
+                                        var newPocket = new MainWindow();
+                                        newPocket.Show();
+                                        newPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
+                                    }
+                                }));
                             }
                         }
                         _swingOriginX = x;
@@ -666,9 +696,11 @@ namespace PocketDrop
         // ══════════════════════════════════════════════════════
         private void ShowPocketDrop(int cursorX, int cursorY)
         {
+            if (this.IsHitTestVisible) return;
+
             // Position near cursor, nudge away from screen edges
-            double wx = cursorX - this.ActualWidth / 2;
-            double wy = cursorY - this.ActualHeight - 20;
+            double wx = cursorX - this.ActualWidth / 2 + 40;
+            double wy = cursorY - this.ActualHeight - 80;
 
             double screenW = SystemParameters.PrimaryScreenWidth;
             double screenH = SystemParameters.PrimaryScreenHeight;
@@ -679,6 +711,10 @@ namespace PocketDrop
             this.Top = wy;
             this.IsHitTestVisible = true;
 
+            // THE ULTIMATE FIX: Force WPF to instantly finish its math for the window movement!
+            // This guarantees the GPU is completely idle and ready before the animation starts.
+            this.UpdateLayout();
+
             // Fade + scale in
             var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(180))
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
@@ -688,19 +724,39 @@ namespace PocketDrop
             var scaleY = new DoubleAnimation(0.88, 1, TimeSpan.FromMilliseconds(200))
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
 
-            var st = new ScaleTransform(1, 1, this.ActualWidth / 2, this.ActualHeight / 2);
-            MainContainer.RenderTransform = st;
-            MainContainer.RenderTransformOrigin = new Point(0.5, 0.5);
+            // THE FIX PART 1: Stop destroying the transform! 
+            // We check if it already exists, and only build it if it's missing.
+            if (!(MainContainer.RenderTransform is ScaleTransform st))
+            {
+                st = new ScaleTransform(1, 1, this.ActualWidth / 2, this.ActualHeight / 2);
+                MainContainer.RenderTransform = st;
+                MainContainer.RenderTransformOrigin = new Point(0.5, 0.5);
+            }
 
             st.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
             st.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
+
+            // Clear any lingering hold from the fade-out animation before starting the new one
+            this.BeginAnimation(OpacityProperty, null);
             this.BeginAnimation(OpacityProperty, fadeIn);
 
-            this.Activate();
+            // THE FIX PART 2: Delay the OS window activation by a few milliseconds!
+            // This lets the UI thread perfectly render the first frames of the animation
+            // before Windows interrupts it to assign window focus.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                this.Activate();
+            }));
         }
 
+        // ══════════════════════════════════════════════════════
+        // HIDE WITH ANIMATION & BACKGROUND CLEANUP
+        // ══════════════════════════════════════════════════════
         private void HidePocketDrop()
         {
+            // THE FIX PART 1: Lock the window immediately so the animation state is perfectly accurate
+            this.IsHitTestVisible = false;
+
             var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150))
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
 
@@ -711,10 +767,15 @@ namespace PocketDrop
                 // THE FIX: Flush the RAM when the app goes to sleep empty!
                 if (PocketedItems.Count == 0)
                 {
-                    // Forces .NET to clean up destroyed windows, cleared lists, and unused bitmaps immediately
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
+                    // THE FIX PART 2: Push the RAM flush to a background worker!
+                    // This prevents the UI thread from freezing, which stops Windows from 
+                    // panicking and assassinating our global mouse hook!
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                    });
                 }
             };
 
@@ -1077,6 +1138,80 @@ namespace PocketDrop
             catch (Exception ex)
             {
                 Console.WriteLine($"Could not clean up temp file: {ex.Message}");
+            }
+        }
+
+        // --- NEW: Handle pasting files directly from the Windows Clipboard ---
+        public async void PasteFromClipboard()
+        {
+            try
+            {
+                if (System.Windows.Clipboard.ContainsFileDropList())
+                {
+                    var files = System.Windows.Clipboard.GetFileDropList();
+                    string[] fileArray = new string[files.Count];
+                    files.CopyTo(fileArray, 0);
+
+                    // Loop through the clipboard files and process them exactly like a drag-and-drop!
+                    foreach (string filePath in fileArray)
+                    {
+                        string fileName = Path.GetFileName(filePath);
+
+                        System.Windows.Media.ImageSource fileIcon = await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            try
+                            {
+                                string ext = Path.GetExtension(filePath).ToLower();
+                                string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
+
+                                if (Array.Exists(imageExts, x => x == ext))
+                                {
+                                    System.Windows.Media.Imaging.BitmapImage img = new System.Windows.Media.Imaging.BitmapImage();
+                                    img.BeginInit();
+                                    img.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                                    img.CreateOptions = System.Windows.Media.Imaging.BitmapCreateOptions.IgnoreColorProfile;
+                                    img.UriSource = new Uri(filePath);
+                                    img.DecodePixelWidth = 120;
+                                    img.EndInit();
+                                    img.Freeze();
+                                    return img;
+                                }
+                                else
+                                {
+                                    // Handle PDFs, text files, EXEs, etc. using the bug-free Large icon
+                                    Microsoft.WindowsAPICodePack.Shell.ShellFile shellFile = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(filePath);
+                                    var thumb = shellFile.Thumbnail.LargeBitmapSource;
+                                    thumb.Freeze();
+                                    return thumb;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Icon error: {ex.Message}");
+                                return null;
+                            }
+                        });
+
+                        PocketedItems.Add(new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon });
+                    }
+
+                    // Update UI after the items are loaded
+                    StatusText.Visibility = Visibility.Collapsed;
+                    FileIconContainer.Visibility = Visibility.Visible;
+                    UpdateStackPreview();
+
+                    CountText.Text = $"{PocketedItems.Count} Items";
+                    if (PopupCountText != null) PopupCountText.Text = $"{PocketedItems.Count} Items";
+                }
+                else
+                {
+                    // Optional: You can remove this else block entirely if you want it to fail silently!
+                    MessageBox.Show("No files found in clipboard!");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Clipboard error: {ex.Message}");
             }
         }
     }
