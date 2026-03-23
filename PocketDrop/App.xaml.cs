@@ -7,10 +7,15 @@ namespace PocketDrop
 {
     public partial class App : Application
     {
+
         // Global master list to hold every file dropped during this session
         public static List<PocketItem> SessionHistory = new List<PocketItem>();
 
         private System.Windows.Forms.NotifyIcon? _trayIcon;
+
+        // ✨ NEW: Native API to force focus and dismiss the tray menu!
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -51,7 +56,24 @@ namespace PocketDrop
             };
 
             var savedPocketsItem = new System.Windows.Forms.ToolStripMenuItem("Saved Pockets");
-            savedPocketsItem.Click += TrayIcon_Click;
+            savedPocketsItem.Click += (s, ev) =>
+            {
+                // Check if the window is already open!
+                var existingWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+
+                if (existingWindow != null)
+                {
+                    // If it is, just bring it to the front
+                    existingWindow.Activate();
+                }
+                else
+                {
+                    // If it isn't, spawn a new one
+                    var historyWindow = new SavedPocketsWindow();
+                    historyWindow.Show();
+                    historyWindow.Activate();
+                }
+            };
 
             var settingsItem = new System.Windows.Forms.ToolStripMenuItem("Settings");
 
@@ -97,12 +119,39 @@ namespace PocketDrop
             _trayIcon.Visible = true;
             _trayIcon.Text = "PocketDrop";
 
-            _trayIcon.Click += (s, ev) =>
+            // ✨ THE FIX: Open Saved Pockets on Left-Click!
+            _trayIcon.MouseClick += async (s, e) =>
             {
-                var mouseArgs = ev as System.Windows.Forms.MouseEventArgs;
-                if (mouseArgs != null && mouseArgs.Button == System.Windows.Forms.MouseButtons.Left)
+                // Only trigger on Left click
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    TrayIcon_Click(s, ev);
+                    // ✨ THE NEW MAGIC TRICK: Fire a fake 'Escape' keypress!
+                    // This forces Windows to instantly break the Hover Lock and close the tray menu.
+                    System.Windows.Forms.SendKeys.SendWait("{ESC}");
+
+                    var existingWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+                    SavedPocketsWindow targetWindow;
+
+                    if (existingWindow != null)
+                    {
+                        targetWindow = existingWindow;
+                        targetWindow.Activate(); // Bring existing to front
+                    }
+                    else
+                    {
+                        targetWindow = new SavedPocketsWindow();
+                        targetWindow.Show(); // Spawn a new one instantly
+                    }
+
+                    // Keep our tiny delay to let the ESC key closing animation finish smoothly
+                    await System.Threading.Tasks.Task.Delay(100);
+
+                    // Now command the absolute OS foreground!
+                    targetWindow.Activate();
+                    targetWindow.Focus();
+
+                    var hwnd = new System.Windows.Interop.WindowInteropHelper(targetWindow).Handle;
+                    SetForegroundWindow(hwnd);
                 }
             };
         }

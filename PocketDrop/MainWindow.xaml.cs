@@ -206,7 +206,14 @@ namespace PocketDrop
                             }
                         });
 
-                        PocketedItems.Add(new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon });
+                        var newItem = new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon };
+                        PocketedItems.Add(newItem);
+
+                        // ✨ INSTANT SYNC: Save it to the global list the millisecond it drops!
+                        if (!App.SessionHistory.Exists(x => x.FilePath == newItem.FilePath))
+                        {
+                            App.SessionHistory.Add(newItem);
+                        }
                     }
 
                     // Update UI after the items are loaded
@@ -247,12 +254,14 @@ namespace PocketDrop
                         var fileIcon = shellFile.Thumbnail.LargeBitmapSource;
                         fileIcon.Freeze();
 
-                        PocketedItems.Add(new PocketItem
+                        var newUrlItem = new PocketItem { FileName = domain, FilePath = filePath, Icon = fileIcon };
+                        PocketedItems.Add(newUrlItem);
+
+                        // ✨ INSTANT SYNC for URLs!
+                        if (!App.SessionHistory.Exists(x => x.FilePath == newUrlItem.FilePath))
                         {
-                            FileName = domain,
-                            FilePath = filePath,
-                            Icon = fileIcon
-                        });
+                            App.SessionHistory.Add(newUrlItem);
+                        }
 
                         // Update UI
                         StatusText.Visibility = Visibility.Collapsed;
@@ -348,6 +357,17 @@ namespace PocketDrop
                     if (SelectAllCheckBox != null)
                         SelectAllCheckBox.IsChecked = false;
                 }
+            }
+
+            // ✨ PING THE WINDOW: Tell the Saved Pockets window to update in real-time!
+            var openHistoryWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+            if (openHistoryWindow != null)
+            {
+                // We use Dispatcher here just in case the background image-loading thread tries to trigger it
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    openHistoryWindow.RefreshHistory();
+                }));
             }
         }
 
@@ -577,11 +597,17 @@ namespace PocketDrop
             // 1. Log all current items to the Global History
             foreach (var item in PocketedItems)
             {
-                // Prevent duplicate entries in the history
                 if (!App.SessionHistory.Exists(x => x.FilePath == item.FilePath))
                 {
                     App.SessionHistory.Add(item);
                 }
+            }
+
+            // ✨ THE FIX: Ping the Saved Pockets window to update in real-time!
+            var openHistoryWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+            if (openHistoryWindow != null)
+            {
+                openHistoryWindow.RefreshHistory();
             }
 
             // 2. Clear this pocket's internal data list and reset the UI
@@ -597,9 +623,7 @@ namespace PocketDrop
                 SelectAllCheckBox.IsChecked = false;
             }
 
-            // 3. THE FIX: Never kill the very last window! 
-            // If this is the last window, fade it out so the mouse hook stays alive.
-            // If you have 2 or 3 windows open, it's safe to completely destroy the extras.
+            // 3. Never kill the very last window! 
             if (Application.Current.Windows.Count <= 1)
             {
                 HidePocketDrop();
@@ -1192,7 +1216,15 @@ namespace PocketDrop
                             }
                         });
 
-                        PocketedItems.Add(new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon });
+                        // ✨ THE FIX: Create the item, add it to the pocket, AND save it globally
+                        var newItem = new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon };
+                        PocketedItems.Add(newItem);
+
+                        // ✨ INSTANT SYNC: Save it to the global list the millisecond it pastes!
+                        if (!App.SessionHistory.Exists(x => x.FilePath == newItem.FilePath))
+                        {
+                            App.SessionHistory.Add(newItem);
+                        }
                     }
 
                     // Update UI after the items are loaded
@@ -1202,6 +1234,16 @@ namespace PocketDrop
 
                     CountText.Text = $"{PocketedItems.Count} Items";
                     if (PopupCountText != null) PopupCountText.Text = $"{PocketedItems.Count} Items";
+
+                    // ✨ PING THE WINDOW: Tell the Saved Pockets window to update in real-time!
+                    var openHistoryWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+                    if (openHistoryWindow != null)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            openHistoryWindow.RefreshHistory();
+                        }));
+                    }
                 }
                 else
                 {
@@ -1212,6 +1254,33 @@ namespace PocketDrop
             catch (Exception ex)
             {
                 Console.WriteLine($"Clipboard error: {ex.Message}");
+            }
+        }
+
+        // --- SAFE KILL SWITCH: Clears and closes the window from the outside ---
+        public void ForceClose()
+        {
+            // 1. Wipe the UI and internal memory
+            PocketedItems.Clear();
+            StackContainer.Children.Clear();
+            StatusText.Visibility = Visibility.Visible;
+            FileIconContainer.Visibility = Visibility.Collapsed;
+            CountText.Text = "0 Items";
+            if (PopupCountText != null) PopupCountText.Text = "0 Items";
+
+            if (SelectAllCheckBox != null)
+            {
+                SelectAllCheckBox.IsChecked = false;
+            }
+
+            // 2. The safety check! If this is the last window, just hide it to keep the app alive.
+            if (Application.Current.Windows.OfType<MainWindow>().Count() <= 1)
+            {
+                HidePocketDrop();
+            }
+            else
+            {
+                this.Close();
             }
         }
     }

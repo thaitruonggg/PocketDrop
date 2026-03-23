@@ -24,3 +24,5 @@ C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\D
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows10.0.19041.0\PocketDrop.pdb
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows10.0.19041.0\PocketDrop.genruntimeconfig.cache
 C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows10.0.19041.0\ref\PocketDrop.dll
+C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows10.0.19041.0\SavedPocketsWindow.baml
+C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\obj\Debug\net10.0-windows10.0.19041.0\SavedPocketsWindow.g.cs
