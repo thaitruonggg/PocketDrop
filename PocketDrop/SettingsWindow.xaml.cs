@@ -32,6 +32,8 @@ namespace PocketDrop
             ShakeToggle.IsChecked = App.EnableMouseShake;
             ShakeDistText.Text = App.ShakeMinimumDistance.ToString();
             GameModeCheck.IsChecked = App.DisableInGameMode;
+
+            ExcludedAppsText.Text = App.ExcludedApps;
         }
 
         // ✨ THE FIX 2: Update the global setting when the user toggles the switch!
@@ -84,6 +86,12 @@ namespace PocketDrop
                 App.ShakeMinimumDistance = dist;
                 App.SaveSettings();
             }
+        }
+
+        private void ExcludedAppsText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            App.ExcludedApps = ExcludedAppsText.Text;
+            App.SaveSettings();
         }
     }
 }

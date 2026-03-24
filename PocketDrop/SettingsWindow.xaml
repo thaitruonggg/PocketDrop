@@ -434,6 +434,54 @@
                     </StackPanel>
                 </Border>
 
+                <Border Style="{DynamicResource SettingCard}">
+                    <StackPanel>
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16 13H8V11H16V13Z" Stroke="#444" StrokeThickness="1" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
+                                <TextBlock Text="Excluded apps" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="Prevent mouse shake shortcut from activating when an excluded app is in the foreground" FontSize="12" Foreground="#666666" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <ToggleButton x:Name="ExpandExcludeButton" Grid.Column="2" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent">
+                                            <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                        </Grid>
+
+                        <Border Margin="-15,15,-15,-15" Padding="20,16,20,20" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                Visibility="{Binding IsChecked, ElementName=ExpandExcludeButton, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Text="Add an application's name, or part of the name, one per line (e.g. adding Notepad will match both Notepad.exe and Notepad++.exe; to match only Notepad.exe add the .exe extension)." 
+                                           FontSize="13" Foreground="#111111" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,12"/>
+
+                                <Border BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="4" Background="#FFFFFF" Height="140">
+                                    <TextBox x:Name="ExcludedAppsText" Background="Transparent" BorderThickness="0" 
+                                             Padding="12" FontSize="14" Foreground="#444444" TextWrapping="Wrap" AcceptsReturn="True" 
+                                             VerticalScrollBarVisibility="Auto" TextChanged="ExcludedAppsText_TextChanged"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

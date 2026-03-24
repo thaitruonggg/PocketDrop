@@ -670,6 +670,7 @@ namespace PocketDrop
                     // ✨ THE NEW CHECKS: Abort if shaking is disabled, or if gaming!
                     if (!App.EnableMouseShake) goto done;
                     if (App.DisableInGameMode && App.IsGameModeActive()) goto done;
+                    if (App.IsForegroundAppExcluded()) goto done;
 
                     int x = hookStruct.pt.X;
                     int dx = x - _lastX;

@@ -86,6 +86,8 @@ namespace PocketDrop
                     EnableMouseShake = Convert.ToBoolean(key.GetValue("EnableMouseShake", true));
                     ShakeMinimumDistance = Convert.ToInt32(key.GetValue("ShakeMinimumDistance", 100));
                     DisableInGameMode = Convert.ToBoolean(key.GetValue("DisableInGameMode", true));
+
+                    ExcludedApps = key.GetValue("ExcludedApps", "").ToString();
                 }
             }
             catch { }
@@ -105,6 +107,8 @@ namespace PocketDrop
                     key.SetValue("EnableMouseShake", EnableMouseShake);
                     key.SetValue("ShakeMinimumDistance", ShakeMinimumDistance);
                     key.SetValue("DisableInGameMode", DisableInGameMode);
+
+                    key.SetValue("ExcludedApps", ExcludedApps);
                 }
             }
             catch { }
@@ -384,6 +388,57 @@ namespace PocketDrop
                     });
                 });
             }
+        }
+
+        // ✨ EXCLUDED APPS SETTINGS
+        public static string ExcludedApps = "";
+
+        // --- NATIVE FOREGROUND WINDOW DETECTION ---
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        public static bool IsForegroundAppExcluded()
+        {
+            if (string.IsNullOrWhiteSpace(ExcludedApps)) return false;
+
+            try
+            {
+                // 1. Get the currently active window
+                IntPtr hWnd = GetForegroundWindow();
+                if (hWnd == IntPtr.Zero) return false;
+
+                // 2. Get the Process ID of that window
+                GetWindowThreadProcessId(hWnd, out uint pid);
+                if (pid == 0) return false;
+
+                // 3. Look up the process name
+                using (var process = System.Diagnostics.Process.GetProcessById((int)pid))
+                {
+                    string pName = process.ProcessName.ToLower(); // e.g., "notepad" or "msedge"
+                    string pExe = pName + ".exe";                 // e.g., "notepad.exe"
+
+                    // 4. Split the user's text box by new lines
+                    var rules = ExcludedApps.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var ruleText in rules)
+                    {
+                        string rule = ruleText.Trim().ToLower();
+                        if (string.IsNullOrEmpty(rule)) continue;
+
+                        // Matches the logic: "notepad" matches "notepad++", but "notepad.exe" is exact
+                        if (pName.Contains(rule) || pExe.Contains(rule))
+                        {
+                            return true; // Abort the shake!
+                        }
+                    }
+                }
+            }
+            catch { } // Failsafe (e.g., system processes we don't have permission to read)
+
+            return false;
         }
     }
 }
