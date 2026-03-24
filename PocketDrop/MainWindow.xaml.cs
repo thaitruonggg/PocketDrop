@@ -725,7 +725,7 @@ namespace PocketDrop
         // ══════════════════════════════════════════════════════
         // SHOW / HIDE WITH ANIMATION
         // ══════════════════════════════════════════════════════
-        private void ShowPocketDrop(int cursorX, int cursorY)
+        public void ShowPocketDrop(int cursorX, int cursorY)
         {
             if (this.IsHitTestVisible) return;
 

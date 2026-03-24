@@ -17,6 +17,96 @@ namespace PocketDrop
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        // --- GLOBAL HOTKEY APIS ---
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        internal static extern bool GetCursorPos(ref Win32Point pt);
+
+        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+        internal struct Win32Point
+        {
+            public int X;
+            public int Y;
+        };
+
+        private const uint MOD_SHIFT = 0x0004;
+        private const uint MOD_WIN = 0x0008;
+        private const int HOTKEY_NEW_POCKET = 9001;
+        private const int HOTKEY_NEW_CLIPBOARD = 9002;
+
+        // ✨ NEW: Dynamic variables instead of locked constants!
+        public static uint PocketKeyVK = 0x5A; // Z
+        public static uint ClipboardKeyVK = 0x58; // X
+        public static string PocketKeyChar = "Z";
+        public static string ClipboardKeyChar = "X";
+
+
+        // ✨ THE FIX: Save the keys permanently to the Windows Registry!
+        public static void LoadSettings()
+        {
+            try
+            {
+                using (var key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\PocketDrop"))
+                {
+                    // Convert safely handles the conversion so the app never crashes on load
+                    PocketKeyChar = key.GetValue("PocketKeyChar", "Z").ToString();
+                    PocketKeyVK = Convert.ToUInt32(key.GetValue("PocketKeyVK", 0x5A));
+
+                    ClipboardKeyChar = key.GetValue("ClipboardKeyChar", "X").ToString();
+                    ClipboardKeyVK = Convert.ToUInt32(key.GetValue("ClipboardKeyVK", 0x58));
+                }
+            }
+            catch { }
+        }
+
+        public static void SaveSettings()
+        {
+            try
+            {
+                using (var key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\PocketDrop"))
+                {
+                    key.SetValue("PocketKeyChar", PocketKeyChar);
+                    key.SetValue("PocketKeyVK", (int)PocketKeyVK);
+                    key.SetValue("ClipboardKeyChar", ClipboardKeyChar);
+                    key.SetValue("ClipboardKeyVK", (int)ClipboardKeyVK);
+                }
+            }
+            catch { }
+        }
+
+        // ✨ THE MASTER FIX 2: Force Thread Synchronization!
+        public static void ReloadHotkeys()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                SaveSettings();
+
+                // 1. Wipe the old keys
+                UnregisterHotKey(IntPtr.Zero, HOTKEY_NEW_POCKET);
+                UnregisterHotKey(IntPtr.Zero, HOTKEY_NEW_CLIPBOARD);
+
+                // 2. Ask Windows for the new keys, and capture its response (true = success, false = rejected)
+                bool successPocket = RegisterHotKey(IntPtr.Zero, HOTKEY_NEW_POCKET, MOD_WIN | MOD_SHIFT, PocketKeyVK);
+                bool successClipboard = RegisterHotKey(IntPtr.Zero, HOTKEY_NEW_CLIPBOARD, MOD_WIN | MOD_SHIFT, ClipboardKeyVK);
+
+                // 3. If Windows says NO, alert the user!
+                if (!successPocket || !successClipboard)
+                {
+                    System.Windows.MessageBox.Show(
+                        "Windows blocked this shortcut!\n\nThis usually means another background app (like Snipping Tool, PowerToys, or a graphics overlay) is already holding this key hostage.\n\nPlease try a different letter.",
+                        "Shortcut Error",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Warning);
+                }
+            });
+        }
+
         // ✨ THE NEW SETTING STATE: Copy by default (true). If false, it's a Move.
         public static bool CopyItemToDestination { get; set; } = true;
 
@@ -112,6 +202,13 @@ namespace PocketDrop
                 Application.Current.Shutdown();
             };
 
+            // ✨ Register Global Hotkeys (IntPtr.Zero attaches them to the app's main background thread)
+            LoadSettings();
+            ReloadHotkeys();
+
+            // Tell WPF to listen for global Windows messages
+            System.Windows.Interop.ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
+
             trayMenu.Items.Add(addPocketItem);
             trayMenu.Items.Add(addClipboardItem);
             trayMenu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
@@ -195,6 +292,68 @@ namespace PocketDrop
             }
 
             base.OnExit(e);
+        }
+
+        // --- CATCHING THE GLOBAL KEYSTROKE ---
+        private void ComponentDispatcher_ThreadPreprocessMessage(ref System.Windows.Interop.MSG msg, ref bool handled)
+        {
+            const int WM_HOTKEY = 0x0312;
+
+            if (msg.message == WM_HOTKEY)
+            {
+                int id = msg.wParam.ToInt32();
+
+                if (id == HOTKEY_NEW_POCKET)
+                {
+                    // Win + Shift + Z pressed!
+                    SpawnPocketAtCursor(false);
+                    handled = true;
+                }
+                else if (id == HOTKEY_NEW_CLIPBOARD)
+                {
+                    // Win + Shift + X pressed!
+                    SpawnPocketAtCursor(true);
+                    handled = true;
+                }
+            }
+        }
+
+        // --- SPAWNING THE POCKET ---
+        private void SpawnPocketAtCursor(bool pasteFromClipboard)
+        {
+            // 1. Find exactly where the mouse is right now
+            Win32Point mousePos = new Win32Point();
+            GetCursorPos(ref mousePos);
+
+            // 2. Find a sleeping pocket, or spawn a fresh one
+            var hiddenPocket = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault(w => !w.IsHitTestVisible);
+            MainWindow targetPocket;
+
+            if (hiddenPocket != null)
+            {
+                targetPocket = hiddenPocket;
+            }
+            else
+            {
+                targetPocket = new MainWindow();
+                targetPocket.Show();
+            }
+
+            // 3. Trigger the animation right at the mouse cursor!
+            targetPocket.ShowPocketDrop(mousePos.X, mousePos.Y);
+
+            // 4. If they pressed X, automatically pull the clipboard data!
+            if (pasteFromClipboard)
+            {
+                // Wait just 100ms for the window to finish expanding, then paste
+                System.Threading.Tasks.Task.Delay(100).ContinueWith(_ =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        targetPocket.PasteFromClipboard();
+                    });
+                });
+            }
         }
     }
 }
