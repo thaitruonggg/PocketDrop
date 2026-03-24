@@ -535,6 +535,23 @@
                         </Grid>
                     </Border>
 
+                    <Border Style="{DynamicResource SettingCard}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Close pocket when emptied" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="Automatically close pockets once all items have been dragged out" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <CheckBox x:Name="CloseEmptiedToggle" Grid.Column="2" Content="On" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="CloseEmptiedToggle_Click"/>
+                        </Grid>
+                    </Border>
+
                 </StackPanel>
             </StackPanel>
         </StackPanel>

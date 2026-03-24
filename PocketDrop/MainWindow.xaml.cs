@@ -341,6 +341,7 @@ namespace PocketDrop
                 _isDraggingFromApp = false;
 
                 // ✨ ALWAYS clear the pocket if the drop was successful, regardless of Copy or Move!
+                // ✨ ALWAYS clear the pocket if the drop was successful, regardless of Copy or Move!
                 if (result != DragDropEffects.None)
                 {
                     foreach (var item in PocketedItems)
@@ -349,15 +350,26 @@ namespace PocketDrop
                     }
 
                     PocketedItems.Clear();
-                    StatusText.Visibility = Visibility.Visible;
-                    FileIconContainer.Visibility = Visibility.Collapsed;
-                    StackContainer.Children.Clear();
-                    CountText.Text = "0 Items";
-                    PopupCountText.Text = "0 Items";
-                    ExpandButton.IsChecked = false;
 
-                    if (SelectAllCheckBox != null)
-                        SelectAllCheckBox.IsChecked = false;
+                    // ✨ THE NEW FIX: Check if we should auto-close!
+                    if (App.CloseWhenEmptied)
+                    {
+                        ExpandButton.IsChecked = false; // Ensure popup closes
+                        ForceClose(); // Uses your built-in safe close method!
+                    }
+                    else
+                    {
+                        // Standard UI reset if they want it to stay open on screen
+                        StatusText.Visibility = Visibility.Visible;
+                        FileIconContainer.Visibility = Visibility.Collapsed;
+                        StackContainer.Children.Clear();
+                        CountText.Text = "0 Items";
+                        PopupCountText.Text = "0 Items";
+                        ExpandButton.IsChecked = false;
+
+                        if (SelectAllCheckBox != null)
+                            SelectAllCheckBox.IsChecked = false;
+                    }
                 }
             }
 
@@ -527,6 +539,7 @@ namespace PocketDrop
             _isDraggingFromApp = false;
 
             // ✨ ALWAYS clear the selected items from the pocket if the drop was successful!
+            // ✨ ALWAYS clear the selected items from the pocket if the drop was successful!
             if (result != DragDropEffects.None)
             {
                 foreach (var item in selectedItems)
@@ -537,10 +550,19 @@ namespace PocketDrop
 
                 if (PocketedItems.Count == 0)
                 {
-                    StatusText.Visibility = Visibility.Visible;
-                    FileIconContainer.Visibility = Visibility.Collapsed;
-                    StackContainer.Children.Clear();
-                    ExpandButton.IsChecked = false;
+                    // ✨ THE NEW FIX: Check if we should auto-close!
+                    if (App.CloseWhenEmptied)
+                    {
+                        ExpandButton.IsChecked = false; // Ensure popup closes
+                        ForceClose(); // Uses your built-in safe close method!
+                    }
+                    else
+                    {
+                        StatusText.Visibility = Visibility.Visible;
+                        FileIconContainer.Visibility = Visibility.Collapsed;
+                        StackContainer.Children.Clear();
+                        ExpandButton.IsChecked = false;
+                    }
                 }
                 else
                 {

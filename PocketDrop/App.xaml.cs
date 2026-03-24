@@ -92,6 +92,8 @@ namespace PocketDrop
                     PocketPlacement = Convert.ToInt32(key.GetValue("PocketPlacement", 0));
 
                     ItemsLayoutMode = Convert.ToInt32(key.GetValue("ItemsLayoutMode", 0));
+
+                    CloseWhenEmptied = Convert.ToBoolean(key.GetValue("CloseWhenEmptied", true));
                 }
             }
             catch { }
@@ -117,6 +119,8 @@ namespace PocketDrop
                     key.SetValue("PocketPlacement", PocketPlacement);
 
                     key.SetValue("ItemsLayoutMode", ItemsLayoutMode);
+
+                    key.SetValue("CloseWhenEmptied", CloseWhenEmptied);
                 }
             }
             catch { }
@@ -405,6 +409,8 @@ namespace PocketDrop
         public static int PocketPlacement = 0; // 0 = Near mouse, 1 = Top edge, etc.
 
         public static int ItemsLayoutMode = 0;
+
+        public static bool CloseWhenEmptied = true;
 
         // --- NATIVE FOREGROUND WINDOW DETECTION ---
         [System.Runtime.InteropServices.DllImport("user32.dll")]

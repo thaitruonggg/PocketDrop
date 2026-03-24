@@ -38,6 +38,8 @@ namespace PocketDrop
             PlacementCombo.SelectedIndex = App.PocketPlacement;
 
             LayoutCombo.SelectedIndex = App.ItemsLayoutMode;
+
+            CloseEmptiedToggle.IsChecked = App.CloseWhenEmptied;
         }
 
         // ✨ THE FIX 2: Update the global setting when the user toggles the switch!
@@ -114,6 +116,12 @@ namespace PocketDrop
                 App.ItemsLayoutMode = LayoutCombo.SelectedIndex;
                 App.SaveSettings();
             }
+        }
+
+        private void CloseEmptiedToggle_Click(object sender, RoutedEventArgs e)
+        {
+            App.CloseWhenEmptied = CloseEmptiedToggle.IsChecked ?? true;
+            App.SaveSettings();
         }
     }
 }
