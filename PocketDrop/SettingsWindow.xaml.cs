@@ -40,6 +40,24 @@ namespace PocketDrop
             LayoutCombo.SelectedIndex = App.ItemsLayoutMode;
 
             CloseEmptiedToggle.IsChecked = App.CloseWhenEmptied;
+
+            // Grab the text-based Informational Version
+            var versionAttr = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                as System.Reflection.AssemblyInformationalVersionAttribute[];
+
+            if (versionAttr != null && versionAttr.Length > 0)
+            {
+                // ✨ THE FIX: Chop off the Git hash at the '+' symbol
+                string cleanVersion = versionAttr[0].InformationalVersion.Split('+')[0].Replace("-beta", " Beta ");
+
+                // Update the UI text!
+                AppVersionText.Text = $"Version {cleanVersion}";
+            }
+            else
+            {
+                AppVersionText.Text = "Version 1.0.0";
+            }
         }
 
         // ✨ THE FIX 2: Update the global setting when the user toggles the switch!
@@ -142,18 +160,14 @@ namespace PocketDrop
 
         private void ThirdParty_Click(object sender, MouseButtonEventArgs e)
         {
-            OpenUrl("https://yourwebsite.com/licenses");
+            // Show the Licenses popup overlay!
+            LicenseOverlay.Visibility = Visibility.Visible;
         }
 
-        private void ReportBug_Click(object sender, MouseButtonEventArgs e)
+        private void CloseLicense_Click(object sender, RoutedEventArgs e)
         {
-            // Opens your specific GitHub Issues page!
-            OpenUrl("https://github.com/naofunyan/PocketDrop/issues");
-        }
-
-        private void Translate_Click(object sender, MouseButtonEventArgs e)
-        {
-            OpenUrl("https://yourwebsite.com/translate");
+            // Hide the Licenses popup overlay!
+            LicenseOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void Rate_Click(object sender, MouseButtonEventArgs e)

@@ -211,279 +211,10 @@
 
     <Grid>
         <ScrollViewer Padding="30">
-        <StackPanel>
-            <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" Margin="0,0,0,30" Foreground="#111111"/>
+            <StackPanel>
+                <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" Margin="0,0,0,30" Foreground="#111111"/>
 
-            <TextBlock Text="Appearance and behavior" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,0,0,10"/>
-
-            <StackPanel Background="Transparent">
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Path Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.7929 3.20706 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22ZM12 22V22" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
-
-                        <TextBlock Grid.Column="1" Text="App theme" VerticalAlignment="Center" FontSize="14" Foreground="#111111"/>
-
-                        <ComboBox Grid.Column="2" Width="160" VerticalAlignment="Center" SelectedIndex="0" Style="{StaticResource ModernComboBox}">
-                            <ComboBoxItem Content="Windows default"/>
-                            <ComboBoxItem Content="Light"/>
-                            <ComboBoxItem Content="Dark"/>
-                        </ComboBox>
-                    </Grid>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Path Data="M15 3H21V9 M10 14L21 3 M18 13V19C18 20.1046 17.1046 21 16 21H5C3.89543 21 3 20.1046 3 19V8C3 6.89543 3.89543 6 5 6H11" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
-
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Run at startup" FontSize="14" Foreground="#111111"/>
-                            <TextBlock Text="PocketDrop will launch automatically" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                        </StackPanel>
-
-                        <CheckBox Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
-                    </Grid>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <StackPanel>
-                        <Grid Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Path Data="M8 16H6C4.89543 16 4 15.1046 4 14V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V8 M10 8H18C19.1046 8 20 8.89543 20 10V18C20 19.1046 19.1046 20 18 20H10C8.89543 20 8 19.1046 8 18V10C8 8.89543 8.89543 8 10 8Z" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
-
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Copy items to destination" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Dragged items from pocket will be copied instead of moved" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                            </StackPanel>
-
-                            <CheckBox x:Name="CopyItemToDestinationCheckbox" Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="Copy_Click" Margin="0,0,10,0"/>
-
-                            <ToggleButton x:Name="ExpandDescButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="Transparent">
-                                            <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Chevron" Property="Stroke" Value="#000"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                        </Grid>
-
-                        <Border Margin="-15,15,-15,-15" Padding="35,16,35,20" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
-                                Visibility="{Binding IsChecked, ElementName=ExpandDescButton, Converter={StaticResource BoolToVis}}">
-                            <TextBlock TextWrapping="Wrap" TextAlignment="Justify" Foreground="#555555" FontSize="13" LineHeight="22">
-                                By default, PocketDrop copies items from your Pocket when they are dragged out and moves them to your destination. Enabling this setting will make copying the default behaviour. If you want to move the file to destination completely, please disable this setting.
-                            </TextBlock>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-            </StackPanel>
-
-            <TextBlock Text="Shortcut" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,20,0,10"/>
-
-            <StackPanel Background="Transparent">
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Path Data="M20 5H4C2.895 5 2 5.895 2 7V17C2 18.105 2.895 19 4 19H20C21.105 19 22 18.105 22 17V7C22 5.895 21.105 5 20 5ZM20 17H4V7H20V17ZM11 8H9V10H11V8ZM15 8H13V10H15V8ZM7 8H5V10H7V8ZM7 12H5V14H7V12ZM11 12H9V14H11V12ZM19 12H13V14H19V12ZM19 15H15V17H19V15ZM21 21H18L19.5 19.5L21 21Z" Stroke="#444" StrokeThickness="1" Fill="#444" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
-
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="New pocket shortcut" FontSize="14" Foreground="#111111"/>
-                            <TextBlock Text="Customize the shortcut to open a new pocket" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Style="{StaticResource Keycap}">
-                                    <Path Data="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM13 13H21V21H13V13Z" Fill="White" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource Keycap}">
-                                    <TextBlock Text="Shift" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource Keycap}">
-                                    <TextBlock x:Name="PocketKeyText" Text="Z" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="EditPocketKey_Click">
-                                    <Path Data="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" Fill="#666" Width="14" Height="14" Margin="10,0,5,0" Stretch="Uniform"/>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Path Data="M19 3H14.82C14.4 1.84 13.3 1 12 1C10.7 1 9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM12 3C12.55 3 13 3.45 13 4C13 4.55 12.55 5 12 5C11.45 5 11 4.55 11 4C11 3.45 11.45 3 12 3ZM19 19H5V5H7V7H17V5H19V19Z" Stroke="#444" StrokeThickness="1" Fill="#444" Stretch="Uniform" Width="18" Height="20" HorizontalAlignment="Left"/>
-
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="New pocket from clipboard shortcut" FontSize="14" Foreground="#111111"/>
-                            <TextBlock Text="Customize the shortcut to open a new pocket using the clipboard" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                        </StackPanel>
-
-                        <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Style="{StaticResource Keycap}">
-                                    <Path Data="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM13 13H21V21H13V13Z" Fill="White" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource Keycap}">
-                                    <TextBlock Text="Shift" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource Keycap}">
-                                    <TextBlock x:Name="ClipboardKeyText" Text="X" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="EditClipboardKey_Click">
-                                    <Path Data="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" Fill="#666" Width="14" Height="14" Margin="10,0,5,0" Stretch="Uniform"/>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <StackPanel>
-                        <Grid Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Path Data="M 6.002 4.004 L 15.688 15.757 L 11.234 16.331 L 13.513 21.602 L 10.518 22.895 L 8.163 17.652 L 4.498 20.84 Z" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Stretch="Uniform" Width="14" Height="20" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Shake mouse to open new Pocket" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Shake your mouse while dragging items to open a new Pocket" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                            </StackPanel>
-
-                            <CheckBox x:Name="ShakeToggle" Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="ShakeToggle_Click" Margin="0,0,10,0"/>
-
-                            <ToggleButton x:Name="ExpandShakeButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="Transparent">
-                                            <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                        </Grid>
-
-                        <Border Margin="-15,15,-15,-15" Padding="20,16,20,16" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
-                                Visibility="{Binding IsChecked, ElementName=ExpandShakeButton, Converter={StaticResource BoolToVis}}">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="100"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Shake minimum distance" FontSize="14" Foreground="#111111"/>
-                                        <TextBlock Text="The minimum distance for mouse shaking activation, for adjusting sensitivity" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                    <Border Grid.Column="1" BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="4" Background="#FFFFFF" Height="32">
-                                        <TextBox x:Name="ShakeDistText" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Padding="8,0" FontSize="14" Foreground="#111111" TextChanged="ShakeDistText_TextChanged"/>
-                                    </Border>
-                                </Grid>
-
-                                <Border Height="1" Background="#E5E5E5" Margin="0,0,0,16"/>
-
-                                <CheckBox x:Name="GameModeCheck" Content="Do not open Pocket when Game Mode is on" IsChecked="True" 
-                                          Click="GameModeCheck_Click" Style="{StaticResource ModernCheckBox}"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}">
-                    <StackPanel>
-                        <Grid Background="Transparent">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16 13H8V11H16V13Z" Stroke="#444" StrokeThickness="1" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
-
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
-                                <TextBlock Text="Excluded apps" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Prevent mouse shake shortcut from activating when an excluded app is in the foreground" FontSize="12" Foreground="#666666" Margin="0,2,0,0" TextWrapping="Wrap"/>
-                            </StackPanel>
-
-                            <ToggleButton x:Name="ExpandExcludeButton" Grid.Column="2" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="Transparent">
-                                            <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                        </Grid>
-
-                        <Border Margin="-15,15,-15,-15" Padding="20,16,20,20" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
-                                Visibility="{Binding IsChecked, ElementName=ExpandExcludeButton, Converter={StaticResource BoolToVis}}">
-                            <StackPanel>
-                                <TextBlock Text="Add an application's name, or part of the name, one per line (e.g. adding Notepad will match both Notepad.exe and Notepad++.exe; to match only Notepad.exe add the .exe extension)." 
-                                           FontSize="13" Foreground="#111111" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,12"/>
-
-                                <Border BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="4" Background="#FFFFFF" Height="140">
-                                    <TextBox x:Name="ExcludedAppsText" Background="Transparent" BorderThickness="0" 
-                                             Padding="12" FontSize="14" Foreground="#444444" TextWrapping="Wrap" AcceptsReturn="True" 
-                                             VerticalScrollBarVisibility="Auto" TextChanged="ExcludedAppsText_TextChanged"/>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <TextBlock Text="Shelf preferences" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,20,0,10"/>
+                <TextBlock Text="Appearance and behavior" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,0,0,10"/>
 
                 <StackPanel Background="Transparent">
 
@@ -494,22 +225,14 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
+                            <Path Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.7929 3.20706 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22ZM12 22V22" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
 
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Shelf placement" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Change where a new shelf is placed upon opening" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="App theme" VerticalAlignment="Center" FontSize="14" Foreground="#111111"/>
 
-                            <ComboBox x:Name="PlacementCombo" Grid.Column="2" Width="180" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="PlacementCombo_SelectionChanged">
-                                <ComboBoxItem Content="Near mouse pointer"/>
-                                <ComboBoxItem Content="Top edge"/>
-                                <ComboBoxItem Content="Bottom edge"/>
-                                <ComboBoxItem Content="Left edge"/>
-                                <ComboBoxItem Content="Right edge"/>
-                                <ComboBoxItem Content="Top left corner"/>
-                                <ComboBoxItem Content="Top right corner"/>
-                                <ComboBoxItem Content="Bottom left corner"/>
-                                <ComboBoxItem Content="Bottom right corner"/>
+                            <ComboBox Grid.Column="2" Width="160" VerticalAlignment="Center" SelectedIndex="0" Style="{StaticResource ModernComboBox}">
+                                <ComboBoxItem Content="Windows default"/>
+                                <ComboBoxItem Content="Light"/>
+                                <ComboBoxItem Content="Dark"/>
                             </ComboBox>
                         </Grid>
                     </Border>
@@ -521,116 +244,399 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <Path Data="M3 3H10V10H3V3ZM14 3H21V10H14V3ZM3 14H10V21H3V14ZM14 14H21V21H14V14Z" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                            <Path Data="M15 3H21V9 M10 14L21 3 M18 13V19C18 20.1046 17.1046 21 16 21H5C3.89543 21 3 20.1046 3 19V8C3 6.89543 3.89543 6 5 6H11" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Items layout mode" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Change the default layout mode in the shelf flyout" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                <TextBlock Text="Run at startup" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="PocketDrop will launch automatically" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
                             </StackPanel>
 
-                            <ComboBox x:Name="LayoutCombo" Grid.Column="2" Width="140" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="LayoutCombo_SelectionChanged">
-                                <ComboBoxItem Content="Grid view"/>
-                                <ComboBoxItem Content="List view"/>
-                            </ComboBox>
+                            <CheckBox Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
 
                     <Border Style="{DynamicResource SettingCard}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Grid Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="Close pocket when emptied" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="Automatically close pockets once all items have been dragged out" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                            </StackPanel>
+                                <Path Data="M8 16H6C4.89543 16 4 15.1046 4 14V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V8 M10 8H18C19.1046 8 20 8.89543 20 10V18C20 19.1046 19.1046 20 18 20H10C8.89543 20 8 19.1046 8 18V10C8 8.89543 8.89543 8 10 8Z" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
 
-                            <CheckBox x:Name="CloseEmptiedToggle" Grid.Column="2" Content="On" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="CloseEmptiedToggle_Click"/>
-                        </Grid>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Copy items to destination" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Dragged items from pocket will be copied instead of moved" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <CheckBox x:Name="CopyItemToDestinationCheckbox" Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="Copy_Click" Margin="0,0,10,0"/>
+
+                                <ToggleButton x:Name="ExpandDescButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Chevron" Property="Stroke" Value="#000"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Grid>
+
+                            <Border Margin="-15,15,-15,-15" Padding="35,16,35,20" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                Visibility="{Binding IsChecked, ElementName=ExpandDescButton, Converter={StaticResource BoolToVis}}">
+                                <TextBlock TextWrapping="Wrap" TextAlignment="Justify" Foreground="#555555" FontSize="13" LineHeight="22">
+                                By default, PocketDrop copies items from your Pocket when they are dragged out and moves them to your destination. Enabling this setting will make copying the default behaviour. If you want to move the file to destination completely, please disable this setting.
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
                     </Border>
 
                 </StackPanel>
-            </StackPanel>
 
-            <TextBlock Text="About" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,30,0,10"/>
+                <TextBlock Text="Shortcut" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,20,0,10"/>
 
-            <StackPanel Background="Transparent">
+                <StackPanel Background="Transparent">
 
-                <Border Style="{DynamicResource SettingCard}">
-                    <StackPanel>
-                        <Grid Background="Transparent">
+                    <Border Style="{DynamicResource SettingCard}">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Path Data="M20 5H4C2.895 5 2 5.895 2 7V17C2 18.105 2.895 19 4 19H20C21.105 19 22 18.105 22 17V7C22 5.895 21.105 5 20 5ZM20 17H4V7H20V17ZM11 8H9V10H11V8ZM15 8H13V10H15V8ZM7 8H5V10H7V8ZM7 12H5V14H7V12ZM11 12H9V14H11V12ZM19 12H13V14H19V12ZM19 15H15V17H19V15ZM21 21H18L19.5 19.5L21 21Z" Stroke="#444" StrokeThickness="1" Fill="#444" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="New pocket shortcut" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="Customize the shortcut to open a new pocket" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Style="{StaticResource Keycap}">
+                                        <Path Data="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM13 13H21V21H13V13Z" Fill="White" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Style="{StaticResource Keycap}">
+                                        <TextBlock Text="Shift" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Style="{StaticResource Keycap}">
+                                        <TextBlock x:Name="PocketKeyText" Text="Z" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="EditPocketKey_Click">
+                                        <Path Data="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" Fill="#666" Width="14" Height="14" Margin="10,0,5,0" Stretch="Uniform"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{DynamicResource SettingCard}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Path Data="M19 3H14.82C14.4 1.84 13.3 1 12 1C10.7 1 9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM12 3C12.55 3 13 3.45 13 4C13 4.55 12.55 5 12 5C11.45 5 11 4.55 11 4C11 3.45 11.45 3 12 3ZM19 19H5V5H7V7H17V5H19V19Z" Stroke="#444" StrokeThickness="1" Fill="#444" Stretch="Uniform" Width="18" Height="20" HorizontalAlignment="Left"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="New pocket from clipboard shortcut" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="Customize the shortcut to open a new pocket using the clipboard" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Style="{StaticResource Keycap}">
+                                        <Path Data="M3 3H11V11H3V3ZM13 3H21V11H13V3ZM3 13H11V21H3V13ZM13 13H21V21H13V13Z" Fill="White" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Style="{StaticResource Keycap}">
+                                        <TextBlock Text="Shift" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Style="{StaticResource Keycap}">
+                                        <TextBlock x:Name="ClipboardKeyText" Text="X" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <Border Background="Transparent" Cursor="Hand" MouseLeftButtonDown="EditClipboardKey_Click">
+                                        <Path Data="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" Fill="#666" Width="14" Height="14" Margin="10,0,5,0" Stretch="Uniform"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{DynamicResource SettingCard}">
+                        <StackPanel>
+                            <Grid Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Path Data="M 6.002 4.004 L 15.688 15.757 L 11.234 16.331 L 13.513 21.602 L 10.518 22.895 L 8.163 17.652 L 4.498 20.84 Z" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Stretch="Uniform" Width="14" Height="20" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Shake mouse to open new Pocket" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Shake your mouse while dragging items to open a new Pocket" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <CheckBox x:Name="ShakeToggle" Grid.Column="2" Content="On" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="ShakeToggle_Click" Margin="0,0,10,0"/>
+
+                                <ToggleButton x:Name="ExpandShakeButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Grid>
+
+                            <Border Margin="-15,15,-15,-15" Padding="20,16,20,16" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                Visibility="{Binding IsChecked, ElementName=ExpandShakeButton, Converter={StaticResource BoolToVis}}">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Shake minimum distance" FontSize="14" Foreground="#111111"/>
+                                            <TextBlock Text="The minimum distance for mouse shaking activation, for adjusting sensitivity" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <Border Grid.Column="1" BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="4" Background="#FFFFFF" Height="32">
+                                            <TextBox x:Name="ShakeDistText" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Padding="8,0" FontSize="14" Foreground="#111111" TextChanged="ShakeDistText_TextChanged"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#E5E5E5" Margin="0,0,0,16"/>
+
+                                    <CheckBox x:Name="GameModeCheck" Content="Do not open Pocket when Game Mode is on" IsChecked="True" 
+                                          Click="GameModeCheck_Click" Style="{StaticResource ModernCheckBox}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{DynamicResource SettingCard}">
+                        <StackPanel>
+                            <Grid Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16 13H8V11H16V13Z" Stroke="#444" StrokeThickness="1" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
+                                    <TextBlock Text="Excluded apps" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Prevent mouse shake shortcut from activating when an excluded app is in the foreground" FontSize="12" Foreground="#666666" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <ToggleButton x:Name="ExpandExcludeButton" Grid.Column="2" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Grid>
+
+                            <Border Margin="-15,15,-15,-15" Padding="20,16,20,20" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                Visibility="{Binding IsChecked, ElementName=ExpandExcludeButton, Converter={StaticResource BoolToVis}}">
+                                <StackPanel>
+                                    <TextBlock Text="Add an application's name, or part of the name, one per line (e.g. adding Notepad will match both Notepad.exe and Notepad++.exe; to match only Notepad.exe add the .exe extension)." 
+                                           FontSize="13" Foreground="#111111" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,12"/>
+
+                                    <Border BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="4" Background="#FFFFFF" Height="140">
+                                        <TextBox x:Name="ExcludedAppsText" Background="Transparent" BorderThickness="0" 
+                                             Padding="12" FontSize="14" Foreground="#444444" TextWrapping="Wrap" AcceptsReturn="True" 
+                                             VerticalScrollBarVisibility="Auto" TextChanged="ExcludedAppsText_TextChanged"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Shelf preferences" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,20,0,10"/>
+
+                    <StackPanel Background="Transparent">
+
+                        <Border Style="{DynamicResource SettingCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Shelf placement" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Change where a new shelf is placed upon opening" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <ComboBox x:Name="PlacementCombo" Grid.Column="2" Width="180" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="PlacementCombo_SelectionChanged">
+                                    <ComboBoxItem Content="Near mouse pointer"/>
+                                    <ComboBoxItem Content="Top edge"/>
+                                    <ComboBoxItem Content="Bottom edge"/>
+                                    <ComboBoxItem Content="Left edge"/>
+                                    <ComboBoxItem Content="Right edge"/>
+                                    <ComboBoxItem Content="Top left corner"/>
+                                    <ComboBoxItem Content="Top right corner"/>
+                                    <ComboBoxItem Content="Bottom left corner"/>
+                                    <ComboBoxItem Content="Bottom right corner"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{DynamicResource SettingCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Path Data="M3 3H10V10H3V3ZM14 3H21V10H14V3ZM3 14H10V21H3V14ZM14 14H21V21H14V14Z" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Items layout mode" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Change the default layout mode in the shelf flyout" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <ComboBox x:Name="LayoutCombo" Grid.Column="2" Width="140" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="LayoutCombo_SelectionChanged">
+                                    <ComboBoxItem Content="Grid view"/>
+                                    <ComboBoxItem Content="List view"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{DynamicResource SettingCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Close pocket when emptied" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="Automatically close pockets once all items have been dragged out" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <CheckBox x:Name="CloseEmptiedToggle" Grid.Column="2" Content="On" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="CloseEmptiedToggle_Click"/>
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Text="About" FontSize="14" FontWeight="SemiBold" Foreground="#444444" Margin="0,30,0,10"/>
+
+                <StackPanel Background="Transparent">
+
+                    <Border Style="{DynamicResource SettingCard}">
+                        <StackPanel>
+                            <Grid Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Width="20" Height="20" Background="#26A0DA" CornerRadius="4" HorizontalAlignment="Left" Margin="4,0,0,0">
+                                    <Path Data="M10 5L10 13M6 9L10 13L14 9" Stroke="White" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="PocketDrop" FontSize="14" Foreground="#111111"/>
+                                    <TextBlock Text="© 2026 Nao. All rights reserved." FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+
+                                    <TextBlock x:Name="AppVersionText" Text="Version 1.0.0 Beta 1" FontSize="12" Foreground="#666666" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                                    <ToggleButton x:Name="ExpandAboutButton" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" VerticalAlignment="Center">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent" Padding="10,10">
+                                                    <Viewbox Width="12" Height="8" VerticalAlignment="Center">
+                                                        <Canvas Width="14" Height="8">
+                                                            <Path x:Name="Chevron" Data="M 0 0 L 7 7 L 14 0" Stroke="#444" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="Chevron" Property="Data" Value="M 0 7 L 7 0 L 14 7"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Margin="-15,15,-15,-15" Padding="50,16,20,16" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                Visibility="{Binding IsChecked, ElementName=ExpandAboutButton, Converter={StaticResource BoolToVis}}">
+                                <StackPanel>
+                                    <TextBlock Text="Privacy policy" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="PrivacyPolicy_Click"/>
+                                    <TextBlock Text="Third party licenses" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="ThirdParty_Click"/>
+                                    <TextBlock Text="Rate and review on the Microsoft Store" FontSize="13" Foreground="#005FB8" Cursor="Hand" MouseLeftButtonDown="Rate_Click"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{DynamicResource SettingCard}" Margin="0,8,0,0" Cursor="Hand" MouseLeftButtonDown="GetHelp_Click" Background="#FFFFFF">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Width="20" Height="20" Background="#26A0DA" CornerRadius="4" HorizontalAlignment="Left" Margin="4,0,0,0">
-                                <Path Data="M10 5L10 13M6 9L10 13L14 9" Stroke="White" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
+                            <Path Data="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z M17 4h5 M17 8h3" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="20" Height="16" HorizontalAlignment="Left" Margin="4,0,0,0"/>
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="PocketDrop" FontSize="14" Foreground="#111111"/>
-                                <TextBlock Text="© 2026 Nao. All rights reserved." FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
+                                <TextBlock Text="Get help" FontSize="14" Foreground="#111111"/>
+                                <TextBlock Text="Report a bug, request features, or contact the developer" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
                             </StackPanel>
 
-                            <TextBlock Grid.Column="2" Text="Version 1.0.0.0" FontSize="12" Foreground="#666666" VerticalAlignment="Center" Margin="0,0,10,0"/>
-
-                            <ToggleButton x:Name="ExpandAboutButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="Transparent">
-                                            <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
+                            <Path Grid.Column="2" Data="M 10 4 L 18 4 L 18 12 M 18 4 L 8 14 M 4 10 L 4 18 L 12 18" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
+                    </Border>
+                </StackPanel>
 
-                        <Border Margin="-15,15,-15,-15" Padding="50,16,20,16" Background="#FAFAFA" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
-                                Visibility="{Binding IsChecked, ElementName=ExpandAboutButton, Converter={StaticResource BoolToVis}}">
-                            <StackPanel>
-                                <TextBlock Text="Privacy policy" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="PrivacyPolicy_Click"/>
-                                <TextBlock Text="Third party licenses" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="ThirdParty_Click"/>
-                                <TextBlock Text="Report bug" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="ReportBug_Click"/>
-                                <TextBlock Text="Help translate PocketDrop" FontSize="13" Foreground="#005FB8" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="Translate_Click"/>
-                                <TextBlock Text="Rate and review on the Microsoft Store" FontSize="13" Foreground="#005FB8" Cursor="Hand" MouseLeftButtonDown="Rate_Click"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <Border Style="{DynamicResource SettingCard}" Margin="0,8,0,0" Cursor="Hand" MouseLeftButtonDown="GetHelp_Click" Background="#FFFFFF">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="30"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Path Data="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z M17 4h5 M17 8h3" Stroke="#444" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="20" Height="16" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Get help" FontSize="14" Foreground="#111111"/>
-                            <TextBlock Text="Report a bug, request features, or contact the developer" FontSize="12" Foreground="#666666" Margin="0,2,0,0"/>
-                        </StackPanel>
-
-                        <Path Grid.Column="2" Data="M 10 4 L 18 4 L 18 12 M 18 4 L 8 14 M 4 10 L 4 18 L 12 18" Stroke="#444" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Border>
             </StackPanel>
-            
-        </StackPanel>
         </ScrollViewer>
         <Grid x:Name="PrivacyOverlay" Visibility="Collapsed" Background="#66000000">
             <Border Background="#FFFFFF" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="8" Padding="24">
@@ -673,6 +679,64 @@
                     </Border>
 
                 </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="LicenseOverlay" Visibility="Collapsed" Background="#66000000">
+            <Border Background="#FFFFFF" Width="520" Height="480" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="8" Padding="24,24,24,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.15" ShadowDepth="4"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Third party licenses" FontSize="20" FontWeight="SemiBold" Foreground="#111111" Margin="0,0,0,16"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16" Padding="0,0,16,0">
+                        <StackPanel>
+                            <TextBlock Text="PocketDrop is made possible by the following open-source software and assets:" 
+                                   TextWrapping="Wrap" FontSize="13" Foreground="#333333" Margin="0,0,0,20"/>
+
+                            <TextBlock Text="Feather Icons" FontWeight="SemiBold" FontSize="14" Foreground="#111111" Margin="0,0,0,4"/>
+                            <TextBlock Text="Copyright (c) 2013-2022 Cole Bemis&#x0a;Licensed under the MIT License." TextWrapping="Wrap" FontSize="13" Foreground="#555555" Margin="0,0,0,16" LineHeight="20"/>
+
+                            <TextBlock Text="Windows API Code Pack" FontWeight="SemiBold" FontSize="14" Foreground="#111111" Margin="0,0,0,4"/>
+                            <TextBlock Text="Copyright (c) Microsoft Corporation&#x0a;Licensed under the MIT License." TextWrapping="Wrap" FontSize="13" Foreground="#555555" Margin="0,0,0,16" LineHeight="20"/>
+
+                            <TextBlock Text="CSWinRT (C# / WinRT)" FontWeight="SemiBold" FontSize="14" Foreground="#111111" Margin="0,0,0,4"/>
+                            <TextBlock Text="Copyright (c) Microsoft Corporation&#x0a;Licensed under the MIT License." TextWrapping="Wrap" FontSize="13" Foreground="#555555" Margin="0,0,0,20" LineHeight="20"/>
+
+                            <TextBlock Text="The MIT License (MIT)" FontWeight="SemiBold" FontSize="13" Foreground="#111111" Margin="0,0,0,4"/>
+                            <TextBlock Text="Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:&#x0a;&#x0a;The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.&#x0a;&#x0a;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." 
+                                   TextWrapping="Wrap" FontSize="12" Foreground="#777777" Margin="0,0,0,12" LineHeight="18" TextAlignment="Justify"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="2" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" Padding="0,16,0,16">
+                        <Button Content="Close" Width="120" Height="32" HorizontalAlignment="Right" Click="CloseLicense_Click" Cursor="Hand" Foreground="#111111" FontSize="13">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="#FFFFFF" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4" x:Name="BtnBorder">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="BtnBorder" Property="Background" Value="#F5F5F5"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="BtnBorder" Property="Background" Value="#E5E5E5"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Border>
+                </Grid>
             </Border>
         </Grid>
 
