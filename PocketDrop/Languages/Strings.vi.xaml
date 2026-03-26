@@ -54,15 +54,15 @@
     <sys:String x:Key="Text_ShakeMouseDesc">Lắc chuột trong khi kéo tệp để mở Pocket mới</sys:String>
     <sys:String x:Key="Text_ShakeDistance">Khoảng cách lắc tối thiểu</sys:String>
     <sys:String x:Key="Text_ShakeDistanceDesc" xml:space="preserve">Khoảng cách lắc tối thiểu để kích hoạt Pocket, dùng để điều chỉnh&#x0a;độ nhạy</sys:String>
-    <sys:String x:Key="Text_GameModeCheck">Không mở Pocket khi chế độ Trò chơi đang bật</sys:String>
+    <sys:String x:Key="Text_GameModeCheck">Không mở Pocket khi Chế độ Trò chơi đang bật</sys:String>
     <sys:String x:Key="Text_ExcludedApps">Các ứng dụng ngoại lệ</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Ngăn tính năng lắc chuột hoạt động khi ứng dụng trong danh sách ngoại lệ đang mở trên màn hình</sys:String>
     <sys:String x:Key="Text_ExcludedAppsHint1">Thêm tên ứng dụng trên một dòng (ví dụ: thêm Notepad sẽ khớp với cả Notepad.exe và Notepad++.exe; để chỉ kích hoạt với Notepad.exe, hãy thêm đuôi .exe).</sys:String>
     <sys:String x:Key="Text_ExcludedAppsHint2">Nhấn Enter để thêm dòng mới. Các thay đổi được lưu tự động khi bạn nhấp ra ngoài hộp văn bản.</sys:String>
 
-    <sys:String x:Key="Text_PocketPreferences">Tùy chọn Khay (Shelf)</sys:String>
-    <sys:String x:Key="Text_ShelfPlacement">Vị trí mở Khay</sys:String>
-    <sys:String x:Key="Text_ShelfPlacementDesc">Thay đổi vị trí xuất hiện của Khay mới khi mở</sys:String>
+    <sys:String x:Key="Text_PocketPreferences">Tùy chọn Pocket</sys:String>
+    <sys:String x:Key="Text_ShelfPlacement">Vị trí mở Pocket</sys:String>
+    <sys:String x:Key="Text_ShelfPlacementDesc">Thay đổi vị trí xuất hiện của Pocket mới khi mở</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Gần con trỏ chuột</sys:String>
     <sys:String x:Key="Text_PlacementTop">Cạnh trên</sys:String>
     <sys:String x:Key="Text_PlacementBottom">Cạnh dưới</sys:String>
@@ -74,11 +74,11 @@
     <sys:String x:Key="Text_PlacementBottomRight">Góc dưới bên phải</sys:String>
 
     <sys:String x:Key="Text_ItemsLayoutMode">Chế độ hiển thị</sys:String>
-    <sys:String x:Key="Text_ItemsLayoutModeDesc">Thay đổi chế độ hiển thị mặc định của danh sách tệp</sys:String>
+    <sys:String x:Key="Text_ItemsLayoutModeDesc">Thay đổi chế độ hiển thị mặc định của danh sách tập tin</sys:String>
     <sys:String x:Key="Text_LayoutGrid">Dạng lưới (Grid)</sys:String>
     <sys:String x:Key="Text_LayoutList">Dạng danh sách (List)</sys:String>
     <sys:String x:Key="Text_CloseEmptied">Đóng Pocket khi trống</sys:String>
-    <sys:String x:Key="Text_CloseEmptiedDesc">Tự động đóng Pocket khi tất cả các tệp đã được kéo ra</sys:String>
+    <sys:String x:Key="Text_CloseEmptiedDesc">Tự động đóng Pocket khi tất cả các tập tin đã được kéo ra</sys:String>
 
     <sys:String x:Key="Text_AboutHeader">Giới thiệu</sys:String>
     <sys:String x:Key="Text_Copyright">2026 Nao. Mọi quyền được bảo lưu.</sys:String>
@@ -98,12 +98,12 @@
     <!-- Shortcut Dialog -->
     <sys:String x:Key="Text_EditShortcutTitle">Sửa phím tắt</sys:String>
     <sys:String x:Key="Text_PressLetterKey">Nhấn một phím chữ (A-Z) để thay đổi phím tắt này.</sys:String>
-    <sys:String x:Key="Text_ModifiersLocked">Các phím bổ trợ (Win + Shift) được khóa cố định để đảm bảo hệ thống ổn định.</sys:String>
+    <sys:String x:Key="Text_ModifiersLocked">Tổ hợp phím (Win + Shift) được khóa cố định để đảm bảo hệ thống hoạt động ổn định.</sys:String>
     <sys:String x:Key="Text_Save">Lưu</sys:String>
 
     <!-- Tray Menu -->
     <sys:String x:Key="Text_TrayAddPocket">Thêm Pocket</sys:String>
-    <sys:String x:Key="Text_TrayAddClipboard">Thêm Pocket từ clipboard</sys:String>
+    <sys:String x:Key="Text_TrayAddClipboard">Thêm Pocket từ Clipboard</sys:String>
     <sys:String x:Key="Text_TraySavedPockets">Các Pocket đã lưu</sys:String>
     <sys:String x:Key="Text_TraySettings">Cài đặt</sys:String>
     <sys:String x:Key="Text_TrayReportBug">Báo cáo lỗi</sys:String>
