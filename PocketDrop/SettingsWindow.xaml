@@ -274,36 +274,45 @@
 
         <StackPanel Grid.Column="0" Margin="10,40,10,10">
             <StackPanel Orientation="Horizontal" Margin="20,0,0,30">
-                <Border Width="28" Height="28" Background="#26A0DA" CornerRadius="6" Margin="0,0,12,0">
-                    <Path Data="M14 7L14 18M8 12L14 18L20 12" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Width="14"/>
-                </Border>
                 <TextBlock Text="{DynamicResource Text_SettingsTitle}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
             </StackPanel>
 
             <RadioButton x:Name="NavAppearance" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}" IsChecked="True">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="M 2 5 C 2 3.895 2.895 3 4 3 L 20 3 C 21.105 3 22 3.895 22 5 L 22 15 C 22 16.105 21.105 17 20 17 L 14 17 L 14 19 L 16 19 C 16.552 19 17 19.448 17 20 C 17 20.552 16.552 21 16 21 L 8 21 C 7.448 21 7 20.552 7 20 C 7 19.448 7.448 19 8 19 L 10 19 L 10 17 L 4 17 C 2.895 17 2 16.105 2 15 L 2 5 Z M 4 5 L 4 15 L 20 15 L 20 5 L 4 5 Z" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
+                    <Path Data="M 5 3 C 3.89 3 3 3.89 3 5 L 3 19 C 3 20.11 3.89 21 5 21 L 19 21 C 20.11 21 21 20.11 21 19 L 21 5 C 21 3.89 20.11 3 19 3 Z M 3 9 L 21 9 M 9 21 L 9 9" 
+              Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+              Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                     <TextBlock Text="{DynamicResource Text_AppearanceBehavior}" VerticalAlignment="Center"/>
                 </StackPanel>
             </RadioButton>
 
             <RadioButton x:Name="NavShortcut" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="M20 5H4C2.895 5 2 5.895 2 7V17C2 18.105 2.895 19 4 19H20C21.105 19 22 18.105 22 17V7C22 5.895 21.105 5 20 5ZM20 17H4V7H20V17ZM11 8H9V10H11V8ZM15 8H13V10H15V8ZM7 8H5V10H7V8ZM7 12H5V14H7V12ZM11 12H9V14H11V12ZM19 12H13V14H19V12ZM19 15H15V17H19V15ZM21 21H18L19.5 19.5L21 21Z" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
+                    <Path Data="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" 
+              Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+              Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                     <TextBlock Text="{DynamicResource Text_ShortcutHeader}" VerticalAlignment="Center"/>
                 </StackPanel>
             </RadioButton>
 
             <RadioButton x:Name="NavShelf" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="M3 3H10V10H3V3ZM14 3H21V10H14V3ZM3 14H10V21H3V14ZM14 14H21V21H14V14Z" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
+                    <Path Data="M 3 3 H 10 V 10 H 3 V 3 Z M 14 3 H 21 V 10 H 14 V 3 Z M 14 14 H 21 V 21 H 14 V 14 Z M 3 14 H 10 V 21 H 3 V 14 Z" 
+              Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+              Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                     <TextBlock Text="{DynamicResource Text_PocketPreferences}" VerticalAlignment="Center"/>
                 </StackPanel>
             </RadioButton>
 
             <RadioButton x:Name="NavAbout" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16 13H8V11H16V13Z" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
+                    <Path Data="M 12 22 C 17.52 22 22 17.52 22 12 C 22 6.48 17.52 2 12 2 C 6.48 2 2 6.48 2 12 C 2 17.52 6.48 22 12 22 Z M 12 16 L 12 12 M 12 8 L 12.01 8" 
+              Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+              Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                     <TextBlock Text="{DynamicResource Text_AboutHeader}" VerticalAlignment="Center"/>
                 </StackPanel>
             </RadioButton>
@@ -363,8 +372,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Path Data="M15 3H21V9 M10 14L21 3 M18 13V19C18 20.1046 17.1046 21 16 21H5C3.89543 21 3 20.1046 3 19V8C3 6.89543 3.89543 6 5 6H11" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 18 13 V 19 C 18 20.11 17.11 21 16 21 H 5 C 3.89 21 3 20.11 3 19 V 8 C 3 6.89 3.89 6 5 6 H 11 M 15 3 H 21 V 9 M 10 14 L 21 3" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_RunAtStartup}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_RunAtStartupDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -381,8 +393,11 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
-                                <Path Data="M8 16H6C4.89543 16 4 15.1046 4 14V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V8 M10 8H18C19.1046 8 20 8.89543 20 10V18C20 19.1046 19.1046 20 18 20H10C8.89543 20 8 19.1046 8 18V10C8 8.89543 8.89543 8 10 8Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <Path Data="M8 16H6C4.895 16 4 15.105 4 14V6C4 4.895 4.895 4 6 4H14C15.105 4 16 4.895 16 6V8 M10 8H18C19.105 8 20 8.895 20 10V18C20 19.105 19.105 20 18 20H10C8.895 20 8 19.105 8 18V10C8 8.895 8.895 8 10 8Z" 
+                                          Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                          Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="{DynamicResource Text_CopyItems}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                     <TextBlock Text="{DynamicResource Text_CopyItemsDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                                 </StackPanel>
@@ -424,8 +439,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Path Data="M20 5H4C2.895 5 2 5.895 2 7V17C2 18.105 2.895 19 4 19H20C21.105 19 22 18.105 22 17V7C22 5.895 21.105 5 20 5ZM20 17H4V7H20V17ZM11 8H9V10H11V8ZM15 8H13V10H15V8ZM7 8H5V10H7V8ZM7 12H5V14H7V12ZM11 12H9V14H11V12ZM19 12H13V14H19V12ZM19 15H15V17H19V15ZM21 21H18L19.5 19.5L21 21Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 11 4 H 4 a 2 2 0 0 0 -2 2 v 14 a 2 2 0 0 0 2 2 h 14 a 2 2 0 0 0 2 -2 v -7 M 18.5 2.5 a 2.121 2.121 0 0 1 3 3 L 12 15 l -4 1 l 1 -4 l 9.5 -9.5 z" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_NewPocketShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_NewPocketShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -455,8 +473,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Path Data="M19 3H14.82C14.4 1.84 13.3 1 12 1C10.7 1 9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM12 3C12.55 3 13 3.45 13 4C13 4.55 12.55 5 12 5C11.45 5 11 4.55 11 4C11 3.45 11.45 3 12 3ZM19 19H5V5H7V7H17V5H19V19Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1" Fill="{DynamicResource TextSecondary}" Stretch="Uniform" Width="18" Height="20" HorizontalAlignment="Left"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 16 4 h 2 a 2 2 0 0 1 2 2 v 14 a 2 2 0 0 1 -2 2 H 6 a 2 2 0 0 1 -2 -2 V 6 a 2 2 0 0 1 2 -2 h 2 M 9 2 h 6 a 1 1 0 0 1 1 1 v 2 a 1 1 0 0 1 -1 1 h -6 a 1 1 0 0 1 -1 -1 v -2 a 1 1 0 0 1 1 -1 z" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_ClipboardShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_ClipboardShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -488,8 +509,11 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
-                                <Path Data="M 6.002 4.004 L 15.688 15.757 L 11.234 16.331 L 13.513 21.602 L 10.518 22.895 L 8.163 17.652 L 4.498 20.84 Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" Fill="Transparent" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Stretch="Uniform" Width="14" Height="20" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <Path Data="M 3 3 L 10.07 19.97 L 12.58 12.58 L 19.97 10.07 Z" 
+                                          Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                          Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="{DynamicResource Text_ShakeMouse}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                     <TextBlock Text="{DynamicResource Text_ShakeMouseDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                                 </StackPanel>
@@ -542,8 +566,11 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
-                                <Path Data="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16 13H8V11H16V13Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1" Fill="Transparent" Stretch="Uniform" Width="20" Height="20" HorizontalAlignment="Left"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
+                                    <Path Data="M 12 2 A 10 10 0 1 1 12 22 A 10 10 0 1 1 12 2 Z M 8 12 H 16" 
+                                          Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                          Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
                                     <TextBlock Text="{DynamicResource Text_ExcludedApps}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                     <TextBlock Text="{DynamicResource Text_ExcludedAppsDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -588,7 +615,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 3 11 L 22 2 L 13 21 L 11 13 Z" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_ShelfPlacement}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_ShelfPlacementDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -613,8 +644,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Path Data="M3 3H10V10H3V3ZM14 3H21V10H14V3ZM3 14H10V21H3V14ZM14 14H21V21H14V14Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 3 3 H 10 V 10 H 3 Z M 14 3 H 21 V 10 H 14 Z M 14 14 H 21 V 21 H 14 Z M 3 14 H 10 V 21 H 3 Z" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_ItemsLayoutMode}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_ItemsLayoutModeDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -632,7 +666,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 12 2 A 10 10 0 1 1 12 22 A 10 10 0 1 1 12 2 Z M 15 9 L 9 15 M 9 9 L 15 15" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_CloseEmptied}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_CloseEmptiedDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
@@ -654,7 +692,7 @@
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Width="20" Height="20" Background="#26A0DA" CornerRadius="4" HorizontalAlignment="Left" Margin="4,0,0,0">
-                                    <Path Data="M10 5L10 13M6 9L10 13L14 9" Stroke="White" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="PocketDrop" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
@@ -702,8 +740,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
-                            <Path Data="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z M17 4h5 M17 8h3" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" Fill="Transparent" Stretch="Uniform" Width="20" Height="16" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Path Data="M 20 21 v -2 a 4 4 0 0 0 -4 -4 H 8 a 4 4 0 0 0 -4 4 v 2 M 12 11 a 4 4 0 1 0 0 -8 a 4 4 0 0 0 0 8 z" 
+                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{DynamicResource Text_GetHelp}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
                                 <TextBlock Text="{DynamicResource Text_GetHelpDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
                             </StackPanel>
