@@ -41,6 +41,7 @@
     <sys:String x:Key="Text_RunAtStartup">Run at startup</sys:String>
     <sys:String x:Key="Text_RunAtStartupDesc">PocketDrop will launch automatically</sys:String>
     <sys:String x:Key="Text_ToggleOn">On</sys:String>
+    <sys:String x:Key="Text_ToggleOff">Off</sys:String>
     <sys:String x:Key="Text_CopyItems">Copy items to destination</sys:String>
     <sys:String x:Key="Text_CopyItemsDesc">Dragged items from pocket will be copied instead of moved</sys:String>
     <sys:String x:Key="Text_CopyItemsHint">By default, PocketDrop copies items from your Pocket when they are dragged out and moves them to your destination. Enabling this setting will make copying the default behaviour. If you want to move the file to destination completely, please disable this setting.</sys:String>

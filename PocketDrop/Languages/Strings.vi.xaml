@@ -41,6 +41,7 @@
     <sys:String x:Key="Text_RunAtStartup">Chạy ứng dụng khi khởi động</sys:String>
     <sys:String x:Key="Text_RunAtStartupDesc">PocketDrop sẽ tự động khởi chạy khi bạn bật thiết bị</sys:String>
     <sys:String x:Key="Text_ToggleOn">Bật</sys:String>
+    <sys:String x:Key="Text_ToggleOff">Tắt</sys:String>
     <sys:String x:Key="Text_CopyItems">Sao chép tập tin tới đích</sys:String>
     <sys:String x:Key="Text_CopyItemsDesc" xml:space="preserve">Các tập tin được kéo từ Pocket sẽ được sao chép thay vì&#x0a;di chuyển hoàn toàn</sys:String>
     <sys:String x:Key="Text_CopyItemsHint">Mặc định, PocketDrop sao chép các tập tin từ Pocket của bạn khi bạn di chuyển chúng đến đích. Nếu bạn muốn di chuyển tập tin đến đích hoàn toàn, vui lòng tắt cài đặt này.</sys:String>

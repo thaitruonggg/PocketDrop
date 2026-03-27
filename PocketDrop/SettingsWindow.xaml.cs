@@ -27,6 +27,8 @@ namespace PocketDrop
             // ✨ THE FIX 1: Load the current state of the setting when the window opens!
             CopyItemToDestinationCheckbox.IsChecked = App.CopyItemToDestination;
 
+            StartupToggle.IsChecked = IsRunAtStartupEnabled();
+
             // ✨ THE FIX: Force the UI to display your actual saved keys!
             PocketKeyText.Text = App.PocketKeyChar;
             ClipboardKeyText.Text = App.ClipboardKeyChar;
@@ -191,6 +193,68 @@ namespace PocketDrop
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             App.CopyItemToDestination = CopyItemToDestinationCheckbox.IsChecked ?? true;
+        }
+
+        // ══════════════════════════════════════════════════════
+        // STARTUP ENGINE
+        // ══════════════════════════════════════════════════════
+
+        private void StartupToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool enable = StartupToggle.IsChecked ?? false;
+            SetRunAtStartup(enable);
+        }
+
+        private bool IsRunAtStartupEnabled()
+        {
+            try
+            {
+                // Open the standard Windows Startup registry folder
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false))
+                {
+                    if (key != null)
+                    {
+                        // Check if PocketDrop is already in there
+                        object value = key.GetValue("PocketDrop");
+                        return value != null;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        private void SetRunAtStartup(bool enable)
+        {
+            try
+            {
+                // Open the registry folder with write access (true)
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                {
+                    if (key != null)
+                    {
+                        if (enable)
+                        {
+                            // Get the exact location of the PocketDrop.exe file on their PC
+                            string exePath = Environment.ProcessPath;
+
+                            // Wrap the path in quotes to protect against spaces in folder names
+                            key.SetValue("PocketDrop", $"\"{exePath}\"");
+                        }
+                        else
+                        {
+                            // Remove it from the startup list
+                            key.DeleteValue("PocketDrop", false);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not update startup settings: {ex.Message}", "Permission Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Snap the toggle back to its previous state if it failed
+                StartupToggle.IsChecked = !enable;
+            }
         }
 
         private void EditPocketKey_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
