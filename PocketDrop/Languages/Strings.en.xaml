@@ -62,8 +62,8 @@
     <sys:String x:Key="Text_ExcludedAppsHint2">Press Enter to add a new line. Your changes are saved automatically when you click outside the box.</sys:String>
 
     <sys:String x:Key="Text_PocketPreferences">Pocket preferences</sys:String>
-    <sys:String x:Key="Text_ShelfPlacement">Pocket placement</sys:String>
-    <sys:String x:Key="Text_ShelfPlacementDesc">Change where a new Pocket is placed upon opening</sys:String>
+    <sys:String x:Key="Text_PocketPlacement">Pocket placement</sys:String>
+    <sys:String x:Key="Text_PocketPlacementDesc">Change where a new Pocket is placed upon opening</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Near mouse pointer</sys:String>
     <sys:String x:Key="Text_PlacementTop">Top edge</sys:String>
     <sys:String x:Key="Text_PlacementBottom">Bottom edge</sys:String>

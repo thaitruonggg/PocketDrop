@@ -380,8 +380,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_RunAtStartup}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_RunAtStartupDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_RunAtStartup}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0"/>
+                                <TextBlock Text="{DynamicResource Text_RunAtStartupDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                             </StackPanel>
                                 <CheckBox x:Name="StartupToggle" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="StartupToggle_Click"/>
                             </Grid>
@@ -401,8 +401,8 @@
                                           StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                           Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource Text_CopyItems}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource Text_CopyItemsDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{DynamicResource Text_CopyItems}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0"/>
+                                    <TextBlock Text="{DynamicResource Text_CopyItemsDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                                 </StackPanel>
                                 <CheckBox x:Name="CopyItemToDestinationCheckbox" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="Copy_Click" Margin="0,0,10,0"/>
                                 <ToggleButton x:Name="ExpandDescButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
@@ -447,8 +447,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_NewPocketShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_NewPocketShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_NewPocketShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource Text_NewPocketShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                             </StackPanel>
                             <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -481,8 +481,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_ClipboardShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_ClipboardShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_ClipboardShortcut}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource Text_ClipboardShortcutDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                             </StackPanel>
                             <Border Grid.Column="2" Style="{StaticResource ShortcutBox}">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -517,8 +517,8 @@
                                           StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                           Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource Text_ShakeMouse}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource Text_ShakeMouseDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{DynamicResource Text_ShakeMouse}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_ShakeMouseDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                                 </StackPanel>
                                 <CheckBox x:Name="ShakeToggle" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="ShakeToggle_Click" Margin="0,0,10,0"/>
                                 <ToggleButton x:Name="ExpandShakeButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
@@ -547,8 +547,8 @@
                                             <ColumnDefinition Width="100"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{DynamicResource Text_ShakeDistance}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                            <TextBlock Text="{DynamicResource Text_ShakeDistanceDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="{DynamicResource Text_ShakeDistance}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{DynamicResource Text_ShakeDistanceDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
                                         </StackPanel>
                                         <Border Grid.Column="1" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource LayerDefault}" Height="32">
                                             <TextBox x:Name="ShakeDistText" CaretBrush="{DynamicResource TextPrimary}" SelectionBrush="{DynamicResource AccentText}" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" Padding="8,0" FontSize="14" Foreground="{DynamicResource TextPrimary}" TextChanged="ShakeDistText_TextChanged" KeyDown="ShakeDistText_KeyDown"/>
@@ -574,8 +574,8 @@
                                           StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                           Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,20,0">
-                                    <TextBlock Text="{DynamicResource Text_ExcludedApps}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource Text_ExcludedAppsDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{DynamicResource Text_ExcludedApps}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_ExcludedAppsDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="ExpandExcludeButton" Grid.Column="2" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
                                     <ToggleButton.Template>
@@ -623,8 +623,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_ShelfPlacement}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_ShelfPlacementDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_PocketPlacement}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_PocketPlacementDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                             </StackPanel>
                             <ComboBox x:Name="PlacementCombo" Grid.Column="2" Width="180" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="PlacementCombo_SelectionChanged">
                                 <ComboBoxItem Content="{DynamicResource Text_PlacementMouse}"/>
@@ -652,8 +652,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_ItemsLayoutMode}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_ItemsLayoutModeDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_ItemsLayoutMode}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_ItemsLayoutModeDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                             </StackPanel>
                             <ComboBox x:Name="LayoutCombo" Grid.Column="2" Width="140" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="LayoutCombo_SelectionChanged">
                                 <ComboBoxItem Content="{DynamicResource Text_LayoutGrid}"/>
@@ -674,8 +674,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_CloseEmptied}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_CloseEmptiedDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_CloseEmptied}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_CloseEmptiedDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                             </StackPanel>
                             <CheckBox x:Name="CloseEmptiedToggle" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="CloseEmptiedToggle_Click"/>
                         </Grid>
@@ -699,10 +699,10 @@
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <TextBlock Text="PocketDrop" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                    <TextBlock Text="{DynamicResource Text_Copyright}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{DynamicResource Text_Copyright}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock x:Name="AppVersionText" Text="Version 1.0.0 Beta 1" FontSize="12" Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                        <TextBlock x:Name="AppVersionText" Text="Version 1.0.0 Beta 1" FontSize="12" Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center" Margin="0,0,12,0" TextWrapping="Wrap"/>
                                     <ToggleButton x:Name="ExpandAboutButton" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False" VerticalAlignment="Center">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
@@ -728,8 +728,8 @@
                             </Grid>
                             <Border Margin="-15,15,-15,-15" Padding="50,16,20,16" Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Visibility="{Binding IsChecked, ElementName=ExpandAboutButton, Converter={StaticResource BoolToVis}}">
                                 <StackPanel>
-                                    <TextBlock Text="{DynamicResource Text_PrivacyPolicy}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="PrivacyPolicy_Click"/>
-                                    <TextBlock Text="{DynamicResource Text_ThirdParty}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" MouseLeftButtonDown="ThirdParty_Click"/>
+                                        <TextBlock Text="{DynamicResource Text_PrivacyPolicy}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" TextWrapping="Wrap" MouseLeftButtonDown="PrivacyPolicy_Click"/>
+                                    <TextBlock Text="{DynamicResource Text_ThirdParty}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" TextWrapping="Wrap" MouseLeftButtonDown="ThirdParty_Click"/>
                                     <TextBlock Text="{DynamicResource Text_RateReview}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" MouseLeftButtonDown="Rate_Click"/>
                                 </StackPanel>
                             </Border>
@@ -748,8 +748,8 @@
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{DynamicResource Text_GetHelp}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                <TextBlock Text="{DynamicResource Text_GetHelpDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Text_GetHelp}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_GetHelpDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Path Grid.Column="2" Data="M 10 4 L 18 4 L 18 12 M 18 4 L 8 14 M 4 10 L 4 18 L 12 18" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" Stretch="Uniform" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>

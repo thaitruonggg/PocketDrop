@@ -43,18 +43,18 @@
     <sys:String x:Key="Text_ToggleOn">Bật</sys:String>
     <sys:String x:Key="Text_ToggleOff">Tắt</sys:String>
     <sys:String x:Key="Text_CopyItems">Sao chép tập tin tới đích</sys:String>
-    <sys:String x:Key="Text_CopyItemsDesc" xml:space="preserve">Các tập tin được kéo từ Pocket sẽ được sao chép thay vì&#x0a;di chuyển hoàn toàn</sys:String>
+    <sys:String x:Key="Text_CopyItemsDesc">Các tập tin được kéo từ Pocket sẽ được sao chép thay vì di chuyển hoàn toàn</sys:String>
     <sys:String x:Key="Text_CopyItemsHint">Mặc định, PocketDrop sao chép các tập tin từ Pocket của bạn khi bạn di chuyển chúng đến đích. Nếu bạn muốn di chuyển tập tin đến đích hoàn toàn, vui lòng tắt cài đặt này.</sys:String>
 
     <sys:String x:Key="Text_ShortcutHeader">Phím tắt</sys:String>
     <sys:String x:Key="Text_NewPocketShortcut">Phím tắt mở Pocket mới</sys:String>
     <sys:String x:Key="Text_NewPocketShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt để mở một Pocket mới</sys:String>
     <sys:String x:Key="Text_ClipboardShortcut">Phím tắt mở Pocket từ Clipboard</sys:String>
-    <sys:String x:Key="Text_ClipboardShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt để mở Pocket bằng dữ liệu từ clipboard</sys:String>
+    <sys:String x:Key="Text_ClipboardShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt để mở Pocket bằng dữ liệu từ Clipboard</sys:String>
     <sys:String x:Key="Text_ShakeMouse">Lắc chuột để mở Pocket mới</sys:String>
     <sys:String x:Key="Text_ShakeMouseDesc">Lắc chuột trong khi kéo tệp để mở Pocket mới</sys:String>
     <sys:String x:Key="Text_ShakeDistance">Khoảng cách lắc tối thiểu</sys:String>
-    <sys:String x:Key="Text_ShakeDistanceDesc" xml:space="preserve">Khoảng cách lắc tối thiểu để kích hoạt Pocket, dùng để điều chỉnh&#x0a;độ nhạy</sys:String>
+    <sys:String x:Key="Text_ShakeDistanceDesc">Khoảng cách lắc tối thiểu để kích hoạt Pocket, dùng để điều chỉnh độ nhạy</sys:String>
     <sys:String x:Key="Text_GameModeCheck">Không mở Pocket khi Chế độ Trò chơi đang bật</sys:String>
     <sys:String x:Key="Text_ExcludedApps">Các ứng dụng ngoại lệ</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Ngăn tính năng lắc chuột hoạt động khi ứng dụng trong danh sách ngoại lệ đang mở trên màn hình</sys:String>
