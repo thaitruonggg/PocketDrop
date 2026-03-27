@@ -355,7 +355,14 @@ namespace PocketDrop
             trayMenu.Items.Add(TrayQuitItem);
 
             _trayIcon = new System.Windows.Forms.NotifyIcon();
-            _trayIcon.Icon = System.Drawing.SystemIcons.Application;
+
+            // 1. Grab your custom icon from the Assets folder
+            var iconUri = new Uri("pack://application:,,,/Assets/PocketDrop.ico", UriKind.Absolute);
+            var iconStream = System.Windows.Application.GetResourceStream(iconUri).Stream;
+
+            // 2. Feed it directly to the tray icon (Replacing the old SystemIcons.Application line)
+            _trayIcon.Icon = new System.Drawing.Icon(iconStream);
+
             _trayIcon.ContextMenuStrip = trayMenu;
             _trayIcon.Visible = true;
             _trayIcon.Text = "PocketDrop";

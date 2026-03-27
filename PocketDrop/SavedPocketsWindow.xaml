@@ -8,7 +8,8 @@
         ShowInTaskbar="False"
         Deactivated="Window_Deactivated"
         Opacity="0"
-        RenderTransformOrigin="0.5,0.5">
+        RenderTransformOrigin="0.5,0.5"
+        Icon="/Assets/PocketDrop.ico">
 
     <Window.Resources>
         <Style x:Key="FluentToolbarButton" TargetType="Button">

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Apps" Height="550" Width="600"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="{DynamicResource LayerDefault}" FontFamily="Segoe UI Variable, Segoe UI, sans-serif">
+        Background="{DynamicResource LayerDefault}" FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        Icon="Assets/PocketDrop.ico">
 
     <Window.Resources>
         <Style x:Key="ModernCheckBox" TargetType="CheckBox">

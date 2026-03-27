@@ -5,7 +5,8 @@
         AllowsTransparency="True" WindowStyle="None" Topmost="True" Background="Transparent"
         ShowInTaskbar="False"
         UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
-        FontFamily="Segoe UI Variable Text, Segoe UI" TextOptions.TextFormattingMode="Display">
+        FontFamily="Segoe UI Variable Text, Segoe UI" TextOptions.TextFormattingMode="Display"
+        Icon="/Assets/PocketDrop.ico">
 
     <Window.Resources>
         <!-- ══ Fluent 2 — White frosted glass, 90% opacity ══ -->
