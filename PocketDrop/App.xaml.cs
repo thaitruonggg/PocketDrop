@@ -59,7 +59,7 @@ namespace PocketDrop
 
         // ✨ NEW SHAKE SETTINGS
         public static bool EnableMouseShake = true;
-        public static int ShakeMinimumDistance = 100; // Default to 100 pixels
+        public static int ShakeMinimumDistance = 150; // Default to 100 pixels
         public static bool DisableInGameMode = true;
 
         public static int AppTheme = 0; // 0 = System, 1 = Light, 2 = Dark
