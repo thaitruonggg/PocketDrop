@@ -58,8 +58,16 @@
     <sys:String x:Key="Text_GameModeCheck">Do not open Pocket when Game Mode is on</sys:String>
     <sys:String x:Key="Text_ExcludedApps">Excluded apps</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Prevent mouse shake shortcut from activating when an excluded app is in the foreground</sys:String>
-    <sys:String x:Key="Text_ExcludedAppsHint1">Add an application's name, or part of the name, one per line (e.g. adding Notepad will match both Notepad.exe and Notepad++.exe; to match only Notepad.exe add the .exe extension).</sys:String>
-    <sys:String x:Key="Text_ExcludedAppsHint2">Press Enter to add a new line. Your changes are saved automatically when you click outside the box.</sys:String>
+    <sys:String x:Key="Text_CurrentlyExcluded">Currently excluded applications:</sys:String>
+    <sys:String x:Key="Text_NoAppsExcluded">No apps are currently excluded.</sys:String>
+    <sys:String x:Key="Text_ManageApps">Manage Apps</sys:String>
+
+    <!-- App Picker Dialog -->
+    <sys:String x:Key="Text_SelectAppsTitle">Select Apps</sys:String>
+    <sys:String x:Key="Text_SelectAppsHeader">Select apps to exclude</sys:String>
+    <sys:String x:Key="Text_ScanningApps">Scanning installed apps...</sys:String>
+    <sys:String x:Key="Text_ScanningDesc">This usually takes a few seconds.</sys:String>
+    <sys:String x:Key="Text_CannotFindApp">Cannot find app</sys:String>
 
     <sys:String x:Key="Text_PocketPreferences">Pocket preferences</sys:String>
     <sys:String x:Key="Text_PocketPlacement">Pocket placement</sys:String>

@@ -57,11 +57,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Select apps to exclude" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"/>
+        <TextBlock Text="{DynamicResource Text_SelectAppsHeader}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"/>
 
         <StackPanel x:Name="LoadingPanel" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Scanning installed apps..." FontSize="16" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
-            <TextBlock Text="This usually takes a few seconds." FontSize="13" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center" Margin="0,8,0,0" Opacity="0.7"/>
+            <TextBlock Text="{DynamicResource Text_ScanningApps}" FontSize="16" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource Text_ScanningDesc}" FontSize="13" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center" Margin="0,8,0,0" Opacity="0.7"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -94,11 +94,11 @@
         </ScrollViewer>
 
         <Grid Grid.Row="2" Margin="0,20,0,0">
-            <TextBlock Text="Cannot find app" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" TextDecorations="Underline" VerticalAlignment="Center" HorizontalAlignment="Left" MouseLeftButtonDown="ManualBrowse_Click"/>
+            <TextBlock Text="{DynamicResource Text_CannotFindApp}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" TextDecorations="Underline" VerticalAlignment="Center" HorizontalAlignment="Left" MouseLeftButtonDown="ManualBrowse_Click"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Cancel" Width="100" Height="32" Margin="0,0,10,0" Click="Cancel_Click" Cursor="Hand" Foreground="{DynamicResource TextPrimary}" Background="Transparent" BorderBrush="{DynamicResource StrokeControlDefault}"/>
-                <Button Content="Save" Width="100" Height="32" Click="Save_Click" Cursor="Hand" Foreground="White" Background="#005FB8" BorderThickness="0"/>
+                <Button Content="{DynamicResource Text_Cancel}" Width="100" Height="32" Margin="0,0,10,0" Click="Cancel_Click" Cursor="Hand" Foreground="{DynamicResource TextPrimary}" Background="Transparent" BorderBrush="{DynamicResource StrokeControlDefault}"/>
+                <Button Content="{DynamicResource Text_Save}" Width="100" Height="32" Click="Save_Click" Cursor="Hand" Foreground="White" Background="#005FB8" BorderThickness="0"/>
             </StackPanel>
         </Grid>
     </Grid>

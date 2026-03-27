@@ -581,7 +581,7 @@
                                         <TextBlock Text="{DynamicResource Text_ExcludedAppsDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <Button Grid.Column="2" Content="Manage Apps" Width="140" Height="32" VerticalAlignment="Center" Click="OpenAppPicker_Click" Cursor="Hand" Foreground="{DynamicResource TextPrimary}" FontSize="14" Margin="0,0,10,0">
+                                    <Button Grid.Column="2" Content="{DynamicResource Text_ManageApps}" Width="140" Height="32" VerticalAlignment="Center" Click="OpenAppPicker_Click" Cursor="Hand" Foreground="{DynamicResource TextPrimary}" FontSize="14" Margin="0,0,10,0">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
                                                 <Border Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="6" x:Name="BtnBorder">
@@ -617,10 +617,10 @@
 
                                 <Border Margin="-15,15,-15,-15" Padding="20,16,20,20" Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8" Visibility="{Binding IsChecked, ElementName=ExpandExcludeButton, Converter={StaticResource BoolToVis}}">
                                     <StackPanel>
-                                        <TextBlock Text="Currently excluded applications:" FontSize="13" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,12"/>
+                                        <TextBlock Text="{DynamicResource Text_CurrentlyExcluded}" FontSize="13" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,12"/>
                                         <Border BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4" Background="{DynamicResource LayerDefault}" MinHeight="48" Padding="8">
                                             <Grid>
-                                                <TextBlock x:Name="ExcludedAppsEmptyText" Text="No apps are currently excluded." VerticalAlignment="Center" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="4,0,0,0" Visibility="Collapsed"/>
+                                                <TextBlock x:Name="ExcludedAppsEmptyText" Text="{DynamicResource Text_NoAppsExcluded}" VerticalAlignment="Center" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="4,0,0,0" Visibility="Collapsed"/>
 
                                                 <ItemsControl x:Name="ExcludedAppsIconDisplay">
                                                     <ItemsControl.ItemsPanel>

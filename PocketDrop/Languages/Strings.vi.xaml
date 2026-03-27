@@ -58,12 +58,20 @@
     <sys:String x:Key="Text_GameModeCheck">Không mở Pocket khi Chế độ Trò chơi đang bật</sys:String>
     <sys:String x:Key="Text_ExcludedApps">Các ứng dụng ngoại lệ</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Ngăn tính năng lắc chuột hoạt động khi ứng dụng trong danh sách ngoại lệ đang mở trên màn hình</sys:String>
-    <sys:String x:Key="Text_ExcludedAppsHint1">Thêm tên ứng dụng trên một dòng (ví dụ: thêm Notepad sẽ khớp với cả Notepad.exe và Notepad++.exe; để chỉ kích hoạt với Notepad.exe, hãy thêm đuôi .exe).</sys:String>
-    <sys:String x:Key="Text_ExcludedAppsHint2">Nhấn Enter để thêm dòng mới. Các thay đổi được lưu tự động khi bạn nhấp ra ngoài hộp văn bản.</sys:String>
+    <sys:String x:Key="Text_CurrentlyExcluded">Các ứng dụng trong danh sách ngoại lệ:</sys:String>
+    <sys:String x:Key="Text_NoAppsExcluded">Chưa có ứng dụng nào trong danh sách ngoại lệ.</sys:String>
+    <sys:String x:Key="Text_ManageApps">Quản lý ứng dụng</sys:String>
+
+    <!-- App Picker Dialog -->
+    <sys:String x:Key="Text_SelectAppsTitle">Chọn ứng dụng</sys:String>
+    <sys:String x:Key="Text_SelectAppsHeader">Chọn ứng dụng ngoại lệ</sys:String>
+    <sys:String x:Key="Text_ScanningApps">Đang quét các ứng dụng...</sys:String>
+    <sys:String x:Key="Text_ScanningDesc">Quá trình này thường mất vài giây.</sys:String>
+    <sys:String x:Key="Text_CannotFindApp">Không tìm thấy ứng dụng</sys:String>
 
     <sys:String x:Key="Text_PocketPreferences">Tùy chọn Pocket</sys:String>
-    <sys:String x:Key="Text_ShelfPlacement">Vị trí mở Pocket</sys:String>
-    <sys:String x:Key="Text_ShelfPlacementDesc">Thay đổi vị trí xuất hiện của Pocket mới khi mở</sys:String>
+    <sys:String x:Key="Text_PocketPlacement">Vị trí mở Pocket</sys:String>
+    <sys:String x:Key="Text_PocketPlacementDesc">Thay đổi vị trí xuất hiện của Pocket mới khi mở</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Gần con trỏ chuột</sys:String>
     <sys:String x:Key="Text_PlacementTop">Cạnh trên</sys:String>
     <sys:String x:Key="Text_PlacementBottom">Cạnh dưới</sys:String>
