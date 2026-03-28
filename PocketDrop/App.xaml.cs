@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace PocketDrop
 {
@@ -210,7 +212,7 @@ namespace PocketDrop
             if (_trayIcon != null) _trayIcon.Text = "PocketDrop";
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -366,6 +368,10 @@ namespace PocketDrop
             _trayIcon.ContextMenuStrip = trayMenu;
             _trayIcon.Visible = true;
             _trayIcon.Text = "PocketDrop";
+
+            // Run the update check silently in the background
+            await CheckForUpdatesOnStartup();
+
 
             // ✨ THE FIX: Open Saved Pockets on Left-Click!
             _trayIcon.MouseClick += async (s, e) =>
@@ -556,6 +562,59 @@ namespace PocketDrop
             catch { } // Failsafe (e.g., system processes we don't have permission to read)
 
             return false;
+        }
+
+        // ✨ NEW: Global flag so the rest of the app knows an update is waiting
+        public static bool UpdateAvailable = false;
+        public static string UpdateUrl = "https://github.com/YOUR_USERNAME/PocketDrop/releases/latest";
+
+        private async Task CheckForUpdatesOnStartup()
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(5);
+                    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
+
+                    string url = "https://raw.githubusercontent.com/YOUR_USERNAME/PocketDrop/main/version.txt";
+                    string latestVersionString = await client.GetStringAsync(url);
+                    latestVersionString = latestVersionString.Trim();
+
+                    // Make sure this matches your current app version!
+                    string currentVersionString = "1.0.0";
+
+                    if (Version.TryParse(currentVersionString, out Version current) &&
+                        Version.TryParse(latestVersionString, out Version latest))
+                    {
+                        if (latest > current)
+                        {
+                            // 1. Flip the global flag to true
+                            UpdateAvailable = true;
+
+                            // 2. Alert the user immediately with a native Windows prompt!
+                            MessageBoxResult result = System.Windows.MessageBox.Show(
+                                $"A new version of PocketDrop ({latestVersionString}) is available!\n\nWould you like to download it now?",
+                                "Update Available",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Information);
+
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                                {
+                                    FileName = UpdateUrl,
+                                    UseShellExecute = true
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Silent fail if no internet
+            }
         }
     }
 }

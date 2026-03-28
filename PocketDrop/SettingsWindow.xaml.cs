@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace PocketDrop
 {
@@ -79,6 +81,15 @@ namespace PocketDrop
             }
             // Mark as loaded so the event doesn't trigger during window creation
             _isLanguageLoaded = true;
+
+            // ✨ SMART SYNC: Check if the background startup scanner already found an update!
+            if (App.UpdateAvailable)
+            {
+                CheckUpdateBtn.Content = "Update Available!";
+                // Optional: Make it green to grab their attention!
+                CheckUpdateBtn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 167, 69));
+            }
+
         }
 
         // ══════════════════════════════════════════════════════
@@ -450,6 +461,94 @@ namespace PocketDrop
                 });
             }
             catch { }
+        }
+
+        // --- OPEN GITHUB WHEN THEY CLICK UPDATE ---
+        // --- HYBRID UPDATE CHECKER ---
+        private async void CheckUpdateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // ✨ 1. If the background scanner already found one, just open the download page!
+            if (App.UpdateAvailable)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = App.UpdateUrl,
+                    UseShellExecute = true
+                });
+                return; // Stop the code here so we don't scan again
+            }
+
+            // ✨ 2. Otherwise, run the manual network scan!
+            CheckUpdateBtn.IsEnabled = false;
+            CheckUpdateBtn.Content = "Checking...";
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(5);
+                    client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
+
+                    string url = "https://raw.githubusercontent.com/naofunyan/PocketDrop/main/version.txt";
+                    string latestVersionString = await client.GetStringAsync(url);
+                    latestVersionString = latestVersionString.Trim();
+
+                    string currentVersionString = "1.0.0";
+
+                    if (Version.TryParse(currentVersionString, out Version current) &&
+                        Version.TryParse(latestVersionString, out Version latest))
+                    {
+                        if (latest > current)
+                        {
+                            // Mark the global flag so the app remembers for next time!
+                            App.UpdateAvailable = true;
+                            App.UpdateUrl = "https://github.com/naofunyan/PocketDrop/releases/latest";
+
+                            MessageBoxResult result = MessageBox.Show(
+                                $"A new version of PocketDrop ({latestVersionString}) is available!\n\nWould you like to download it now?",
+                                "Update Available",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Information);
+
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                                {
+                                    FileName = App.UpdateUrl,
+                                    UseShellExecute = true
+                                });
+                            }
+                            else
+                            {
+                                // If they click 'No', turn the button green so they can grab it later
+                                CheckUpdateBtn.Content = "Update Available!";
+                                CheckUpdateBtn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 167, 69));
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("You are already using the latest version of PocketDrop.", "Up to Date", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Could not connect to the update server. Please check your internet connection and try again.", "Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                // Only reset the button back to normal if an update WASN'T found
+                if (!App.UpdateAvailable)
+                {
+                    CheckUpdateBtn.IsEnabled = true;
+                    CheckUpdateBtn.Content = "Check for updates";
+                }
+                else
+                {
+                    CheckUpdateBtn.IsEnabled = true; // Keep it clickable!
+                }
+            }
         }
     }
 }
