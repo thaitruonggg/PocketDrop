@@ -16,7 +16,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using WinRT;
@@ -1403,6 +1402,46 @@ namespace PocketDrop
             HidePocketDrop(!isLastWindow);
         }
 
+        // --- NEW: Syncs the pocket UI with the global history ---
+        public void RefreshPocketUI()
+        {
+            // 1. Find items in this pocket that no longer exist in the global history
+            var itemsToRemove = PocketedItems.Where(p => !App.SessionHistory.Exists(h => h.FilePath == p.FilePath)).ToList();
+
+            if (itemsToRemove.Count == 0) return; // Nothing to sync!
+
+            // 2. Remove the deleted files from this pocket's local memory
+            foreach (var item in itemsToRemove)
+            {
+                PocketedItems.Remove(item);
+            }
+
+            // 3. Update the UI based on what is left
+            if (PocketedItems.Count == 0)
+            {
+                // If deleting those files emptied the pocket completely
+                if (App.CloseWhenEmptied)
+                {
+                    ForceClose(); // Safely animate and close
+                }
+                else
+                {
+                    // Or just reset it to the "Drop files here" state
+                    StatusText.Visibility = Visibility.Visible;
+                    FileIconContainer.Visibility = Visibility.Collapsed;
+                    StackContainer.Children.Clear();
+                    if (ExpandButton != null) ExpandButton.IsChecked = false;
+                    UpdateItemCountDisplay(0);
+                }
+            }
+            else
+            {
+                // If there are still files left, just redraw the card stack!
+                UpdateStackPreview();
+                UpdateItemCountDisplay(PocketedItems.Count);
+            }
+        }
+
         // --- HELPER: Updates text and translates dynamically ---
         private void UpdateItemCountDisplay(int count)
         {
@@ -1430,5 +1469,7 @@ namespace PocketDrop
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public System.Windows.Media.ImageSource Icon { get; set; }
+
+        public bool IsPinned { get; set; }
     }
 }

@@ -27,7 +27,28 @@
     <sys:String x:Key="Text_ClearAllPocketsDesc">This will close all windows and clear the list.</sys:String>
     <sys:String x:Key="Text_Cancel">Cancel</sys:String>
     <sys:String x:Key="Text_Delete">Delete</sys:String>
-    
+
+    <sys:String x:Key="Text_SidebarNew">New</sys:String>
+    <sys:String x:Key="Text_SidebarClear">Clear</sys:String>
+    <sys:String x:Key="Text_SidebarHome">Home</sys:String>
+    <sys:String x:Key="Text_SidebarPinned">Pinned</sys:String>
+    <sys:String x:Key="Text_SidebarSettings">Settings</sys:String>
+
+    <sys:String x:Key="Text_TabHomeTooltip">All Pockets</sys:String>
+    <sys:String x:Key="Text_TabPinnedTooltip">Pinned Pockets</sys:String>
+    <sys:String x:Key="Text_DeleteSelected">Delete selected</sys:String>
+
+    <sys:String x:Key="Text_SortDefault">Default</sys:String>
+    <sys:String x:Key="Text_SortAtoZ">A - Z</sys:String>
+    <sys:String x:Key="Text_SortZtoA">Z - A</sys:String>
+    <sys:String x:Key="Text_SortDefaultTooltip">Sort: Default Order</sys:String>
+    <sys:String x:Key="Text_SortAtoZTooltip">Sort: Alphabetical</sys:String>
+    <sys:String x:Key="Text_SortZtoATooltip">Sort: Reverse Alphabetical</sys:String>
+
+    <sys:String x:Key="Text_ToastRestoredDefault">Restored to Default</sys:String>
+    <sys:String x:Key="Text_ToastSortedAtoZ">Sorted A to Z</sys:String>
+    <sys:String x:Key="Text_ToastSortedZtoA">Sorted Z to A</sys:String>
+
     <!-- Settings Window -->
     <sys:String x:Key="Text_SettingsTitle">Settings</sys:String>
     <sys:String x:Key="Text_AppearanceBehavior">Appearance and behavior</sys:String>
@@ -117,5 +138,6 @@
     <sys:String x:Key="Text_TraySettings">Settings</sys:String>
     <sys:String x:Key="Text_TrayReportBug">Report bug</sys:String>
     <sys:String x:Key="Text_TrayQuit">Quit PocketDrop</sys:String>
+    
 
 </ResourceDictionary>
