@@ -305,9 +305,25 @@ namespace PocketDrop
             TraySettingsItem = new System.Windows.Forms.ToolStripMenuItem("Settings");
             TraySettingsItem.Click += (s, ev) =>
             {
-                var settingsWindow = new SettingsWindow();
-                settingsWindow.Show();
-                settingsWindow.Activate();
+                // ✨ Check if the settings window is already open!
+                var existingSettings = System.Windows.Application.Current.Windows.OfType<SettingsWindow>().FirstOrDefault();
+
+                if (existingSettings != null)
+                {
+                    // If it is open (but maybe minimized), restore it and bring it to the front
+                    if (existingSettings.WindowState == WindowState.Minimized)
+                    {
+                        existingSettings.WindowState = WindowState.Normal;
+                    }
+                    existingSettings.Activate();
+                }
+                else
+                {
+                    // If it isn't open at all, safely spawn a new one
+                    var settingsWindow = new SettingsWindow();
+                    settingsWindow.Show();
+                    settingsWindow.Activate();
+                }
             };
 
             TrayReportBugItem = new System.Windows.Forms.ToolStripMenuItem("Report bug");
