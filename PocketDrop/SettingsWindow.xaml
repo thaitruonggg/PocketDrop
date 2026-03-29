@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{DynamicResource Text_SettingsTitle}" Height="700" Width="950"
         WindowStartupLocation="CenterScreen"
-        Background="#dd2c2f" FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        Background="{DynamicResource MicaBase}" FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
         Icon="/Assets/PocketDrop.ico">
 
     <Window.Resources>
@@ -35,9 +35,9 @@
 
         <Style x:Key="NavRadioButtonStyle" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Margin" Value="0,2"/>
             <Setter Property="Padding" Value="12,10"/>
@@ -46,21 +46,26 @@
                     <ControlTemplate TargetType="RadioButton">
                         <Grid Background="Transparent">
                             <Border x:Name="BgBorder" Background="{TemplateBinding Background}" CornerRadius="6" Margin="4,0"/>
-                            <Border x:Name="ActiveIndicator" Width="3" Height="16" CornerRadius="1.5" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" Margin="4,0,0,0"/>
+                            <Border x:Name="ActiveIndicator" Width="3" Height="16" CornerRadius="1.5" Background="#dd2c2f" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" Margin="4,0,0,0"/>
                             <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BgBorder" Property="Background" Value="#26FFFFFF"/>
+                                <Setter TargetName="BgBorder" Property="Background" Value="{DynamicResource LayerAlt}"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="BgBorder" Property="Background" Value="#40FFFFFF"/>
+                                <Setter TargetName="BgBorder" Property="Background" Value="{DynamicResource LayerAlt}"/>
                                 <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Foreground" Value="#dd2c2f"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="ToggleSwitch" TargetType="CheckBox">
@@ -154,7 +159,7 @@
         <Style x:Key="SettingCard" TargetType="Border">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="Padding" Value="15"/>
             <Setter Property="BorderBrush" Value="{DynamicResource StrokeCardDefault}"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -277,16 +282,16 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="#dd2c2f">
+        <Border Grid.Column="0" Background="Transparent">
             <StackPanel Margin="10,40,10,10">
                 <StackPanel Orientation="Horizontal" Margin="20,0,0,30">
-                    <TextBlock Text="{DynamicResource Text_SettingsTitle}" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Text_SettingsTitle}" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <RadioButton x:Name="NavAppearance" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}" IsChecked="True">
                     <StackPanel Orientation="Horizontal">
                         <Path Data="M 5 3 C 3.89 3 3 3.89 3 5 L 3 19 C 3 20.11 3.89 21 5 21 L 19 21 C 20.11 21 21 20.11 21 19 L 21 5 C 21 3.89 20.11 3 19 3 Z M 3 9 L 21 9 M 9 21 L 9 9" 
-                              Stroke="White" StrokeThickness="2" 
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" 
                               StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                               Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                         <TextBlock Text="{DynamicResource Text_AppearanceBehavior}" VerticalAlignment="Center"/>
@@ -295,8 +300,8 @@
 
                 <RadioButton x:Name="NavShortcut" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <Path Data="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" 
-                              Stroke="White" StrokeThickness="2" 
+                        <Path Data="M 18 13 V 19 C 18 20.11 17.11 21 16 21 H 5 C 3.89 21 3 20.11 3 19 V 8 C 3 6.89 3.89 6 5 6 H 11 M 15 3 H 21 V 9 M 10 14 L 21 3"  
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" 
                               StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                               Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                         <TextBlock Text="{DynamicResource Text_ShortcutHeader}" VerticalAlignment="Center"/>
@@ -305,8 +310,8 @@
 
                 <RadioButton x:Name="NavShelf" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <Path Data="M 3 3 H 10 V 10 H 3 V 3 Z M 14 3 H 21 V 10 H 14 V 3 Z M 14 14 H 21 V 21 H 14 V 14 Z M 3 14 H 10 V 21 H 3 V 14 Z" 
-                              Stroke="White" StrokeThickness="2" 
+                        <Path Data="M 4 21 L 4 14 M 4 10 L 4 3 M 12 21 L 12 12 M 12 8 L 12 3 M 20 21 L 20 16 M 20 12 L 20 3 M 1 14 L 7 14 M 9 8 L 15 8 M 17 16 L 23 16" 
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" 
                               StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                               Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                         <TextBlock Text="{DynamicResource Text_PocketPreferences}" VerticalAlignment="Center"/>
@@ -316,7 +321,7 @@
                 <RadioButton x:Name="NavAbout" GroupName="SettingsNav" Style="{StaticResource NavRadioButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <Path Data="M 12 22 C 17.52 22 22 17.52 22 12 C 22 6.48 17.52 2 12 2 C 6.48 2 2 6.48 2 12 C 2 17.52 6.48 22 12 22 Z M 12 16 L 12 12 M 12 8 L 12.01 8" 
-                              Stroke="White" StrokeThickness="2" 
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="1.5" 
                               StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                               Stretch="Uniform" Width="18" Height="18" Margin="8,0,16,0"/>
                         <TextBlock Text="{DynamicResource Text_AboutHeader}" VerticalAlignment="Center"/>
@@ -379,7 +384,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Path Data="M 18 13 V 19 C 18 20.11 17.11 21 16 21 H 5 C 3.89 21 3 20.11 3 19 V 8 C 3 6.89 3.89 6 5 6 H 11 M 15 3 H 21 V 9 M 10 14 L 21 3" 
+                                <Path Data="M 18.36 6.64 A 9 9 0 1 1 5.64 6.64 M 12 2 L 12 12" 
                                       Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
                                       Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
@@ -389,50 +394,6 @@
                                 </StackPanel>
                                 <CheckBox x:Name="StartupToggle" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="StartupToggle_Click"/>
                             </Grid>
-                        </Border>
-
-                        <Border Style="{DynamicResource SettingCard}">
-                            <StackPanel>
-                                <Grid Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="30"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Path Data="M8 16H6C4.895 16 4 15.105 4 14V6C4 4.895 4.895 4 6 4H14C15.105 4 16 4.895 16 6V8 M10 8H18C19.105 8 20 8.895 20 10V18C20 19.105 19.105 20 18 20H10C8.895 20 8 19.105 8 18V10C8 8.895 8.895 8 10 8Z" 
-                                          Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
-                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
-                                          Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="{DynamicResource Text_CopyItems}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0"/>
-                                        <TextBlock Text="{DynamicResource Text_CopyItemsDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
-                                    </StackPanel>
-                                    <CheckBox x:Name="CopyItemToDestinationCheckbox" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="Copy_Click" Margin="0,0,10,0"/>
-                                    <ToggleButton x:Name="ExpandDescButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
-                                        <ToggleButton.Template>
-                                            <ControlTemplate TargetType="ToggleButton">
-                                                <Border Background="Transparent">
-                                                    <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Chevron" Property="Stroke" Value="{DynamicResource TextPrimary}"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </ToggleButton.Template>
-                                    </ToggleButton>
-                                </Grid>
-
-                                <Border Margin="-15,15,-15,-15" Padding="35,16,35,20" Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
-                                Visibility="{Binding IsChecked, ElementName=ExpandDescButton, Converter={StaticResource BoolToVis}}">
-                                    <TextBlock Text="{DynamicResource Text_CopyItemsHint}" TextWrapping="Wrap" TextAlignment="Justify" Foreground="{DynamicResource TextSecondary}" FontSize="13" LineHeight="22"/>
-                                </Border>
-                            </StackPanel>
                         </Border>
                     </StackPanel>
 
@@ -566,6 +527,35 @@
                         </Border>
 
                         <Border Style="{DynamicResource SettingCard}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Path Data="M 3 11 L 22 2 L 13 21 L 11 13 Z" 
+              Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+              Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{DynamicResource Text_PocketPlacement}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{DynamicResource Text_PocketPlacementDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <ComboBox x:Name="PlacementCombo" Grid.Column="2" Width="180" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="PlacementCombo_SelectionChanged">
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementMouse}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTop}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottom}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementLeft}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementRight}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTopLeft}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTopRight}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottomLeft}"/>
+                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottomRight}"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{DynamicResource SettingCard}">
                             <StackPanel>
                                 <Grid Background="Transparent">
                                     <Grid.ColumnDefinitions>
@@ -650,32 +640,47 @@
                         <TextBlock Text="{DynamicResource Text_PocketPreferences}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"/>
 
                         <Border Style="{DynamicResource SettingCard}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Path Data="M 3 11 L 22 2 L 13 21 L 11 13 Z" 
-                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
-                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
-                                      Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{DynamicResource Text_PocketPlacement}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{DynamicResource Text_PocketPlacementDesc}" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <ComboBox x:Name="PlacementCombo" Grid.Column="2" Width="180" VerticalAlignment="Center" Style="{StaticResource ModernComboBox}" SelectionChanged="PlacementCombo_SelectionChanged">
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementMouse}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTop}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottom}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementLeft}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementRight}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTopLeft}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementTopRight}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottomLeft}"/>
-                                    <ComboBoxItem Content="{DynamicResource Text_PlacementBottomRight}"/>
-                                </ComboBox>
-                            </Grid>
+                            <StackPanel>
+                                <Grid Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="30"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Path Data="M8 16H6C4.895 16 4 15.105 4 14V6C4 4.895 4.895 4 6 4H14C15.105 4 16 4.895 16 6V8 M10 8H18C19.105 8 20 8.895 20 10V18C20 19.105 19.105 20 18 20H10C8.895 20 8 19.105 8 18V10C8 8.895 8.895 8 10 8Z" 
+                                          Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent" 
+                                          Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{DynamicResource Text_CopyItems}" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,20,0"/>
+                                        <TextBlock Text="{DynamicResource Text_CopyItemsDesc}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,2,20,0"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="CopyItemToDestinationCheckbox" Grid.Column="2" Content="{DynamicResource Text_ToggleOn}" IsChecked="True" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Center" Click="Copy_Click" Margin="0,0,10,0"/>
+                                    <ToggleButton x:Name="ExpandDescButton" Grid.Column="3" Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Focusable="False">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent">
+                                                    <Path x:Name="Chevron" Data="M 5 9 L 12 15 L 19 9" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="Chevron" Property="Data" Value="M 5 15 L 12 9 L 19 15"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Chevron" Property="Stroke" Value="{DynamicResource TextPrimary}"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+
+                                <Border Margin="-15,15,-15,-15" Padding="35,16,35,20" Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="0,1,0,0" CornerRadius="0,0,8,8"
+                                        Visibility="{Binding IsChecked, ElementName=ExpandDescButton, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{DynamicResource Text_CopyItemsHint}" TextWrapping="Wrap" Foreground="{DynamicResource TextSecondary}" FontSize="13" LineHeight="22"/>
+                                </Border>
+                            </StackPanel>
                         </Border>
 
                         <Border Style="{DynamicResource SettingCard}">

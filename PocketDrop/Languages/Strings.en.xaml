@@ -6,36 +6,37 @@
     <sys:String x:Key="Text_MenuOpenWith">Open with...</sys:String>
     <sys:String x:Key="Text_MenuShare">Share...</sys:String>
     <sys:String x:Key="Text_MenuCompressZip">Compress to ZIP...</sys:String>
-    <sys:String x:Key="Text_MenuClearItems">Clear all items</sys:String>
+    <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
     <sys:String x:Key="Text_MenuOpenTempFolder">Open Temp Folder</sys:String>
     <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
-    <sys:String x:Key="Text_DropItemsHere">Drop items here</sys:String>
+    <sys:String x:Key="Text_DropItemsHere">Drop files here</sys:String>
     <sys:String x:Key="Text_SelectAll">Select all</sys:String>
-    <sys:String x:Key="Text_0Items">0 items</sys:String>
-    <sys:String x:Key="Text_Item">item</sys:String>
-    <sys:String x:Key="Text_Items">items</sys:String>
+    <sys:String x:Key="Text_0Items">0 files</sys:String>
+    <sys:String x:Key="Text_Item">file</sys:String>
+    <sys:String x:Key="Text_Items">files</sys:String>
     <sys:String x:Key="Text_FileSelected">file selected</sys:String>
     <sys:String x:Key="Text_FilesSelected">files selected</sys:String>
     
     <!-- Saved Pockets Window -->
-    <sys:String x:Key="Text_SavedPocketsTitle">Saved Pockets</sys:String>
-    <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Your Pockets will appear here&#x0a;when you close them.</sys:String>
-    <sys:String x:Key="Text_AddPocketTooltip">Add new pocket</sys:String>
-    <sys:String x:Key="Text_DeleteAllTooltip">Delete all pockets</sys:String>
-    <sys:String x:Key="Text_SettingsTooltip">Settings</sys:String>
-    <sys:String x:Key="Text_ClearAllPocketsTitle">Clear all pockets?</sys:String>
-    <sys:String x:Key="Text_ClearAllPocketsDesc">This will close all windows and clear the list.</sys:String>
-    <sys:String x:Key="Text_Cancel">Cancel</sys:String>
-    <sys:String x:Key="Text_Delete">Delete</sys:String>
+    <sys:String x:Key="Text_SavedPocketsTitle">My Pockets</sys:String>
+    <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Your files appear here&#x0a;when you close Pockets.</sys:String>
 
     <sys:String x:Key="Text_SidebarNew">New</sys:String>
     <sys:String x:Key="Text_SidebarClear">Clear</sys:String>
     <sys:String x:Key="Text_SidebarHome">Home</sys:String>
     <sys:String x:Key="Text_SidebarPinned">Pinned</sys:String>
     <sys:String x:Key="Text_SidebarSettings">Settings</sys:String>
+    <sys:String x:Key="Text_AddPocketTooltip">Add new Pocket</sys:String>
+    <sys:String x:Key="Text_DeleteAllTooltip">Delete all Pockets</sys:String>
+    <sys:String x:Key="Text_SettingsTooltip">Settings</sys:String>
+    <sys:String x:Key="Text_ClearAllPocketsTitle">Clear all Pockets?</sys:String>
+    <sys:String x:Key="Text_ClearAllPocketsDesc">This will close all Pockets and clear the list.</sys:String>
+    <sys:String x:Key="Text_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Text_Delete">Delete</sys:String>
 
-    <sys:String x:Key="Text_TabHomeTooltip">All contents</sys:String>
-    <sys:String x:Key="Text_TabPinnedTooltip">Pinned contents</sys:String>
+
+    <sys:String x:Key="Text_TabHomeTooltip">All files</sys:String>
+    <sys:String x:Key="Text_TabPinnedTooltip">Pinned files</sys:String>
     <sys:String x:Key="Text_DeleteSelected">Delete selected</sys:String>
 
     <sys:String x:Key="Text_SortDefault">Default</sys:String>
@@ -51,7 +52,7 @@
 
     <!-- Settings Window -->
     <sys:String x:Key="Text_SettingsTitle">Settings</sys:String>
-    <sys:String x:Key="Text_AppearanceBehavior">Appearance and behavior</sys:String>
+    <sys:String x:Key="Text_AppearanceBehavior">General</sys:String>
     <sys:String x:Key="Text_AppTheme">App theme</sys:String>
     <sys:String x:Key="Text_ThemeSystem">System</sys:String>
     <sys:String x:Key="Text_ThemeLight">Light</sys:String>
@@ -59,40 +60,40 @@
     <sys:String x:Key="Text_AppLanguage">App language</sys:String>
     <sys:String x:Key="Text_LangEnglish">English</sys:String>
     <sys:String x:Key="Text_LangVietnamese">Vietnamese</sys:String>
-    <sys:String x:Key="Text_RunAtStartup">Run at startup</sys:String>
-    <sys:String x:Key="Text_RunAtStartupDesc">PocketDrop will launch automatically</sys:String>
+    <sys:String x:Key="Text_RunAtStartup">Launch on startup</sys:String>
+    <sys:String x:Key="Text_RunAtStartupDesc">PocketDrop opens automatically when you start your computer.</sys:String>
     <sys:String x:Key="Text_ToggleOn">On</sys:String>
     <sys:String x:Key="Text_ToggleOff">Off</sys:String>
-    <sys:String x:Key="Text_CopyItems">Copy items to destination</sys:String>
-    <sys:String x:Key="Text_CopyItemsDesc">Dragged items from pocket will be copied instead of moved</sys:String>
-    <sys:String x:Key="Text_CopyItemsHint">By default, PocketDrop copies items from your Pocket when they are dragged out and moves them to your destination. Enabling this setting will make copying the default behaviour. If you want to move the file to destination completely, please disable this setting.</sys:String>
+    <sys:String x:Key="Text_CopyItems">Copy files when dropped</sys:String>
+    <sys:String x:Key="Text_CopyItemsDesc">Files dropped into Pockets are copied, not moved.</sys:String>
+    <sys:String x:Key="Text_CopyItemsHint">By default, PocketDrop keeps your original items safe. When you drag an item out, it simply creates a copy in the new location. If you’d rather completely move the item there instead, just disable this setting.</sys:String>
 
-    <sys:String x:Key="Text_ShortcutHeader">Shortcut</sys:String>
-    <sys:String x:Key="Text_NewPocketShortcut">New pocket shortcut</sys:String>
-    <sys:String x:Key="Text_NewPocketShortcutDesc">Customize the shortcut to open a new pocket</sys:String>
-    <sys:String x:Key="Text_ClipboardShortcut">New pocket from clipboard shortcut</sys:String>
-    <sys:String x:Key="Text_ClipboardShortcutDesc">Customize the shortcut to open a new pocket using the clipboard</sys:String>
-    <sys:String x:Key="Text_ShakeMouse">Shake mouse to open new Pocket</sys:String>
-    <sys:String x:Key="Text_ShakeMouseDesc">Shake your mouse while dragging items to open a new Pocket</sys:String>
-    <sys:String x:Key="Text_ShakeDistance">Shake minimum distance</sys:String>
-    <sys:String x:Key="Text_ShakeDistanceDesc">The minimum distance for mouse shaking activation, for adjusting sensitivity</sys:String>
-    <sys:String x:Key="Text_GameModeCheck">Do not open Pocket when Game Mode is on</sys:String>
-    <sys:String x:Key="Text_ExcludedApps">Excluded apps</sys:String>
-    <sys:String x:Key="Text_ExcludedAppsDesc">Prevent mouse shake shortcut from activating when an excluded app is in the foreground</sys:String>
-    <sys:String x:Key="Text_CurrentlyExcluded">Currently excluded applications:</sys:String>
-    <sys:String x:Key="Text_NoAppsExcluded">No apps are currently excluded.</sys:String>
-    <sys:String x:Key="Text_ManageApps">Manage Apps</sys:String>
+    <sys:String x:Key="Text_ShortcutHeader">Pocket Activation</sys:String>
+    <sys:String x:Key="Text_NewPocketShortcut">Create a new Pocket</sys:String>
+    <sys:String x:Key="Text_NewPocketShortcutDesc">Customize the keyboard shortcut for this action.</sys:String>
+    <sys:String x:Key="Text_ClipboardShortcut">Create a new Pocket from the clipboard</sys:String>
+    <sys:String x:Key="Text_ClipboardShortcutDesc">Customize the keyboard shortcut for this action.</sys:String>
+    <sys:String x:Key="Text_ShakeMouse">Shake to open a new Pocket</sys:String>
+    <sys:String x:Key="Text_ShakeMouseDesc">Wiggle your mouse left and right while dragging files to instantly open a Pocket.</sys:String>
+    <sys:String x:Key="Text_ShakeDistance">Shake sensitivity</sys:String>
+    <sys:String x:Key="Text_ShakeDistanceDesc">Adjust how far you need to wiggle your mouse to open a Pocket.</sys:String>
+    <sys:String x:Key="Text_GameModeCheck">Disable Pockets in Game Mode</sys:String>
+    <sys:String x:Key="Text_ExcludedApps">App exceptions</sys:String>
+    <sys:String x:Key="Text_ExcludedAppsDesc">Prevent mouse wiggles from opening Pockets while you're using these apps.</sys:String>
+    <sys:String x:Key="Text_CurrentlyExcluded">Current app exceptions:</sys:String>
+    <sys:String x:Key="Text_NoAppsExcluded">You haven't added any apps yet.</sys:String>
+    <sys:String x:Key="Text_ManageApps">Manage apps</sys:String>
 
     <!-- App Picker Dialog -->
-    <sys:String x:Key="Text_SelectAppsTitle">Select Apps</sys:String>
+    <sys:String x:Key="Text_SelectAppsTitle">Select apps</sys:String>
     <sys:String x:Key="Text_SelectAppsHeader">Select apps to exclude</sys:String>
     <sys:String x:Key="Text_ScanningApps">Scanning installed apps...</sys:String>
     <sys:String x:Key="Text_ScanningDesc">This usually takes a few seconds.</sys:String>
     <sys:String x:Key="Text_CannotFindApp">Cannot find app</sys:String>
 
-    <sys:String x:Key="Text_PocketPreferences">Pocket preferences</sys:String>
+    <sys:String x:Key="Text_PocketPreferences">Pocket Interaction</sys:String>
     <sys:String x:Key="Text_PocketPlacement">Pocket placement</sys:String>
-    <sys:String x:Key="Text_PocketPlacementDesc">Change where a new Pocket is placed upon opening</sys:String>
+    <sys:String x:Key="Text_PocketPlacementDesc">Choose where new Pockets appear on your screen.</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Near mouse pointer</sys:String>
     <sys:String x:Key="Text_PlacementTop">Top edge</sys:String>
     <sys:String x:Key="Text_PlacementBottom">Bottom edge</sys:String>
@@ -103,20 +104,20 @@
     <sys:String x:Key="Text_PlacementBottomLeft">Bottom left corner</sys:String>
     <sys:String x:Key="Text_PlacementBottomRight">Bottom right corner</sys:String>
 
-    <sys:String x:Key="Text_ItemsLayoutMode">Items layout mode</sys:String>
-    <sys:String x:Key="Text_ItemsLayoutModeDesc">Change the default layout mode in the shelf flyout</sys:String>
+    <sys:String x:Key="Text_ItemsLayoutMode">Detail view layout</sys:String>
+    <sys:String x:Key="Text_ItemsLayoutModeDesc">Choose how files are arranged when you expand a Pocket.</sys:String>
     <sys:String x:Key="Text_LayoutGrid">Grid view</sys:String>
     <sys:String x:Key="Text_LayoutList">List view</sys:String>
-    <sys:String x:Key="Text_CloseEmptied">Close pocket when emptied</sys:String>
-    <sys:String x:Key="Text_CloseEmptiedDesc">Automatically close pockets once all items have been dragged out</sys:String>
+    <sys:String x:Key="Text_CloseEmptied">Close Pockets when empty</sys:String>
+    <sys:String x:Key="Text_CloseEmptiedDesc">Automatically close a Pocket once all files have been dragged out.</sys:String>
 
     <sys:String x:Key="Text_AboutHeader">About</sys:String>
-    <sys:String x:Key="Text_Copyright">2026 Nao. All rights reserved.</sys:String>
+    <sys:String x:Key="Text_Copyright">Developed by Naofunyan. © 2026 All rights reserved.</sys:String>
     <sys:String x:Key="Text_PrivacyPolicy">Privacy policy</sys:String>
     <sys:String x:Key="Text_ThirdParty">Third party licenses</sys:String>
     <sys:String x:Key="Text_RateReview">Rate and review on the Microsoft Store</sys:String>
     <sys:String x:Key="Text_GetHelp">Get help</sys:String>
-    <sys:String x:Key="Text_GetHelpDesc">Report a bug, request features, or contact the developer</sys:String>
+    <sys:String x:Key="Text_GetHelpDesc">Got feedback? Report a bug, suggest a feature, or just say hi.</sys:String>
 
     <sys:String x:Key="Text_PrivacyP1">PocketDrop does not collect, store or share your personal information or data. The app only locally accesses user data such as files and folders from the local device, content from the clipboard, and device information in order to make the app function properly. This data is not transmitted, collected, or shared with any third parties.</sys:String>
     <sys:String x:Key="Text_PrivacyP2">PocketDrop collects anonymous information about crashes and hangs. The information we collect is non-identifiable and does not include any personal data. We do not share collected information with any third parties.</sys:String>
@@ -134,7 +135,7 @@
     <!-- Tray Menu -->
     <sys:String x:Key="Text_TrayAddPocket">Add Pocket</sys:String>
     <sys:String x:Key="Text_TrayAddClipboard">Add Pocket from clipboard</sys:String>
-    <sys:String x:Key="Text_TraySavedPockets">Saved Pockets</sys:String>
+    <sys:String x:Key="Text_TraySavedPockets">My Pockets</sys:String>
     <sys:String x:Key="Text_TraySettings">Settings</sys:String>
     <sys:String x:Key="Text_TrayReportBug">Report bug</sys:String>
     <sys:String x:Key="Text_TrayQuit">Quit PocketDrop</sys:String>
