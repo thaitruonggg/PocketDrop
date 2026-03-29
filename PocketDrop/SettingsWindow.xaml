@@ -46,7 +46,7 @@
                     <ControlTemplate TargetType="RadioButton">
                         <Grid Background="Transparent">
                             <Border x:Name="BgBorder" Background="{TemplateBinding Background}" CornerRadius="6" Margin="4,0"/>
-                            <Border x:Name="ActiveIndicator" Width="3" Height="16" CornerRadius="1.5" Background="#dd2c2f" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" Margin="4,0,0,0"/>
+                            <Border x:Name="ActiveIndicator" Width="3" Height="16" CornerRadius="1.5" Background="{DynamicResource BrandAccent}" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" Margin="4,0,0,0"/>
                             <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -63,7 +63,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Foreground" Value="#dd2c2f"/>
+                    <Setter Property="Foreground" Value="{DynamicResource BrandAccent}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
