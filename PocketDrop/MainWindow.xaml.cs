@@ -145,9 +145,28 @@ namespace PocketDrop
             base.OnClosed(e);
         }
 
+        // --- DRAG HOVER EFFECTS ---
+        private void Window_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(DataFormats.Text))
+            {
+                // ✨ Just turn the overlay on! No layout math required.
+                DragGlowBorder.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Window_DragLeave(object sender, DragEventArgs e)
+        {
+            // Turn it off when they drag away
+            DragGlowBorder.Visibility = Visibility.Collapsed;
+        }
+
         // --- CATCHING THE FILES (Dropping In) ---
         private async void Window_Drop(object sender, DragEventArgs e)
         {
+            // ✨ Instantly turn off the glow AND reset the margin when the file drops!
+            DragGlowBorder.Visibility = Visibility.Collapsed;
+
             // SAFETY: If the user dropped the files back onto the app itself, cancel everything!
             if (_isDraggingFromApp)
             {
