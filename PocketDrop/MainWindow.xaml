@@ -260,13 +260,13 @@
                                     <Grid Margin="16,0">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
 
-                                            <Viewbox Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,0,0">
+                                            <!--<Viewbox Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,0,0">
                                                 <Canvas Width="24" Height="24">
                                                     <Path Stroke="{DynamicResource TextSecondary}"
                                                       StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                                                       Data="M3,6 h18 M3,10 h18 M3,14 h18 M3,18 h18"/>
                                                 </Canvas>
-                                            </Viewbox>
+                                            </Viewbox>-->
 
                                             <CheckBox x:Name="SelectAllCheckBox" Content="{DynamicResource Text_SelectAll}" Margin="8,0,0,0" Padding="6,1,0,0"
                                               Foreground="{DynamicResource TextPrimary}" FontSize="14" 
