@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
     <!-- Main Window -->
-    <sys:String x:Key="Text_MenuOpen">Mở</sys:String>
+    <sys:String x:Key="Text_MenuOpen">Mở...</sys:String>
     <sys:String x:Key="Text_MenuOpenWith">Mở bằng...</sys:String>
     <sys:String x:Key="Text_MenuShare">Chia sẻ qua...</sys:String>
     <sys:String x:Key="Text_MenuCompressZip">Nén thành ZIP...</sys:String>

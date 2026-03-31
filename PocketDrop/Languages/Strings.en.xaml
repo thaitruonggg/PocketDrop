@@ -3,9 +3,9 @@
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
     
     <!-- Main Window -->
-    <sys:String x:Key="Text_MenuOpen">Open</sys:String>
+    <sys:String x:Key="Text_MenuOpen">Open...</sys:String>
     <sys:String x:Key="Text_MenuOpenWith">Open with...</sys:String>
-    <sys:String x:Key="Text_MenuShare">Share...</sys:String>
+    <sys:String x:Key="Text_MenuShare">Share with...</sys:String>
     <sys:String x:Key="Text_MenuCompressZip">Compress to ZIP...</sys:String>
     <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
     <sys:String x:Key="Text_MenuSettings">Settings</sys:String>

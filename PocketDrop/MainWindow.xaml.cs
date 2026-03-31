@@ -1182,44 +1182,46 @@ namespace PocketDrop
         }
 
         // Class-level variables to handle the share lifecycle
-        private string _fileToSharePath;
+        private List<string> _filesToSharePaths;
         private DataTransferManager _shareManager;
 
         // --- MENU ACTION: Share ---
         private void Menu_Share_Click(object sender, RoutedEventArgs e)
         {
-            if (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
-                _fileToSharePath = ((PocketItem)ItemsListBox.SelectedItems[0]).FilePath;
-            else if (PocketedItems.Count > 0)
-                _fileToSharePath = PocketedItems[0].FilePath;
+            // 1. Gather all files to share
+            var itemsToShare = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
+                ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
+                : PocketedItems.ToList();
 
-            if (!string.IsNullOrEmpty(_fileToSharePath) && File.Exists(_fileToSharePath))
+            if (itemsToShare.Count == 0) return;
+
+            // 2. Save all their paths to our new list!
+            _filesToSharePaths = itemsToShare.Select(item => item.FilePath).ToList();
+
+            try
             {
-                try
-                {
-                    // 1. Get the exact Window Handle (HWND) of your WPF app
-                    IntPtr hwnd = new WindowInteropHelper(this).Handle;
+                // 1. Get the exact Window Handle (HWND) of your WPF app
+                IntPtr hwnd = new WindowInteropHelper(this).Handle;
 
-                    // 2. Access the native Windows 11 Share factory
-                    var factory = WinRT.ActivationFactory.Get("Windows.ApplicationModel.DataTransfer.DataTransferManager");
+                // 2. Access the native Windows 11 Share factory
+                var factory = WinRT.ActivationFactory.Get("Windows.ApplicationModel.DataTransfer.DataTransferManager");
 
-                    // THE FIX: Extract the raw COM pointer and create a standard .NET COM Wrapper
-                    // This perfectly bypasses the ObjectReference error!
-                    var interop = (IDataTransferManagerInterop)Marshal.GetObjectForIUnknown(factory.ThisPtr);
+                // THE FIX: Extract the raw COM pointer and create a standard .NET COM Wrapper
+                // This perfectly bypasses the ObjectReference error!
+                var interop = (IDataTransferManagerInterop)Marshal.GetObjectForIUnknown(factory.ThisPtr);
 
-                    // 3. Get the Share Manager assigned to THIS specific window
-                    Guid guid = Guid.Parse("a5caee9b-8708-49d1-8d36-67d25a8da00c");
-                    IntPtr ptr = interop.GetForWindow(hwnd, ref guid);
-                    _shareManager = WinRT.MarshalInterface<DataTransferManager>.FromAbi(ptr);
+                // 3. Get the Share Manager assigned to THIS specific window
+                Guid guid = Guid.Parse("a5caee9b-8708-49d1-8d36-67d25a8da00c");
+                IntPtr ptr = interop.GetForWindow(hwnd, ref guid);
+                _shareManager = WinRT.MarshalInterface<DataTransferManager>.FromAbi(ptr);
 
-                    // 4. Attach our file to the payload and show the UI!
-                    _shareManager.DataRequested += ShareManager_DataRequested;
-                    interop.ShowShareUIForWindow(hwnd);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Share error: {ex.Message}");
-                }
+                // 4. Attach our file to the payload and show the UI!
+                _shareManager.DataRequested += ShareManager_DataRequested;
+                interop.ShowShareUIForWindow(hwnd);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Share error: {ex.Message}");
             }
         }
 
@@ -1231,11 +1233,24 @@ namespace PocketDrop
 
             try
             {
-                args.Request.Data.Properties.Title = "Sharing from PocketDrop";
+                // ✨ Dynamic Share Title
+                args.Request.Data.Properties.Title = _filesToSharePaths.Count == 1
+                    ? "Sharing 1 file from PocketDrop"
+                    : $"Sharing {_filesToSharePaths.Count} files from PocketDrop";
 
-                // Convert the standard physical file path into a modern Windows Storage File
-                StorageFile file = await StorageFile.GetFileFromPathAsync(_fileToSharePath);
-                args.Request.Data.SetStorageItems(new[] { file });
+                // ✨ Loop through and convert ALL paths into Windows Storage Files!
+                List<IStorageItem> storageItems = new List<IStorageItem>();
+                foreach (string path in _filesToSharePaths)
+                {
+                    if (File.Exists(path))
+                    {
+                        StorageFile file = await StorageFile.GetFileFromPathAsync(path);
+                        storageItems.Add(file);
+                    }
+                }
+
+                // Send the entire array to the Share UI
+                args.Request.Data.SetStorageItems(storageItems);
             }
             finally
             {
