@@ -210,11 +210,11 @@ namespace PocketDrop
                                 }
                                 else
                                 {
-                                    // Handle PDFs, text files, EXEs, etc.
-                                    ShellFile shellFile = ShellFile.FromFilePath(filePath);
+                                    // Handle PDFs, text files, EXEs, folders, etc.
+                                    ShellObject shellObj = ShellObject.FromParsingName(filePath);
 
-                                    // THE FIX: Request the Large icon instead of ExtraLarge to completely avoid the 256px padding bug
-                                    var thumb = shellFile.Thumbnail.LargeBitmapSource;
+                                    // Request the Large icon instead of ExtraLarge to completely avoid the 256px padding bug
+                                    var thumb = shellObj.Thumbnail.LargeBitmapSource;
 
                                     thumb.Freeze();
                                     return thumb;
@@ -268,10 +268,10 @@ namespace PocketDrop
                         // Generate the physical shortcut file
                         File.WriteAllText(filePath, $"[InternetShortcut]\nURL={droppedText}");
 
-                        ShellFile shellFile = ShellFile.FromFilePath(filePath);
+                        ShellObject shellObj = ShellObject.FromParsingName(filePath);
 
-                        // THE FIX: Use LargeBitmapSource here too, and remove the cropper wrapper
-                        var fileIcon = shellFile.Thumbnail.LargeBitmapSource;
+                        // Use LargeBitmapSource here too, and remove the cropper wrapper
+                        var fileIcon = shellObj.Thumbnail.LargeBitmapSource;
                         fileIcon.Freeze();
 
                         var newUrlItem = new PocketItem { FileName = domain, FilePath = filePath, Icon = fileIcon };
@@ -1447,8 +1447,8 @@ namespace PocketDrop
                                 else
                                 {
                                     // Handle PDFs, text files, EXEs, etc. using the bug-free Large icon
-                                    Microsoft.WindowsAPICodePack.Shell.ShellFile shellFile = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(filePath);
-                                    var thumb = shellFile.Thumbnail.LargeBitmapSource;
+                                    Microsoft.WindowsAPICodePack.Shell.ShellObject shellObj = Microsoft.WindowsAPICodePack.Shell.ShellObject.FromParsingName(filePath);
+                                    var thumb = shellObj.Thumbnail.LargeBitmapSource;
                                     thumb.Freeze();
                                     return thumb;
                                 }
