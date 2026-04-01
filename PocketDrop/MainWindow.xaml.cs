@@ -1046,12 +1046,29 @@ namespace PocketDrop
 
             if (itemsToOpen.Count == 0) return;
 
-            // 2. SCENARIO A: Only 1 file -> Show the native "How do you want to open this?" dialog
+            // 2. SCENARIO A: Only 1 item -> Handle Folders differently than Files
             if (itemsToOpen.Count == 1)
             {
                 string targetFilePath = itemsToOpen[0].FilePath;
 
-                if (!string.IsNullOrEmpty(targetFilePath) && File.Exists(targetFilePath))
+                // NEW: Check if it is a Folder first!
+                if (Directory.Exists(targetFilePath))
+                {
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = targetFilePath,
+                            UseShellExecute = true // Opens the folder in File Explorer
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Could not open folder: {ex.Message}");
+                    }
+                }
+                // It's a file, show the native "How do you want to open this?" dialog
+                else if (!string.IsNullOrEmpty(targetFilePath) && File.Exists(targetFilePath))
                 {
                     System.Threading.Tasks.Task.Run(() =>
                     {
@@ -1070,16 +1087,17 @@ namespace PocketDrop
                     });
                 }
             }
-            // 3. SCENARIO B: Multiple files -> Open them all instantly in their default apps!
+            // 3. SCENARIO B: Multiple items -> Open them all!
             else
             {
                 foreach (var item in itemsToOpen)
                 {
-                    if (File.Exists(item.FilePath))
+                    // NEW: Check for Directory.Exists OR File.Exists
+                    if (Directory.Exists(item.FilePath) || File.Exists(item.FilePath))
                     {
                         try
                         {
-                            // UseShellExecute acts exactly like double-clicking the file in Windows Explorer
+                            // UseShellExecute acts exactly like double-clicking the file/folder in Windows Explorer
                             Process.Start(new ProcessStartInfo
                             {
                                 FileName = item.FilePath,
