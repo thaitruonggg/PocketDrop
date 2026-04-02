@@ -352,6 +352,44 @@ namespace PocketDrop
             }
         }
 
+        // --- HELPER: Sweeps the pocket for files that were deleted in File Explorer ---
+        private bool RemoveDeadFiles()
+        {
+            bool foundDeadFiles = false;
+
+            // Loop backwards because we are removing items from the list as we go!
+            for (int i = PocketedItems.Count - 1; i >= 0; i--)
+            {
+                var item = PocketedItems[i];
+
+                // If it is neither a File nor a Directory, it was deleted!
+                if (!File.Exists(item.FilePath) && !Directory.Exists(item.FilePath))
+                {
+                    PocketedItems.RemoveAt(i);
+                    foundDeadFiles = true;
+                }
+            }
+
+            if (foundDeadFiles)
+            {
+                // Update the UI to reflect the missing files
+                UpdateItemCountDisplay(PocketedItems.Count);
+
+                if (PocketedItems.Count > 0)
+                {
+                    UpdateStackPreview();
+                }
+                else
+                {
+                    // If the pocket is now empty, reset the UI or auto-close
+                    if (StackContainer != null) StackContainer.Children.Clear();
+                    if (App.CloseWhenEmptied) ForceClose();
+                }
+            }
+
+            return foundDeadFiles;
+        }
+
         // --- TRACKING THE CLICK (Preparing to drag a file out) ---
         private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -528,121 +566,58 @@ namespace PocketDrop
             }
         }
 
-        // --- ITEM LIST: TRACK CLICK ON A LIST ITEM ---
-        private bool _suppressToggleOnUp = false;
-
-        private void ItemsList_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void ItemsList_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            // ✨ THE FIX: If this is a double-click, ignore the drag logic and let it pass through!
-            if (e.ClickCount == 2)
+            // Only trigger drag if the Left mouse button is held down
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            // ✨ JUST-IN-TIME CHECK: Did they delete files before dragging?
+            if (RemoveDeadFiles())
             {
+                string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
+                string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Never trigger the background window drag from this area
-            startPoint = null;
-            _suppressToggleOnUp = false;
-
-            // Find the ListBoxItem under the cursor
+            // We only care if they are dragging an actual ListBoxItem (a file), not the background
             var hit = e.OriginalSource as DependencyObject;
             while (hit != null && !(hit is ListBoxItem) && !(hit is ListBox))
                 hit = VisualTreeHelper.GetParent(hit);
 
-            if (hit is ListBoxItem lbi && lbi.IsSelected)
-            {
-                // Clicking any already-selected item → snapshot selection, arm drag,
-                // and suppress the click so ListBox doesn't deselect anything.
-                _dragCandidates = ItemsListBox.SelectedItems.Cast<PocketItem>().ToList();
-                _listDragStart = e.GetPosition(null);
-                e.Handled = true; // Blocks the instant unselect!
-            }
-            else if (hit is ListBoxItem)
-            {
-                // Clicking an unselected item: WPF will select it automatically.
-                // We set a flag so we don't accidentally unselect it on mouse release!
-                _suppressToggleOnUp = true;
-                _dragCandidates = null;
-                _listDragStart = e.GetPosition(null);
-                // Do NOT set e.Handled
-            }
-            else
-            {
-                _dragCandidates = null;
-                _listDragStart = null;
-            }
-        }
+            if (!(hit is ListBoxItem lbi))
+                return; // They are dragging empty space, ignore it.
 
-        private void ItemsList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // If _listDragStart is still set, it means the user clicked and released WITHOUT dragging
-            if (_listDragStart != null)
-            {
-                var hit = e.OriginalSource as DependencyObject;
-                while (hit != null && !(hit is ListBoxItem) && !(hit is ListBox))
-                    hit = VisualTreeHelper.GetParent(hit);
-
-                // If they clicked an already-selected item, manually unselect it now!
-                if (hit is ListBoxItem lbi && !_suppressToggleOnUp)
-                {
-                    var item = lbi.DataContext as PocketItem;
-                    if (item != null && ItemsListBox.SelectedItems.Contains(item))
-                    {
-                        ItemsListBox.SelectedItems.Remove(item);
-                    }
-                }
-            }
-
-            // Reset trackers
-            _listDragStart = null;
-            _dragCandidates = null;
-            _suppressToggleOnUp = false;
-        }
-
-        // --- ITEM LIST: DRAG ONLY SELECTED ITEMS OUT ---
-        private void ItemsList_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton != MouseButtonState.Pressed || _listDragStart == null)
-            {
-                _listDragStart = null;
-                _dragCandidates = null;
-                return;
-            }
-
-            Point pos = e.GetPosition(null);
-            Vector diff = (Point)_listDragStart - pos;
-
-            if (Math.Abs(diff.X) <= SystemParameters.MinimumHorizontalDragDistance &&
-                Math.Abs(diff.Y) <= SystemParameters.MinimumVerticalDragDistance)
+            var draggedItem = lbi.DataContext as PocketItem;
+            if (draggedItem == null)
                 return;
 
-            // Use snapshotted candidates for multi-select, or current selection for single
-            var selectedItems = _dragCandidates
-                ?? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList();
-
-            if (selectedItems.Count == 0)
+            // If they drag an item that ISN'T selected yet, select it automatically for them!
+            if (!ItemsListBox.SelectedItems.Contains(draggedItem))
             {
-                _listDragStart = null;
-                _dragCandidates = null;
-                return;
+                ItemsListBox.SelectedItems.Add(draggedItem);
             }
 
+            var selectedItems = ItemsListBox.SelectedItems.Cast<PocketItem>().ToList();
+            if (selectedItems.Count == 0) return;
+
+            // Gather paths and prepare the payload
             string[] paths = selectedItems.Select(item => item.FilePath).ToArray();
             DataObject dragData = new DataObject(DataFormats.FileDrop, paths);
 
-            // ✨ THE MAGIC FIX: Force Windows Explorer to explicitly Copy or Cut!
             byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
             dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
 
-            _listDragStart = null;
-            _dragCandidates = null;
-
             _isDraggingFromApp = true;
             DragDropEffects allowedEffects = App.CopyItemToDestination ? DragDropEffects.Copy : DragDropEffects.Move;
+
+            // START THE DRAG!
             DragDropEffects result = DragDrop.DoDragDrop(ItemsListBox, dragData, allowedEffects);
+
             _isDraggingFromApp = false;
 
-            // ✨ ALWAYS clear the selected items from the pocket if the drop was successful!
-            // ✨ ALWAYS clear the selected items from the pocket if the drop was successful!
+            // Cleanup after drop
             if (result != DragDropEffects.None)
             {
                 foreach (var item in selectedItems)
@@ -653,11 +628,10 @@ namespace PocketDrop
 
                 if (PocketedItems.Count == 0)
                 {
-                    // ✨ THE NEW FIX: Check if we should auto-close!
                     if (App.CloseWhenEmptied)
                     {
-                        ExpandButton.IsChecked = false; // Ensure popup closes
-                        ForceClose(); // Uses your built-in safe close method!
+                        ExpandButton.IsChecked = false;
+                        ForceClose();
                     }
                     else
                     {
@@ -1164,6 +1138,16 @@ namespace PocketDrop
         // --- MENU ACTION: Smart Open (Switches based on count) ---
         private void Menu_DynamicOpen_Click(object sender, RoutedEventArgs e)
         {
+
+            // ✨ JUST-IN-TIME CHECK
+            if (RemoveDeadFiles())
+            {
+                string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
+                string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // 1. Gather the selected files (or all of them if none are selected)
             var itemsToOpen = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
                 ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
@@ -1295,6 +1279,16 @@ namespace PocketDrop
         // --- MENU ACTION: Open With ---
         private void Menu_OpenWith_Click(object sender, RoutedEventArgs e)
         {
+
+            // ✨ JUST-IN-TIME CHECK
+            if (RemoveDeadFiles())
+            {
+                string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
+                string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // 1. Determine which file to open 
             string targetFilePath = null;
 
@@ -1339,6 +1333,15 @@ namespace PocketDrop
         // --- MENU ACTION: Share ---
         private async void Menu_Share_Click(object sender, RoutedEventArgs e)
         {
+            // ✨ JUST-IN-TIME CHECK
+            if (RemoveDeadFiles())
+            {
+                string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
+                string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var itemsToShare = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
                 ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
                 : PocketedItems.ToList();
@@ -1579,6 +1582,15 @@ namespace PocketDrop
         // --- MENU ACTION: Compress to ZIP ---
         private async void Menu_CompressZip_Click(object sender, RoutedEventArgs e)
         {
+            // ✨ JUST-IN-TIME CHECK
+            if (RemoveDeadFiles())
+            {
+                string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
+                string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // 1. Determine what to compress (Selected items, or ALL items if none are selected)
             var itemsToCompress = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
                 ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
@@ -1589,10 +1601,10 @@ namespace PocketDrop
             // 2. Ask the user where they want to save the new ZIP archive
             Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog
             {
-                Title = "Save ZIP Archive",
-                FileName = "PocketDrop_Archive",
+                Title = (string)Application.Current.Resources["Text_SaveZipTitle"],
+                FileName = (string)Application.Current.Resources["Text_SaveZipFileName"],
                 DefaultExt = ".zip",
-                Filter = "ZIP Archives (*.zip)|*.zip"
+                Filter = (string)Application.Current.Resources["Text_SaveZipFilter"]
             };
 
             if (saveDialog.ShowDialog() == true)
@@ -1781,8 +1793,10 @@ namespace PocketDrop
                 }
                 else
                 {
-                    // Optional: You can remove this else block entirely if you want it to fail silently!
-                    MessageBox.Show("No files found in clipboard!");
+                    // Optional: Show a localized warning if the clipboard doesn't have files
+                    string emptyDesc = (string)Application.Current.Resources["Text_ClipboardEmpty"];
+                    string emptyTitle = (string)Application.Current.Resources["Text_ClipboardEmptyTitle"];
+                    MessageBox.Show(emptyDesc, emptyTitle, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)

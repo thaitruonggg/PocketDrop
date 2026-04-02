@@ -36,6 +36,16 @@
     <sys:String x:Key="Text_ShareFailText">Không thể chuẩn bị tệp:</sys:String>
     <sys:String x:Key="Text_Reason">Lý do:</sys:String>
 
+    <sys:String x:Key="Text_FilesMissingTitle">Thiếu tệp</sys:String>
+    <sys:String x:Key="Text_FilesMissingDesc">Một số tệp không thể tìm thấy và đã bị xóa khỏi Pocket. Chúng có thể đã bị xóa hoặc di chuyển bên ngoài PocketDrop.</sys:String>
+
+    <sys:String x:Key="Text_ClipboardEmpty">Không tìm thấy tệp nào trong khay nhớ tạm!</sys:String>
+    <sys:String x:Key="Text_ClipboardEmptyTitle">Khay nhớ tạm trống</sys:String>
+    <sys:String x:Key="Text_SaveZipTitle">Lưu tệp ZIP</sys:String>
+    <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
+    <sys:String x:Key="Text_SaveZipFilter">Tệp ZIP (*.zip)|*.zip</sys:String>
+    
+
     <!-- Saved Pockets Window -->
     <sys:String x:Key="Text_SavedPocketsTitle">Các Pocket của bạn</sys:String>
     <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Các tập tin của bạn sẽ xuất hiện&#x0a;ở đây khi bạn đóng các Pocket.</sys:String>

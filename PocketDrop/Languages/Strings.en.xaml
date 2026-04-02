@@ -36,6 +36,16 @@
     <sys:String x:Key="Text_ShareFailText">Failed to prepare files:</sys:String>
     <sys:String x:Key="Text_Reason">Reason:</sys:String>
 
+    <sys:String x:Key="Text_FilesMissingTitle">Files Missing</sys:String>
+    <sys:String x:Key="Text_FilesMissingDesc">Some files could not be found and were removed from the Pocket. They may have been deleted or moved outside of PocketDrop.</sys:String>
+
+    <sys:String x:Key="Text_ClipboardEmpty">No files found in clipboard!</sys:String>
+    <sys:String x:Key="Text_ClipboardEmptyTitle">Clipboard Empty</sys:String>
+    <sys:String x:Key="Text_SaveZipTitle">Save ZIP Archive</sys:String>
+    <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
+    <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
+    
+
     <!-- Saved Pockets Window -->
     <sys:String x:Key="Text_SavedPocketsTitle">My Pockets</sys:String>
     <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Your files appear here&#x0a;when you close Pockets.</sys:String>
