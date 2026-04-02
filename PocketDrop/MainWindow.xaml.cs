@@ -187,7 +187,25 @@ namespace PocketDrop
                 {
                     foreach (string filePath in droppedFiles)
                     {
-                        string fileName = Path.GetFileName(filePath);
+                        // ✨ SCENARIO 1: If this EXACT file is already in the pocket, skip it!
+                        if (PocketedItems.Any(item => item.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            continue;
+                        }
+
+                        // ✨ SCENARIO 2: Auto-rename if the name is taken, but the path is different
+                        string originalName = Path.GetFileName(filePath);
+                        string nameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+                        string extension = Path.GetExtension(filePath);
+
+                        string finalDisplayName = originalName;
+                        int counter = 1;
+
+                        while (PocketedItems.Any(item => item.FileName.Equals(finalDisplayName, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            finalDisplayName = $"{nameWithoutExt} ({counter}){extension}";
+                            counter++;
+                        }
 
                         // THE FIX: Push the heavy image downscaling to a background worker thread!
                         System.Windows.Media.ImageSource fileIcon = await System.Threading.Tasks.Task.Run(() =>
@@ -230,7 +248,8 @@ namespace PocketDrop
                             }
                         });
 
-                        var newItem = new PocketItem { FileName = fileName, FilePath = filePath, Icon = fileIcon };
+                        // ✨ Create the item using the safe finalDisplayName
+                        var newItem = new PocketItem { FileName = finalDisplayName, FilePath = filePath, Icon = fileIcon };
                         PocketedItems.Add(newItem);
 
                         // ✨ INSTANT SYNC: Save it to the global list the millisecond it drops!
@@ -264,6 +283,16 @@ namespace PocketDrop
                     try
                     {
                         string domain = uriResult.Host.Replace("www.", "");
+
+                        // ✨ URL SCENARIO 2: If the user drops multiple links from the same domain, number them!
+                        string finalDomainName = domain;
+                        int urlCounter = 1;
+                        while (PocketedItems.Any(item => item.FileName.Equals(finalDomainName, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            finalDomainName = $"{domain} ({urlCounter})";
+                            urlCounter++;
+                        }
+
                         string tempFolder = Path.GetTempPath();
                         string fileName = $"{domain} Link_{DateTime.Now.Ticks}.url";
                         string filePath = Path.Combine(tempFolder, fileName);
@@ -277,7 +306,8 @@ namespace PocketDrop
                         var fileIcon = shellObj.Thumbnail.LargeBitmapSource;
                         fileIcon.Freeze();
 
-                        var newUrlItem = new PocketItem { FileName = domain, FilePath = filePath, Icon = fileIcon };
+                        // ✨ Create the URL item using the numbered domain name
+                        var newUrlItem = new PocketItem { FileName = finalDomainName, FilePath = filePath, Icon = fileIcon };
                         PocketedItems.Add(newUrlItem);
 
                         // ✨ INSTANT SYNC for URLs!
@@ -1452,13 +1482,15 @@ namespace PocketDrop
                     {
                         if (Directory.Exists(item.FilePath))
                         {
-                            // It's a folder: Add the folder and all its contents recursively
-                            AddDirectoryToZip(archive, item.FilePath, Path.GetFileName(item.FilePath));
+                            // It's a folder: Add the folder recursively
+                            // ✨ THE FIX: We pass item.FileName instead of Path.GetFileName(item.FilePath)
+                            AddDirectoryToZip(archive, item.FilePath, item.FileName);
                         }
                         else if (File.Exists(item.FilePath))
                         {
-                            // It's a standard file: Just add it to the root of the zip
-                            archive.CreateEntryFromFile(item.FilePath, Path.GetFileName(item.FilePath));
+                            // It's a standard file: Add it to the root of the zip
+                            // ✨ THE FIX: We use item.FileName to ensure there are no collisions!
+                            archive.CreateEntryFromFile(item.FilePath, item.FileName);
                         }
                     }
                 }
