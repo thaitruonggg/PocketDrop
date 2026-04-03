@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PocketDrop Tests/PocketDrop Tests.csproj" Id="be80ad46-a8ad-43d2-b0a5-4b85c1fccac1" />
   <Project Path="PocketDrop/PocketDrop.csproj" />
 </Solution>

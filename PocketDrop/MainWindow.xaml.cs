@@ -5,21 +5,22 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Windows.Interop;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using WinRT;
-using System.IO.Compression;
+using static PocketDrop.AppHelpers;
 
 namespace PocketDrop
 {
@@ -69,6 +70,9 @@ namespace PocketDrop
         private static IntPtr _hookHandle = IntPtr.Zero;
         private static LowLevelMouseProc _hookProc; // Keep reference — prevents GC
 
+        // ✨ ADD THIS LINE RIGHT HERE:
+        private static ShakeDetector _shakeDetector = new ShakeDetector();
+
         public bool IsGhost { get; set; } = false;
 
         // ══════════════════════════════════════════════════════
@@ -80,10 +84,8 @@ namespace PocketDrop
 
         private static bool _leftButtonHeld = false;
         private static bool _hasSpawnedPocketThisDrag = false; // ✨ NEW: The Lockout Flag!
-        private static int _lastX = 0;
-        private static int _currentDir = 0;       // +1 = right, -1 = left, 0 = none
-        private static int _swingOriginX = 0;       // X where current swing started
-        private static readonly Queue<long> _swingTimestamps = new Queue<long>();
+
+
 
         // ══════════════════════════════════════════════════════
         // --- VIEW MODE LOGIC ---
@@ -188,7 +190,7 @@ namespace PocketDrop
                     foreach (string filePath in droppedFiles)
                     {
                         // ✨ SCENARIO 1: If this EXACT file is already in the pocket, skip it!
-                        if (PocketedItems.Any(item => item.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase)))
+                        if (AppHelpers.IsDuplicate(PocketedItems, filePath))
                         {
                             continue;
                         }
@@ -350,44 +352,6 @@ namespace PocketDrop
                     }
                 }
             }
-        }
-
-        // --- HELPER: Sweeps the pocket for files that were deleted in File Explorer ---
-        private bool RemoveDeadFiles()
-        {
-            bool foundDeadFiles = false;
-
-            // Loop backwards because we are removing items from the list as we go!
-            for (int i = PocketedItems.Count - 1; i >= 0; i--)
-            {
-                var item = PocketedItems[i];
-
-                // If it is neither a File nor a Directory, it was deleted!
-                if (!File.Exists(item.FilePath) && !Directory.Exists(item.FilePath))
-                {
-                    PocketedItems.RemoveAt(i);
-                    foundDeadFiles = true;
-                }
-            }
-
-            if (foundDeadFiles)
-            {
-                // Update the UI to reflect the missing files
-                UpdateItemCountDisplay(PocketedItems.Count);
-
-                if (PocketedItems.Count > 0)
-                {
-                    UpdateStackPreview();
-                }
-                else
-                {
-                    // If the pocket is now empty, reset the UI or auto-close
-                    if (StackContainer != null) StackContainer.Children.Clear();
-                    if (App.CloseWhenEmptied) ForceClose();
-                }
-            }
-
-            return foundDeadFiles;
         }
 
         // --- TRACKING THE CLICK (Preparing to drag a file out) ---
@@ -573,7 +537,7 @@ namespace PocketDrop
                 return;
 
             // ✨ JUST-IN-TIME CHECK: Did they delete files before dragging?
-            if (RemoveDeadFiles())
+            if (AppHelpers.RemoveDeadFiles(PocketedItems))
             {
                 string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
                 string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
@@ -733,82 +697,55 @@ namespace PocketDrop
                 if (msg == WM_LBUTTONDOWN)
                 {
                     _leftButtonHeld = true;
-                    _hasSpawnedPocketThisDrag = false; // ✨ THE FIX: Reset the lock every time they click a new file!
-
-                    _lastX = hookStruct.pt.X;
-                    _swingOriginX = hookStruct.pt.X;
-                    _currentDir = 0;
-                    _swingTimestamps.Clear();
+                    _hasSpawnedPocketThisDrag = false;
                 }
                 else if (msg == WM_LBUTTONUP)
                 {
                     _leftButtonHeld = false;
-                    _currentDir = 0;
-                    _swingTimestamps.Clear();
                 }
                 else if (msg == WM_MOUSEMOVE && _leftButtonHeld)
                 {
-                    // ✨ THE CHECKS: Abort if shaking is disabled, gaming, excluded app...
+                    // 1. Check all user settings before doing math
                     if (!App.EnableMouseShake) goto done;
                     if (App.DisableInGameMode && App.IsGameModeActive()) goto done;
                     if (App.IsForegroundAppExcluded()) goto done;
+                    if (_hasSpawnedPocketThisDrag) goto done; // Don't spawn duplicates!
 
-                    // ✨ THE FIX: If we already spawned a pocket during this specific drag, stop calculating shakes!
-                    if (_hasSpawnedPocketThisDrag) goto done;
+                    // 2. Feed the raw coordinates to our new decoupled brain
+                    bool isShaking = _shakeDetector.CheckForShake(
+                        currentMouseX: hookStruct.pt.X,  // ✨ Fixed: Capital X
+                        currentTimestampMs: Environment.TickCount64,
+                        minDistancePx: App.ShakeMinimumDistance,
+                        maxTimeMs: 1000,
+                        requiredSwings: 3
+                    );
 
-                    int x = hookStruct.pt.X;
-                    int dx = x - _lastX;
-                    _lastX = x;
-
-                    if (Math.Abs(dx) < 2) goto done;
-
-                    int newDir = dx > 0 ? 1 : -1;
-
-                    if (_currentDir != 0 && newDir != _currentDir)
+                    // 3. If the math detects a shake, spawn the UI
+                    if (isShaking)
                     {
-                        int swingSize = Math.Abs(x - _swingOriginX);
+                        _hasSpawnedPocketThisDrag = true; // Lock it down until they release the mouse
 
-                        if (swingSize >= App.ShakeMinimumDistance)
+                        // ✨ Fixed: Using your exact Dispatcher logic to spawn the pocket safely!
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                         {
-                            long now = Environment.TickCount64;
-                            _swingTimestamps.Enqueue(now);
+                            var hiddenPocket = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault(w => !w.IsHitTestVisible);
 
-                            while (_swingTimestamps.Count > 0 &&
-                                   now - _swingTimestamps.Peek() > SHAKE_WINDOW_MS)
-                                _swingTimestamps.Dequeue();
-
-                            if (_swingTimestamps.Count >= REQUIRED_SWINGS)
+                            if (hiddenPocket != null)
                             {
-                                _swingTimestamps.Clear();
-                                _currentDir = 0;
-
-                                _hasSpawnedPocketThisDrag = true; // ✨ THE FIX: Lock it down! No more pockets until they let go of the mouse.
-
-                                // Spawn the window!
-                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
-                                {
-                                    var hiddenPocket = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault(w => !w.IsHitTestVisible);
-
-                                    if (hiddenPocket != null)
-                                    {
-                                        hiddenPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
-                                    }
-                                    else
-                                    {
-                                        var newPocket = new MainWindow();
-                                        newPocket.Show();
-                                        newPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
-                                    }
-                                }));
+                                hiddenPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
                             }
-                        }
-                        _swingOriginX = x;
+                            else
+                            {
+                                var newPocket = new MainWindow();
+                                newPocket.Show();
+                                newPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
+                            }
+                        }));
                     }
-
-                    if (newDir != 0) _currentDir = newDir;
                 }
             }
         done:
+            // ✨ Fixed: Using your actual variable name _hookHandle
             return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
         }
 
@@ -1043,7 +980,7 @@ namespace PocketDrop
                     ? (string)Application.Current.Resources["Text_FileSelected"]
                     : (string)Application.Current.Resources["Text_FilesSelected"];
 
-                PopupCountText.Text = $"{selectedCount} {fileWord} ({FormatBytes(totalBytes)})";
+                PopupCountText.Text = $"{selectedCount} {fileWord} ({AppHelpers.FormatBytes(totalBytes)})";
             }
             else
             {
@@ -1089,22 +1026,6 @@ namespace PocketDrop
             DeleteSelectedButton.Visibility = Visibility.Collapsed;
         }
 
-        // --- HELPER: Formats raw bytes into readable KB/MB/GB ---
-        private string FormatBytes(long bytes)
-        {
-            if (bytes == 0) return "0 B";
-
-            string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
-
-            // Figure out the scale of the file size mathematically
-            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-
-            // Round it to one decimal place (e.g., 4.2 MB)
-            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-
-            return $"{num} {suffixes[place]}";
-        }
-
         // --- MORE BUTTON DROPDOWN MENU ---
         private void MoreButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1140,7 +1061,7 @@ namespace PocketDrop
         {
 
             // ✨ JUST-IN-TIME CHECK
-            if (RemoveDeadFiles())
+            if (AppHelpers.RemoveDeadFiles(PocketedItems))
             {
                 string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
                 string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
@@ -1281,7 +1202,7 @@ namespace PocketDrop
         {
 
             // ✨ JUST-IN-TIME CHECK
-            if (RemoveDeadFiles())
+            if (AppHelpers.RemoveDeadFiles(PocketedItems))
             {
                 string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
                 string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
@@ -1334,7 +1255,7 @@ namespace PocketDrop
         private async void Menu_Share_Click(object sender, RoutedEventArgs e)
         {
             // ✨ JUST-IN-TIME CHECK
-            if (RemoveDeadFiles())
+            if (AppHelpers.RemoveDeadFiles(PocketedItems))
             {
                 string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
                 string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
@@ -1583,7 +1504,7 @@ namespace PocketDrop
         private async void Menu_CompressZip_Click(object sender, RoutedEventArgs e)
         {
             // ✨ JUST-IN-TIME CHECK
-            if (RemoveDeadFiles())
+            if (AppHelpers.RemoveDeadFiles(PocketedItems))
             {
                 string warningTitle = (string)Application.Current.Resources["Text_FilesMissingTitle"];
                 string warningDesc = (string)Application.Current.Resources["Text_FilesMissingDesc"];
