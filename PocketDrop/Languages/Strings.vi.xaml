@@ -165,8 +165,8 @@
     <sys:String x:Key="Text_CloseShare">Đóng Pocket sau khi chia sẻ</sys:String>
     <sys:String x:Key="Text_CloseShareDesc">Tự động đóng Pocket khi bạn chia sẻ tập tin qua menu "Chia sẻ"</sys:String>
 
-    <sys:String x:Key="Text_CloseCompress">Close Pocket after compress ZIP</sys:String>
-    <sys:String x:Key="Text_CloseCompressDesc">Automatically closes the Pocket when you use the 'Compress to ZIP' action.</sys:String>
+    <sys:String x:Key="Text_CloseCompress">Đóng Pocket sau khi nén thành ZIP</sys:String>
+    <sys:String x:Key="Text_CloseCompressDesc">Tự động đóng Pocket khi bạn nén tập tin thành ZIP</sys:String>
 
     <!-- Settings Window - About -->
     <sys:String x:Key="Text_AboutHeader">Giới thiệu</sys:String>
