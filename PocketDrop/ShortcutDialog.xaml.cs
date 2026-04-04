@@ -84,11 +84,12 @@ namespace PocketDrop
         {
             Key keyToUse = e.Key == Key.System ? e.SystemKey : e.Key;
 
-            // 1. Track modifier keys in the EXACT order they are pressed!
-            if (keyToUse == Key.LWin || keyToUse == Key.RWin) { if (!_pressedModifiers.Contains("Win")) _pressedModifiers.Add("Win"); return; }
-            if (keyToUse == Key.LeftCtrl || keyToUse == Key.RightCtrl) { if (!_pressedModifiers.Contains("Ctrl")) _pressedModifiers.Add("Ctrl"); return; }
-            if (keyToUse == Key.LeftAlt || keyToUse == Key.RightAlt) { if (!_pressedModifiers.Contains("Alt")) _pressedModifiers.Add("Alt"); return; }
-            if (keyToUse == Key.LeftShift || keyToUse == Key.RightShift) { if (!_pressedModifiers.Contains("Shift")) _pressedModifiers.Add("Shift"); return; }
+            // 1. Check if the pressed key is a modifier
+            bool isModifier = false;
+            if (keyToUse == Key.LWin || keyToUse == Key.RWin) { if (!_pressedModifiers.Contains("Win")) _pressedModifiers.Add("Win"); isModifier = true; }
+            else if (keyToUse == Key.LeftCtrl || keyToUse == Key.RightCtrl) { if (!_pressedModifiers.Contains("Ctrl")) _pressedModifiers.Add("Ctrl"); isModifier = true; }
+            else if (keyToUse == Key.LeftAlt || keyToUse == Key.RightAlt) { if (!_pressedModifiers.Contains("Alt")) _pressedModifiers.Add("Alt"); isModifier = true; }
+            else if (keyToUse == Key.LeftShift || keyToUse == Key.RightShift) { if (!_pressedModifiers.Contains("Shift")) _pressedModifiers.Add("Shift"); isModifier = true; }
 
             // 2. Gather all currently held modifiers
             uint mods = 0;
@@ -97,30 +98,66 @@ namespace PocketDrop
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) || Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) mods |= App.MOD_SHIFT;
             if (Keyboard.IsKeyDown(Key.LWin) || Keyboard.IsKeyDown(Key.RWin)) mods |= App.MOD_WIN;
 
-            // 3. Clean up the tracking list if a key was released before the letter was pressed
+            // 3. Clean up the tracking list if a key was released
             if ((mods & App.MOD_WIN) == 0) _pressedModifiers.Remove("Win");
             if ((mods & App.MOD_CTRL) == 0) _pressedModifiers.Remove("Ctrl");
             if ((mods & App.MOD_ALT) == 0) _pressedModifiers.Remove("Alt");
             if ((mods & App.MOD_SHIFT) == 0) _pressedModifiers.Remove("Shift");
 
-            // 4. Enforce at least one modifier!
-            if (mods == 0)
+            // ✨ THE FIX: If the user just pressed or released a modifier, draw it instantly!
+            if (isModifier)
             {
-                string msg = (string)Application.Current.Resources["Text_MsgNeedModifier"];
-                string title = (string)Application.Current.Resources["Text_MsgInvalidShortcutTitle"];
-                MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Information);
-                _pressedModifiers.Clear(); // Reset
+                _displayOrder = new List<string>(_pressedModifiers);
+                SelectedLetter = ""; // Clear any previous letter while they hold modifiers
+                RenderKeycaps();     // Draw just the modifiers!
+                e.Handled = true;    // Stop the event
                 return;
             }
 
-            // 5. Catch the final letter and save it
+            // 4. Catch the final letter
             if (keyToUse >= Key.A && keyToUse <= Key.Z)
             {
-                // ✨ Pass the chronological list to SetKey
-                SetKey(keyToUse.ToString(), mods, _pressedModifiers);
+                // Enforce at least one modifier!
+                if (mods == 0)
+                {
+                    string msg = (string)Application.Current.Resources["Text_MsgNeedModifier"];
+                    string title = (string)Application.Current.Resources["Text_MsgInvalidShortcutTitle"];
+                    MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Information);
+                    _pressedModifiers.Clear();
+                    SelectedLetter = "_";
+                    RenderKeycaps();
+                    return;
+                }
 
+                // Save and lock in the final shortcut
+                SetKey(keyToUse.ToString(), mods, _pressedModifiers);
                 e.Handled = true;
                 _pressedModifiers.Clear(); // Reset for the next time the user tries
+            }
+        }
+
+        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            Key keyToUse = e.Key == Key.System ? e.SystemKey : e.Key;
+
+            // If they release a modifier before locking in a letter, we need to erase it from the screen
+            if (keyToUse == Key.LWin || keyToUse == Key.RWin) _pressedModifiers.Remove("Win");
+            if (keyToUse == Key.LeftCtrl || keyToUse == Key.RightCtrl) _pressedModifiers.Remove("Ctrl");
+            if (keyToUse == Key.LeftAlt || keyToUse == Key.RightAlt) _pressedModifiers.Remove("Alt");
+            if (keyToUse == Key.LeftShift || keyToUse == Key.RightShift) _pressedModifiers.Remove("Shift");
+
+            // Only update the UI if they haven't locked in a final letter yet
+            if (string.IsNullOrEmpty(SelectedLetter))
+            {
+                _displayOrder = new List<string>(_pressedModifiers);
+
+                // If they let go of everything, return to the blank state
+                if (_displayOrder.Count == 0)
+                {
+                    SelectedLetter = "_";
+                }
+
+                RenderKeycaps();
             }
         }
 
@@ -181,13 +218,17 @@ namespace PocketDrop
             DialogKeysContainer.Children.Clear();
             if (SelectedLetter == "_") return;
 
-            // ✨ Render them in the exact order they were pressed
+            // ✨ 1. Render the modifiers in real-time
             foreach (string mod in _displayOrder)
             {
                 AddKeycap(mod);
             }
 
-            AddKeycap(SelectedLetter);
+            // ✨ 2. THE FIX: Only draw the final blue square if a letter has actually been pressed!
+            if (!string.IsNullOrEmpty(SelectedLetter))
+            {
+                AddKeycap(SelectedLetter);
+            }
         }
 
         private void AddKeycap(string text)
