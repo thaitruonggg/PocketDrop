@@ -81,4 +81,50 @@ public class WindowPlacementTests
         Assert.Equal(8, result.X);
         Assert.Equal(8, result.Y);
     }
+
+    // ══════════════════════════════════════════════════════
+    // TASKBAR SNAP TESTS (SavedPocketsWindow)
+    // ══════════════════════════════════════════════════════
+
+    [Fact]
+    public void CalculateTaskbarSnapPosition_ShouldOffsetShadow_On1080pMonitor()
+    {
+        // Arrange: A standard 1080p monitor and a 300x400 window with a 15px shadow
+        double workAreaW = 1920;
+        double workAreaH = 1080;
+        double windowW = 300;
+        double windowH = 400;
+        double shadowMargin = 15;
+
+        // Act
+        Point result = AppHelpers.CalculateTaskbarSnapPosition(
+            windowW, windowH, workAreaW, workAreaH, shadowMargin);
+
+        // Assert: Math says -> Left: Screen (1920) - Window (300) + Shadow (15) = 1635
+        Assert.Equal(1635, result.X);
+
+        // Assert: Math says -> Top: Screen (1080) - Window (400) + Shadow (15) = 695
+        Assert.Equal(695, result.Y);
+    }
+
+    [Fact]
+    public void CalculateTaskbarSnapPosition_ShouldWorkCorrectly_WithZeroShadow()
+    {
+        // Arrange: Testing the edge case where you remove the shadow entirely in the future
+        double workAreaW = 2560; // 1440p Monitor
+        double workAreaH = 1440;
+        double windowW = 500;
+        double windowH = 600;
+        double shadowMargin = 0; // No shadow!
+
+        // Act
+        Point result = AppHelpers.CalculateTaskbarSnapPosition(
+            windowW, windowH, workAreaW, workAreaH, shadowMargin);
+
+        // Assert: Left -> 2560 - 500 + 0 = 2060
+        Assert.Equal(2060, result.X);
+
+        // Assert: Top -> 1440 - 600 + 0 = 840
+        Assert.Equal(840, result.Y);
+    }
 }

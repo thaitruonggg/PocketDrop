@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace PocketDrop
 {
@@ -189,6 +190,99 @@ namespace PocketDrop
             }
 
             return new Point(targetLeft, targetTop);
+        }
+
+        // ══════════════════════════════════════════════════════
+        // Calculate My Pocket position ALGORITHM
+        // ══════════════════════════════════════════════════════
+        public static Point CalculateTaskbarSnapPosition(double windowWidth, double windowHeight, double workAreaWidth, double workAreaHeight, double shadowMargin)
+        {
+            // Subtract the window size from the total screen size to push it to the right/bottom edge,
+            // then add the shadow margin back so the invisible borders bleed off the screen.
+            double targetLeft = workAreaWidth - windowWidth + shadowMargin;
+            double targetTop = workAreaHeight - windowHeight + shadowMargin;
+
+            return new Point(targetLeft, targetTop);
+        }
+
+        // ══════════════════════════════════════════════════════
+        // Check DarkMode ALGORITHM
+        // ══════════════════════════════════════════════════════
+
+        public static bool IsWindowsInDarkMode()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"))
+                {
+                    if (key?.GetValue("AppsUseLightTheme") != null)
+                    {
+                        return (int)key.GetValue("AppsUseLightTheme") == 0;
+                    }
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        // ══════════════════════════════════════════════════════
+        // Run at Startup ALGORITHM
+        // ══════════════════════════════════════════════════════
+        public static bool IsRunAtStartupEnabled()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false))
+                {
+                    return key?.GetValue("PocketDrop") != null;
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        public static bool SetRunAtStartup(bool enable, string exePath)
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                {
+                    if (key != null)
+                    {
+                        if (enable)
+                        {
+                            key.SetValue("PocketDrop", $"\"{exePath}\"");
+                        }
+                        else
+                        {
+                            key.DeleteValue("PocketDrop", false);
+                        }
+                        return true; // Success
+                    }
+                }
+            }
+            catch { }
+            return false; // Failed
+        }
+
+        // ══════════════════════════════════════════════════════
+        // Version check ALGORITHM
+        // ══════════════════════════════════════════════════════
+        public static bool IsUpdateAvailable(string currentVersionText, string onlineVersionText)
+        {
+            // Clean up the strings just in case GitHub added invisible spaces or newlines
+            string currentClean = currentVersionText?.Trim() ?? "";
+            string onlineClean = onlineVersionText?.Trim() ?? "";
+
+            if (Version.TryParse(currentClean, out Version current) &&
+                Version.TryParse(onlineClean, out Version latest))
+            {
+                return latest > current;
+            }
+
+            // If the strings are garbage (like "HTML Error 404"), safely return false
+            return false;
         }
     }
 }

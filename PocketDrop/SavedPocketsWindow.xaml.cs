@@ -16,20 +16,18 @@ namespace PocketDrop
             RefreshHistory();
         }
 
-        // --- NEW: Snap to the bottom right of the screen! ---
         // --- Snap seamlessly to the taskbar! ---
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            double workAreaWidth = SystemParameters.WorkArea.Width;
-            double workAreaHeight = SystemParameters.WorkArea.Height;
+            // ✨ Fetch the decoupled math!
+            Point snapPos = AppHelpers.CalculateTaskbarSnapPosition(
+                this.Width, this.Height,
+                SystemParameters.WorkArea.Width, SystemParameters.WorkArea.Height,
+                shadowMargin: 13);
 
-            // Because the XAML has Margin="15" for the drop shadow, the window has 15px of invisible padding.
-            // We shift the window +15 to push that invisible padding off-screen!
-            double shadowMargin = 15;
-
-            // Perfectly flush against the right edge and the bottom taskbar
-            this.Left = workAreaWidth - this.Width + shadowMargin;
-            this.Top = workAreaHeight - this.Height + shadowMargin;
+            // Apply the coordinates
+            this.Left = snapPos.X;
+            this.Top = snapPos.Y;
 
             // ✨ THE ENTRANCE ANIMATION
             var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
@@ -94,7 +92,6 @@ namespace PocketDrop
             newPocket.Activate();
         }
 
-        // --- BOTTOM BUTTON: 'Trash' (Clears the RAM) ---
         // --- BOTTOM BUTTON: 'Trash' (Opens the popup!) ---
         private void Trash_Click(object sender, RoutedEventArgs e)
         {
@@ -149,7 +146,6 @@ namespace PocketDrop
             DeleteConfirmPopup.IsOpen = false;
         }
 
-        // --- BOTTOM BUTTON: 'Gear' (Opens Settings) ---
         // --- BOTTOM BUTTON: 'Gear' (Opens Settings) ---
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
@@ -211,7 +207,6 @@ namespace PocketDrop
             }
         }
 
-        // Variables to track drag-and-drop math
         // Variables to track drag-and-drop math and multi-select snapshots
         private Point? _listDragStart = null;
         private List<PocketItem> _dragCandidates = null;
