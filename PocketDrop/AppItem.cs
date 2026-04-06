@@ -7,6 +7,6 @@ namespace PocketDrop
         public string AppName { get; set; }
         public string ExePath { get; set; }
         public ImageSource AppIcon { get; set; }
-        public bool IsSelected { get; set; } // Tracks if the user checked the box!
+        public bool IsSelected { get; set; } // Tracks if the user checked the box
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,31 +11,42 @@ namespace PocketDrop
 {
     public partial class AppPickerDialog : Window
     {
-        // This is where we store the final string of exe paths to give back to Settings
+        // ================================================ //
+        // 1. STATE & DATA (VARIABLES)
+        // ================================================ //
+
+        // Store final exe path string for settings output
         public string FinalExcludedAppsString { get; private set; } = "";
 
+        // Store raw previously saved app string for parsing
         private string _existingApps;
-        private List<AppItem> _allApps;
 
+        // ObservableCollection for automatic UI updates when items are added
+        private ObservableCollection<AppItem> _allApps;
+
+
+        // ================================================ //
+        // 2. WINDOW LIFECYCLE (STARTUP)
+        // ================================================ //
         public AppPickerDialog(string existingApps)
         {
             InitializeComponent();
             _existingApps = existingApps ?? "";
 
-            // Start scanning immediately when the window opens!
-            LoadAppsAsync();
+            LoadAppsAsync(); // Trigger app scan on window open
         }
 
         private async void LoadAppsAsync()
         {
-            // Run the heavy registry scanning on a background thread so the UI doesn't freeze
-            _allApps = await Task.Run(() => AppScanner.GetInstalledApps());
+            // 1. Run registry scan on background thread to prevent UI freeze, then save this into a temporary variable
+            var scannedApps = await Task.Run(() => AppScanner.GetInstalledApps());
 
-            // Check if any of the scanned apps match what the user previously saved
+            // 2. Parse the saved exceptions list
             var savedList = _existingApps.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries)
                                          .Select(a => a.Trim().ToLower())
                                          .ToList();
 
+            // 3. Loop through the temporary list to check off any apps the user previously saved
             foreach (var app in _allApps)
             {
                 if (savedList.Contains(app.ExePath.ToLower()) ||
@@ -44,11 +56,19 @@ namespace PocketDrop
                 }
             }
 
+            // 4. Wrap the fully processed list into the ObservableCollection
+            _allApps = new ObservableCollection<AppItem>(scannedApps);
+
             // Hide the loading text and show the grid
             LoadingPanel.Visibility = Visibility.Collapsed;
             AppListControl.ItemsSource = _allApps;
             AppListControl.Visibility = Visibility.Visible;
         }
+
+
+        // ================================================ //
+        // 3. UI EVENTS (CLICKS)
+        // ================================================ //
 
         private void ManualBrowse_Click(object sender, MouseButtonEventArgs e)
         {
@@ -62,20 +82,16 @@ namespace PocketDrop
             {
                 string path = openFileDialog.FileName;
 
-                // Manually create a new AppItem for the custom file
+                // Manually create AppItem for custom file entry
                 var customApp = new AppItem
                 {
                     AppName = System.IO.Path.GetFileNameWithoutExtension(path),
                     ExePath = path,
                     AppIcon = AppScanner.GetIconFromExe(path),
-                    IsSelected = true // Auto-check it since they just picked it!
+                    IsSelected = true // Auto-check it when the user adds it
                 };
 
                 _allApps.Insert(0, customApp); // Put it at the very top of the list
-
-                // Refresh the UI
-                AppListControl.ItemsSource = null;
-                AppListControl.ItemsSource = _allApps;
             }
         }
 
@@ -84,7 +100,7 @@ namespace PocketDrop
             // Gather all the currently checked apps
             var checkedApps = _allApps.Where(a => a.IsSelected).Select(a => a.ExePath).ToList();
 
-            // Join them together with line breaks so it perfectly matches your existing App.ExcludedApps format
+            // Join checked apps with newlines
             FinalExcludedAppsString = string.Join(Environment.NewLine, checkedApps);
 
             DialogResult = true;
