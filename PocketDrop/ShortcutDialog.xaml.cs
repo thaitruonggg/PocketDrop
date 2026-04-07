@@ -4,22 +4,32 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Collections.Generic;
 
 namespace PocketDrop
 {
     public partial class ShortcutDialog : Window
     {
+        // ================================================ //
+        // 1. NATIVE WINDOWS APIS (P/INVOKE)
+        // ================================================ //
+
         // OS API for the Conflict Tester
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+
+        // ================================================ //
+        // 2. STATE & VARIABLES
+        // ================================================ //
+
         public uint SelectedVK { get; private set; }
         public string SelectedLetter { get; private set; }
         public uint SelectedModifiers { get; private set; }
 
-        // ✨ NEW: Track chronological order of physical key presses
+        // Track chronological order of physical key presses
         private List<string> _pressedModifiers = new List<string>();
         private List<string> _displayOrder = new List<string>();
 
@@ -27,6 +37,10 @@ namespace PocketDrop
         private uint _originalModifiers;
         private string _defaultLetter;
         private uint _defaultModifiers;
+
+        // ================================================ //
+        // 3. LIFECYCLE (STARTUP)
+        // ================================================ //
 
         public ShortcutDialog(string title, string currentLetter, uint currentMods, string defaultLetter, uint defaultMods)
         {
@@ -41,7 +55,16 @@ namespace PocketDrop
             SetKey(currentLetter, currentMods);
         }
 
-        // ✨ Add the optional "orderedMods" parameter
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Focus();
+        }
+
+
+        // ================================================ //
+        // 4. KEYBOARD INTERCEPTION ENGINE
+        // ================================================ //
+
         private void SetKey(string letter, uint mods, List<string> orderedMods = null)
         {
             if (string.IsNullOrEmpty(letter) || letter == "_")
@@ -57,14 +80,12 @@ namespace PocketDrop
                 SelectedModifiers = mods;
                 SelectedVK = (uint)KeyInterop.VirtualKeyFromKey((Key)System.Enum.Parse(typeof(Key), letter));
 
-                // Save the exact chronological visual order!
                 if (orderedMods != null && orderedMods.Count > 0)
                 {
                     _displayOrder = new List<string>(orderedMods);
                 }
                 else
                 {
-                    // Fallback order (used when loading the window from Settings)
                     _displayOrder.Clear();
                     if ((mods & App.MOD_WIN) != 0) _displayOrder.Add("Win");
                     if ((mods & App.MOD_CTRL) != 0) _displayOrder.Add("Ctrl");
@@ -73,11 +94,6 @@ namespace PocketDrop
                 }
             }
             RenderKeycaps();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.Focus();
         }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -104,12 +120,11 @@ namespace PocketDrop
             if ((mods & App.MOD_ALT) == 0) _pressedModifiers.Remove("Alt");
             if ((mods & App.MOD_SHIFT) == 0) _pressedModifiers.Remove("Shift");
 
-            // ✨ THE FIX: If the user just pressed or released a modifier, draw it instantly!
             if (isModifier)
             {
                 _displayOrder = new List<string>(_pressedModifiers);
-                SelectedLetter = ""; // Clear any previous letter while they hold modifiers
-                RenderKeycaps();     // Draw just the modifiers!
+                SelectedLetter = ""; // Clear previous letter input while modifier keys are held
+                RenderKeycaps();     // Draw just the modifiers
                 e.Handled = true;    // Stop the event
                 return;
             }
@@ -117,7 +132,7 @@ namespace PocketDrop
             // 4. Catch the final letter
             if (keyToUse >= Key.A && keyToUse <= Key.Z)
             {
-                // Enforce at least one modifier!
+                // Enforce at least one modifier
                 if (mods == 0)
                 {
                     string msg = (string)Application.Current.Resources["Text_MsgNeedModifier"];
@@ -140,18 +155,18 @@ namespace PocketDrop
         {
             Key keyToUse = e.Key == Key.System ? e.SystemKey : e.Key;
 
-            // If they release a modifier before locking in a letter, we need to erase it from the screen
+            // Erase pending letter from screen when modifier released before input
             if (keyToUse == Key.LWin || keyToUse == Key.RWin) _pressedModifiers.Remove("Win");
             if (keyToUse == Key.LeftCtrl || keyToUse == Key.RightCtrl) _pressedModifiers.Remove("Ctrl");
             if (keyToUse == Key.LeftAlt || keyToUse == Key.RightAlt) _pressedModifiers.Remove("Alt");
             if (keyToUse == Key.LeftShift || keyToUse == Key.RightShift) _pressedModifiers.Remove("Shift");
 
-            // Only update the UI if they haven't locked in a final letter yet
+            // Skip UI update if final letter already locked in
             if (string.IsNullOrEmpty(SelectedLetter))
             {
                 _displayOrder = new List<string>(_pressedModifiers);
 
-                // If they let go of everything, return to the blank state
+                // Return to blank state when all keys released
                 if (_displayOrder.Count == 0)
                 {
                     SelectedLetter = "_";
@@ -160,6 +175,11 @@ namespace PocketDrop
                 RenderKeycaps();
             }
         }
+
+
+        // ================================================ //
+        // 5. UI ACTIONS & COMMANDS
+        // ================================================ //
 
         private void Reset_Click(object sender, MouseButtonEventArgs e)
         {
@@ -181,7 +201,7 @@ namespace PocketDrop
                 return;
             }
 
-            // If they didn't actually change anything, just close immediately!
+            // Close immediately if no changes were made
             if (SelectedLetter == _originalLetter && SelectedModifiers == _originalModifiers)
             {
                 this.DialogResult = true;
@@ -189,17 +209,17 @@ namespace PocketDrop
                 return;
             }
 
-            // ✨ CONFLICT CHECK! Try to register it with the OS using a dummy ID (9999)
+            // Check for hotkey conflicts by registering dummy test ID with OS
             bool success = RegisterHotKey(IntPtr.Zero, 9999, SelectedModifiers, SelectedVK);
             if (!success)
             {
                 string msg = (string)Application.Current.Resources["Text_MsgConflictDesc"];
                 string title = (string)Application.Current.Resources["Text_MsgConflictTitle"];
                 MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
-                return; // Stop them from saving!
+                return; // Stop from saving!
             }
 
-            // It worked! Unregister the test so the main app can claim it, and close the dialog
+            // Unregister test hotkey and close dialog on success
             UnregisterHotKey(IntPtr.Zero, 9999);
 
             this.DialogResult = true;
@@ -212,19 +232,21 @@ namespace PocketDrop
             this.Close();
         }
 
-        // --- DYNAMIC KEYCAP GENERATOR FOR THE DIALOG ---
+
+        // ================================================ //
+        // 6. UI DYNAMIC RENDERING
+        // ================================================ //
+
         private void RenderKeycaps()
         {
             DialogKeysContainer.Children.Clear();
             if (SelectedLetter == "_") return;
 
-            // ✨ 1. Render the modifiers in real-time
             foreach (string mod in _displayOrder)
             {
                 AddKeycap(mod);
             }
 
-            // ✨ 2. THE FIX: Only draw the final blue square if a letter has actually been pressed!
             if (!string.IsNullOrEmpty(SelectedLetter))
             {
                 AddKeycap(SelectedLetter);
@@ -237,7 +259,7 @@ namespace PocketDrop
             {
                 Background = new SolidColorBrush(Color.FromRgb(0, 95, 184)),
                 CornerRadius = new CornerRadius(4),
-                // ✨ FIXED: Explicitly declaring Left, Top, Right, Bottom
+
                 Padding = new Thickness(14, 10, 14, 10),
                 Margin = new Thickness(0, 0, 6, 0),
                 MinWidth = 48

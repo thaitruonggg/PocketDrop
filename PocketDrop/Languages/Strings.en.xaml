@@ -62,8 +62,8 @@
     <sys:String x:Key="Text_Delete">Delete</sys:String>
     <sys:String x:Key="Text_DeleteSelected">Delete selected</sys:String>
 
-    <system:String x:Key="Text_ErrorTitle">Error</system:String>
-    <system:String x:Key="Text_OpenFileError">Could not open the file:</system:String>
+    <sys:String x:Key="Text_ErrorTitle">Error</sys:String>
+    <sys:String x:Key="Text_OpenFileError">Could not open the file:</sys:String>
 
     <sys:String x:Key="Text_SortDefault">Default</sys:String>
     <sys:String x:Key="Text_SortDefaultTooltip">Sort: Default Order</sys:String>
