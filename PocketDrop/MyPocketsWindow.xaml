@@ -12,6 +12,7 @@
         Icon="/Assets/PocketDrop.ico">
 
     <Window.Resources>
+
         <Style x:Key="FluentToolbarButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
@@ -44,9 +45,7 @@
                     <ControlTemplate TargetType="RadioButton">
                         <Grid Background="Transparent">
                             <Border x:Name="BackgroundBorder" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True"/>
-
                             <Border x:Name="ActiveIndicator" Width="3" Height="24" CornerRadius="1.5" Background="{DynamicResource BrandAccent}" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" Margin="2,0,0,0"/>
-
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -71,10 +70,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="BackgroundBorder" 
-                                Background="{TemplateBinding Background}" 
-                                CornerRadius="6" 
-                                SnapsToDevicePixels="True">
+                        <Border x:Name="BackgroundBorder" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -89,6 +85,64 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="HistoryItemStyle" TargetType="ListBoxItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ItemBorder" CornerRadius="10" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" Padding="0" Margin="6,4">
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#0D000000"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#1A0078D4"/>
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#330078D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="HistoryItemTemplate">
+            <Grid Margin="4,8" Background="Transparent" PreviewMouseLeftButtonDown="Item_PreviewMouseLeftButtonDown" PreviewMouseMove="Item_PreviewMouseMove" PreviewMouseLeftButtonUp="Item_PreviewMouseLeftButtonUp">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="76"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{Binding Icon}" Width="70" Height="70" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                <TextBlock Grid.Column="1" Text="{Binding FileName}" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextWrapping="Wrap" LineHeight="18" Margin="0,0,10,0"/>
+
+                <ToggleButton Grid.Column="2" Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center" ToolTip="Pin this pocket" Click="PinButton_Click" IsChecked="{Binding IsPinned, Mode=TwoWay}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="Transparent" CornerRadius="4" x:Name="BtnBorder">
+                                <Viewbox Width="16" Height="16">
+                                    <Path x:Name="StarIcon" Data="M12,2.25 l2.88,6.69 l7.23,0.61 l-5.46,4.88 l1.6,7.09 L12,18.04 l-6.25,3.48 l1.6-7.09 l-5.46,-4.88 l7.23,-0.61 Z" Stroke="{DynamicResource TextSecondary}" StrokeThickness="2" Fill="Transparent" StrokeLineJoin="Round"/>
+                                </Viewbox>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource IconHaloBackground}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="StarIcon" Property="Fill" Value="#Fcc600"/>
+                                    <Setter TargetName="StarIcon" Property="Stroke" Value="#Fcc600"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
 
     <Window.RenderTransform>
@@ -98,11 +152,8 @@
         </TransformGroup>
     </Window.RenderTransform>
 
-    <Border Background="{DynamicResource MicaBase}" 
-            BorderBrush="{DynamicResource StrokeCardDefault}" 
-            BorderThickness="1" 
-            CornerRadius="12" 
-            Margin="15">
+
+    <Border Background="{DynamicResource MicaBase}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="12" Margin="15">
         <Border.Effect>
             <DropShadowEffect BlurRadius="24" ShadowDepth="8" Opacity="0.15" Color="Black" Direction="270"/>
         </Border.Effect>
@@ -113,11 +164,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" 
-                    Background="Transparent" 
-                    BorderBrush="{DynamicResource StrokeControlDefault}" 
-                    BorderThickness="0,0,1,0" 
-                    CornerRadius="12,0,0,12">
+            <Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="0,0,1,0" CornerRadius="12,0,0,12">
                 <Grid Margin="0,15,0,15">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -126,26 +173,19 @@
 
                     <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
 
-                        <Button Style="{StaticResource FluentToolbarButton}" 
-                                Width="64" Height="58" Margin="0,0,0,4" Click="AddPocket_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_AddPocketTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <Button Style="{StaticResource FluentToolbarButton}" Width="64" Height="58" Margin="0,0,0,4" Click="AddPocket_Click" Cursor="Hand" ToolTip="{DynamicResource Text_AddPocketTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z M12 8V16 M8 12H16" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z M12 8V16 M8 12H16" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock Text="{DynamicResource Text_SidebarNew}" FontSize="11" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="TrashButton" 
-                                Style="{StaticResource FluentToolbarButton}" 
-                                Width="64" Height="58" Click="Trash_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_DeleteAllTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <Button x:Name="TrashButton" Style="{StaticResource FluentToolbarButton}" Width="64" Height="58" Click="Trash_Click" Cursor="Hand" ToolTip="{DynamicResource Text_DeleteAllTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M3 6H21 M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6 M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6 M10 11V17 M14 11V17" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M3 6H21 M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6 M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6 M10 11V17 M14 11V17" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock Text="{DynamicResource Text_SidebarClear}" FontSize="11" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
@@ -153,37 +193,28 @@
 
                         <Rectangle Height="2" Fill="{DynamicResource StrokeControlDefault}" Margin="12,8,12,12"/>
 
-                        <RadioButton x:Name="TabHome"  GroupName="SidebarNav" Style="{StaticResource SidebarNavRadioButtonStyle}" IsChecked="True"
-                                Width="64" Height="58" Margin="0,0,0,4" Click="TabHome_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_TabHomeTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <RadioButton x:Name="TabHome" GroupName="SidebarNav" Style="{StaticResource SidebarNavRadioButtonStyle}" IsChecked="True" Width="64" Height="58" Margin="0,0,0,4" Click="TabHome_Click" Cursor="Hand" ToolTip="{DynamicResource Text_TabHomeTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M12 3L4 9V21H9V14H15V21H20V9L12 3Z" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M12 3L4 9V21H9V14H15V21H20V9L12 3Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock Text="{DynamicResource Text_SidebarHome}" TextWrapping="Wrap" FontSize="11" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton x:Name="TabPinned" GroupName="SidebarNav" Style="{StaticResource SidebarNavRadioButtonStyle}" 
-                                Width="64" Height="58" Margin="0,0,0,4" Click="TabPinned_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_TabPinnedTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <RadioButton x:Name="TabPinned" GroupName="SidebarNav" Style="{StaticResource SidebarNavRadioButtonStyle}" Width="64" Height="58" Margin="0,0,0,4" Click="TabPinned_Click" Cursor="Hand" ToolTip="{DynamicResource Text_TabPinnedTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M12,2.25 l2.88,6.69 l7.23,0.61 l-5.46,4.88 l1.6,7.09 L12,18.04 l-6.25,3.48 l1.6-7.09 l-5.46,-4.88 l7.23,-0.61 Z" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="2" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M12,2.25 l2.88,6.69 l7.23,0.61 l-5.46,4.88 l1.6,7.09 L12,18.04 l-6.25,3.48 l1.6-7.09 l-5.46,-4.88 l7.23,-0.61 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}" StrokeThickness="2" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock Text="{DynamicResource Text_SidebarPinned}" FontSize="11" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
                         </RadioButton>
 
-                        <Button x:Name="SortButton" Style="{StaticResource FluentToolbarButton}" 
-                                Width="64" Height="58" Margin="0,0,0,4" Click="Sort_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_SortDefaultTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <Button x:Name="SortButton" Style="{StaticResource FluentToolbarButton}" Width="64" Height="58" Margin="0,0,0,4" Click="Sort_Click" Cursor="Hand" ToolTip="{DynamicResource Text_SortDefaultTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M4,5 H20 L14,12 V19 L10,17 V12 Z" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M4,5 H20 L14,12 V19 L10,17 V12 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock x:Name="SortText" Text="{DynamicResource Text_SortDefault}" FontSize="11" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
@@ -192,13 +223,10 @@
 
                     <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
                         <Rectangle Height="2" Fill="{DynamicResource StrokeControlDefault}" Margin="12,8,12,12"/>
-                        <Button Style="{StaticResource FluentToolbarButton}" 
-                                Width="66" Height="60" Click="Settings_Click" Cursor="Hand" 
-                                ToolTip="{DynamicResource Text_SettingsTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
+                        <Button Style="{StaticResource FluentToolbarButton}" Width="66" Height="60" Click="Settings_Click" Cursor="Hand" ToolTip="{DynamicResource Text_SettingsTooltip}" ToolTipService.Placement="Right" ToolTipService.HorizontalOffset="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Viewbox Width="20" Height="20" Margin="0,0,0,5">
-                                    <Path Data="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" 
-                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                    <Path Data="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                                 </Viewbox>
                                 <TextBlock Text="{DynamicResource Text_SidebarSettings}" FontSize="12" FontWeight="SemiBold" TextAlignment="Center"/>
                             </StackPanel>
@@ -213,128 +241,14 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Name="EmptyStateText" 
-                   Grid.Row="0" Grid.RowSpan="2"
-                   Text="{DynamicResource Text_EmptyPockets}" TextWrapping="Wrap"
-                   TextAlignment="Center" VerticalAlignment="Center" 
-                   Foreground="{DynamicResource TextSecondary}" 
-                   FontSize="14" Margin="20"/>
+                <TextBlock x:Name="EmptyStateText" Grid.Row="0" Grid.RowSpan="2" Text="{DynamicResource Text_EmptyPockets}" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}" FontSize="14" Margin="20"/>
 
-                <ListBox x:Name="HistoryListBox" 
-                 Grid.Row="0"
-                 SelectionMode="Extended" 
-                 SelectionChanged="HistoryListBox_SelectionChanged"
-                 Background="Transparent" BorderThickness="0" 
-                 Visibility="Collapsed" Margin="5,10,5,5" Padding="0"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListBox.Resources>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="ItemBorder" 
-                        CornerRadius="10" 
-                        Background="Transparent" 
-                        BorderBrush="Transparent"
-                        BorderThickness="1"
-                        Padding="0" 
-                        Margin="6,4">
-                                            <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" />
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="ItemBorder" Property="Background" Value="#0D000000"/>
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="ItemBorder" Property="Background" Value="#1A0078D4"/>
-                                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#330078D4"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.Resources>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="4,8" 
-                          Background="Transparent"
-                          PreviewMouseLeftButtonDown="Item_PreviewMouseLeftButtonDown"
-                          PreviewMouseMove="Item_PreviewMouseMove"
-                                  PreviewMouseLeftButtonUp="Item_PreviewMouseLeftButtonUp">
+                <ListBox x:Name="HistoryListBox" Grid.Row="0" SelectionMode="Extended" SelectionChanged="HistoryListBox_SelectionChanged" Background="Transparent" BorderThickness="0" Visibility="Collapsed" Margin="5,10,5,5" Padding="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemContainerStyle="{StaticResource HistoryItemStyle}" 
+                         ItemTemplate="{StaticResource HistoryItemTemplate}" />
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="76"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="40"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Image Source="{Binding Icon}" 
-                               Width="70" Height="70" 
-                               HorizontalAlignment="Left" 
-                               VerticalAlignment="Center"/>
-
-                                <TextBlock Grid.Column="1" 
-                                   Text="{Binding FileName}" 
-                                   Foreground="{DynamicResource TextPrimary}" 
-                                   VerticalAlignment="Center" 
-                                   TextWrapping="Wrap" 
-                                   LineHeight="18"
-                                   Margin="0,0,10,0"/>
-
-                                <ToggleButton Grid.Column="2" 
-                                      Width="32" Height="32" 
-                                      Background="Transparent" BorderThickness="0"
-                                      Cursor="Hand"
-                                      VerticalAlignment="Center"
-                                      ToolTip="Pin this pocket"
-                                      Click="PinButton_Click"
-                                      IsChecked="{Binding IsPinned, Mode=TwoWay}">
-                                    <ToggleButton.Template>
-                                        <ControlTemplate TargetType="ToggleButton">
-                                            <Border Background="Transparent" CornerRadius="4" x:Name="BtnBorder">
-                                                <Viewbox Width="16" Height="16">
-                                                    <Path x:Name="StarIcon" 
-                                                  Data="M12,2.25 l2.88,6.69 l7.23,0.61 l-5.46,4.88 l1.6,7.09 L12,18.04 l-6.25,3.48 l1.6-7.09 l-5.46,-4.88 l7.23,-0.61 Z" 
-                                                  Stroke="{DynamicResource TextSecondary}" 
-                                                  StrokeThickness="2" 
-                                                  Fill="Transparent" 
-                                                  StrokeLineJoin="Round"/>
-                                                </Viewbox>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource IconHaloBackground}"/>
-                                                </Trigger>
-                                                <Trigger Property="IsChecked" Value="True">
-                                                    <Setter TargetName="StarIcon" Property="Fill" Value="#Fcc600"/>
-                                                    <Setter TargetName="StarIcon" Property="Stroke" Value="#Fcc600"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </ToggleButton.Template>
-                                </ToggleButton>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
-                <Border x:Name="ToastPopup" 
-                        Grid.Row="0"
-                        Background="#CC202020" 
-                        CornerRadius="8" 
-                        HorizontalAlignment="Center" 
-                        VerticalAlignment="Bottom" 
-                        Margin="0,0,0,20" 
-                        Padding="16,8" 
-                        IsHitTestVisible="False" 
-                        Opacity="0">
-                    <TextBlock x:Name="ToastText" 
-                               Foreground="White" 
-                               FontWeight="SemiBold" 
-                               FontSize="12"/>
+                <Border x:Name="ToastPopup" Grid.Row="0" Background="#CC202020" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Padding="16,8" IsHitTestVisible="False" Opacity="0">
+                    <TextBlock x:Name="ToastText" Foreground="White" FontWeight="SemiBold" FontSize="12"/>
                 </Border>
 
                 <Grid x:Name="SelectAllBar" Grid.Row="1" Margin="15,5,15,10" MinHeight="32" Visibility="Collapsed">
@@ -344,31 +258,15 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center"
-                                MouseLeftButtonDown="SelectAllBar_Click" Cursor="Hand" Background="Transparent">
-                        <CheckBox x:Name="SelectAllCheckBox" 
-                                  VerticalAlignment="Center" 
-                                  Checked="SelectAll_Checked" 
-                                  Unchecked="SelectAll_Unchecked"
-                                  Cursor="Hand"/>
-                        <TextBlock Text="{DynamicResource Text_SelectAll}" 
-                                   Foreground="{DynamicResource TextSecondary}" 
-                                   FontSize="12" 
-                                   Margin="8,0,0,0" 
-                                   VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" MouseLeftButtonDown="SelectAllBar_Click" Cursor="Hand" Background="Transparent">
+                        <CheckBox x:Name="SelectAllCheckBox" VerticalAlignment="Center" Checked="SelectAll_Checked" Unchecked="SelectAll_Unchecked" Cursor="Hand"/>
+                        <TextBlock Text="{DynamicResource Text_SelectAll}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <Button x:Name="DeleteSelectedBtn"
-                            Grid.Column="2" 
-                            Style="{StaticResource FluentToolbarButton}" 
-                            Height="32" Padding="8,4"
-                            Click="DeleteSelected_Click" 
-                            Cursor="Hand" Visibility="Collapsed">
+                    <Button x:Name="DeleteSelectedBtn" Grid.Column="2" Style="{StaticResource FluentToolbarButton}" Height="32" Padding="8,4" Click="DeleteSelected_Click" Cursor="Hand" Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Viewbox Width="14" Height="14" Margin="0,0,6,0">
-                                <Path Data="M3 6H21 M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6 M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6 M10 11V17 M14 11V17" 
-                                      Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
-                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
+                                <Path Data="M3 6H21 M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6 M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6 M10 11V17 M14 11V17" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Fill="Transparent"/>
                             </Viewbox>
                             <TextBlock Text="{DynamicResource Text_DeleteSelected}" Foreground="{DynamicResource TextSecondary}" FontSize="12" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -377,40 +275,21 @@
             </Grid>
 
             <Popup x:Name="DeleteConfirmPopup" AllowsTransparency="True" StaysOpen="False" Placement="Right" PlacementTarget="{Binding ElementName=TrashButton}" HorizontalOffset="15" VerticalOffset="-50">
-                <Border Background="{DynamicResource LayerDefault}" 
-                        BorderBrush="{DynamicResource StrokeCardDefault}" 
-                        BorderThickness="1" 
-                        CornerRadius="12" 
-                        Margin="25,15" Padding="20">
+                <Border Background="{DynamicResource LayerDefault}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="12" Margin="25,15" Padding="20">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="28" ShadowDepth="6" Opacity="0.2" Direction="270" Color="Black"/>
                     </Border.Effect>
 
                     <StackPanel Width="220">
-                        <TextBlock Text="{DynamicResource Text_ClearAllPocketsTitle}"
-                                   Foreground="{DynamicResource TextPrimary}" 
-                                   FontWeight="SemiBold"
-                                   FontSize="16" Margin="0,0,0,8"
-                                   TextAlignment="Center"/>
-                        <TextBlock Text="{DynamicResource Text_ClearAllPocketsDesc}"
-                                   Foreground="{DynamicResource TextSecondary}" 
-                                   FontSize="13" Margin="0,0,0,20" 
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap" LineHeight="18"/>
+                        <TextBlock Text="{DynamicResource Text_ClearAllPocketsTitle}" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8" TextAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Text_ClearAllPocketsDesc}" Foreground="{DynamicResource TextSecondary}" FontSize="13" Margin="0,0,0,20" TextAlignment="Center" TextWrapping="Wrap" LineHeight="18"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Content="{DynamicResource Text_Cancel}" Margin="0,0,6,0"
-                                    Style="{StaticResource FluentToolbarButton}"
-                                    Foreground="{DynamicResource TextPrimary}"
-                                    FontSize="13" Height="36" 
-                                    Click="CloseDeletePopup_Click"/>
-                            <Button Grid.Column="1" Content="{DynamicResource Text_Delete}"
-                                    Style="{StaticResource DestructiveButtonStyle}"
-                                    FontSize="13" FontWeight="SemiBold" Height="36" 
-                                    Click="ConfirmDelete_Click"/>
+                            <Button Grid.Column="0" Content="{DynamicResource Text_Cancel}" Margin="0,0,6,0" Style="{StaticResource FluentToolbarButton}" Foreground="{DynamicResource TextPrimary}" FontSize="13" Height="36" Click="CloseDeletePopup_Click"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Text_Delete}" Style="{StaticResource DestructiveButtonStyle}" FontSize="13" FontWeight="SemiBold" Height="36" Click="ConfirmDelete_Click"/>
                         </Grid>
                     </StackPanel>
                 </Border>
