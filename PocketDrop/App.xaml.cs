@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Sentry;
 
 namespace PocketDrop
 {
@@ -118,6 +119,36 @@ namespace PocketDrop
         // ================================================ //
         // 4. APP LIFECYCLE (STARTUP & EXIT)
         // ================================================ //
+
+        // Setup Sentry
+        public App()
+        {
+            SentrySdk.Init(options =>
+            {
+                options.Dsn = "https://4d1f664fbd5da3c2414771f1ca89870e@o4511181788741632.ingest.de.sentry.io/4511181794050128";
+                options.IsGlobalModeEnabled = true;
+                options.SendDefaultPii = false;
+            });
+
+            // Hook into the global WPF safety net
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
+
+        // Sentry crash catcher
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            // 1. Send to Sentry
+            SentrySdk.CaptureException(e.Exception);
+
+            // Wait up to 2 seconds for Sentry to finish uploading before the app dies
+            SentrySdk.FlushAsync(TimeSpan.FromSeconds(2)).GetAwaiter().GetResult();
+
+            // 2. Prevent default Windows error popup
+            e.Handled = true;
+
+            // 3. Close safely
+            System.Windows.Application.Current.Shutdown();
+        }
 
         // Read all user preferences from Windows
         public static void LoadSettings()

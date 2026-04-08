@@ -18,6 +18,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Sentry" Version="6.3.0" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
