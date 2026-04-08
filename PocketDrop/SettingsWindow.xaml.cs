@@ -60,21 +60,8 @@ namespace PocketDrop
             RefreshExcludedAppsDisplay();
 
             // 4. Get the version number, chopping off the Git hash
-            var versionAttr = System.Reflection.Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
-                as System.Reflection.AssemblyInformationalVersionAttribute[];
-
-            if (versionAttr != null && versionAttr.Length > 0)
-            {
-                string cleanVersion = versionAttr[0].InformationalVersion.Split('+')[0].Replace("-beta", " Beta ");
-
-                // Update the UI text
-                AppVersionText.Text = $"Version {cleanVersion}";
-            }
-            else
-            {
-                AppVersionText.Text = "Version 1.0.0";
-            }
+            // 4. ✨ THE FIX: Pull the clean version from our new central source
+            AppVersionText.Text = $"Version {App.GetAppVersion()}";
 
             // 5. Load and apply the Theme
             ThemeCombo.SelectedIndex = App.AppTheme;
@@ -96,7 +83,7 @@ namespace PocketDrop
             if (App.UpdateAvailable)
             {
                 CheckUpdateBtn.Content = "Update Available!";
-                CheckUpdateBtn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 167, 69));
+                CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
             }
         }
 
@@ -468,6 +455,15 @@ namespace PocketDrop
         // 7. UPDATE CHECKER ENGINE
         // ================================================ //
 
+        private void ShowUpdateAvailableButton()
+        {
+            // 1. Change the text to alert the user
+            CheckUpdateBtn.Content = "Update Available!";
+
+            // 2. Safely swap the style from Blue to the Green one we created
+            CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
+        }
+
         // Update checker
         private async void CheckUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -491,7 +487,9 @@ namespace PocketDrop
 
                     string url = "https://raw.githubusercontent.com/naofunyan/PocketDrop/main/version.txt";
                     string latestVersionString = await client.GetStringAsync(url);
-                    string currentVersionString = "1.0.0";
+
+                    // ✨ THE FIX: Use the dynamic version instead of "1.0.0"
+                    string currentVersionString = App.GetAppVersion().Replace(" Beta ", "-beta");
 
                     bool hasUpdate = AppHelpers.IsUpdateAvailable(currentVersionString, latestVersionString);
 
@@ -513,7 +511,7 @@ namespace PocketDrop
                         else
                         {
                             CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_UpdateAvailableBtn"] ?? "Update Available!";
-                            CheckUpdateBtn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 167, 69));
+                            CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
                         }
                     }
                     else
@@ -534,15 +532,13 @@ namespace PocketDrop
             }
             finally
             {
+                CheckUpdateBtn.IsEnabled = true;
+
                 // Only reset version check button if no update was found
                 if (!App.UpdateAvailable)
                 {
-                    CheckUpdateBtn.IsEnabled = true;
                     CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_CheckUpdatesBtn"] ?? "Check for updates";
-                }
-                else
-                {
-                    CheckUpdateBtn.IsEnabled = true;
+                    CheckUpdateBtn.Style = (Style)FindResource("PrimaryButtonStyle");
                 }
             }
         }

@@ -34,6 +34,19 @@ namespace PocketDrop
         public static bool UpdateAvailable = false;
         public static string UpdateUrl = "https://github.com/naofunyan/PocketDrop/releases/latest";
 
+        public static string GetAppVersion()
+        {
+            var versionAttr = System.Reflection.Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                as System.Reflection.AssemblyInformationalVersionAttribute[];
+
+            if (versionAttr != null && versionAttr.Length > 0)
+            {
+                // Returns the clean version (e.g., "0.1.0" or "0.1.0 Beta 1")
+                return versionAttr[0].InformationalVersion.Split('+')[0].Replace("-beta-", " Beta ");
+            }
+            return "1.0.0"; // Fallback
+        }
 
         // ================================================ //
         // 2. USER SETTINGS & PREFERENCES
@@ -411,8 +424,8 @@ namespace PocketDrop
                     string url = "https://raw.githubusercontent.com/naofunyan/PocketDrop/main/version.txt";
                     string latestVersionString = await client.GetStringAsync(url);
 
-                    // Bump version to match current app version
-                    string currentVersionString = "1.0.0";
+                    // Dynamically fetch the version and format it for the GitHub comparison
+                    string currentVersionString = GetAppVersion().Replace(" Beta ", "-beta");
 
                     bool hasUpdate = AppHelpers.IsUpdateAvailable(currentVersionString, latestVersionString);
 
