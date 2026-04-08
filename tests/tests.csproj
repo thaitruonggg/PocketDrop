@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>PocketDrop_Tests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-	  <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
