@@ -20,7 +20,7 @@
     <sys:String x:Key="Text_MenuOpenWith">Mở bằng...</sys:String>
 
     <sys:String x:Key="Text_MenuShare">Chia sẻ qua...</sys:String>
-    <sys:String x:Key="Text_CompressingShare">Đang nén thư mục để chia sẻ...</sys:String>
+    <sys:String x:Key="Text_CompressingShare">Đang nén thư mục...</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorTitle">Chia sẻ thất bại</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorDesc">Không thể chia sẻ trực tiếp thư mục. Vui lòng chọn 'Nén thành ZIP' trước hoặc bật Tự động nén trong Cài đặt.</sys:String>
     <sys:String x:Key="Text_ShareCompressErrorTitle">Quá trình nén thất bại</sys:String>

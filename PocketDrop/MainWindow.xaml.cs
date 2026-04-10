@@ -1147,6 +1147,16 @@ namespace PocketDrop
             {
                 string zipPath = saveDialog.FileName;
 
+                // Show loading state
+                if (ExpandButton != null) ExpandButton.IsChecked = false; // Collapse the menu immediately
+
+                if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
+                if (StatusText != null)
+                {
+                    StatusText.Text = (string)Application.Current.Resources["Text_CompressingShare"] ?? "Compressing files...";
+                    StatusText.Visibility = Visibility.Visible;
+                }
+
                 // 3. Compress in the background
                 await System.Threading.Tasks.Task.Run(() =>
                 {
@@ -1160,9 +1170,14 @@ namespace PocketDrop
                         {
                             foreach (var item in itemsToCompress)
                             {
-                                if (File.Exists(item.FilePath))
+                                // 1. Check if it is a folder
+                                if (Directory.Exists(item.FilePath))
                                 {
-                                    // Add each physical file to the ZIP payload
+                                    AddDirectoryToZip(archive, item.FilePath, item.FileName);
+                                }
+                                // 2. Check if it is a standard file
+                                else if (File.Exists(item.FilePath))
+                                {
                                     archive.CreateEntryFromFile(item.FilePath, item.FileName);
                                 }
                             }
@@ -1173,6 +1188,13 @@ namespace PocketDrop
                         Console.WriteLine($"Could not create ZIP: {ex.Message}");
                     }
                 });
+
+                // Restore UI (if the Pocket stays open after compression based on user settings)
+                if (!App.CloseWhenCompress)
+                {
+                    if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+                    if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
+                }
 
                 // 4. Search existing Windows Explorer tabs
                 try

@@ -20,7 +20,7 @@
     <sys:String x:Key="Text_MenuOpenWith">Open with...</sys:String>
 
     <sys:String x:Key="Text_MenuShare">Share with...</sys:String>
-    <sys:String x:Key="Text_CompressingShare">Compressing for Share...</sys:String>
+    <sys:String x:Key="Text_CompressingShare">Compressing...</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorTitle">Share Action Failed</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorDesc">Folders cannot be shared directly. Please use 'Compress to ZIP' first or enable Auto-Compress in Settings.</sys:String>
     <sys:String x:Key="Text_ShareCompressErrorTitle">Compression Error</sys:String>
