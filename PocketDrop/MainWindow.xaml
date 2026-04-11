@@ -15,28 +15,37 @@
             <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
         </Style>
 
-        <DataTemplate x:Key="GridTemplate">
-            <StackPanel Margin="5" Width="96" UseLayoutRounding="True">
-                <Border CornerRadius="6" Background="Transparent" Width="90" Height="90" ClipToBounds="True">
-                    <Image Source="{Binding Icon}" Stretch="Uniform" UseLayoutRounding="True" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Border>
-                <TextBlock Text="{Binding FileName}" FontSize="11" Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
-            </StackPanel>
-        </DataTemplate>
+        <DataTemplate x:Key="UnifiedItemTemplate">
+            <Grid>
 
-        <DataTemplate x:Key="ListTemplate">
-            <Border Margin="0,3" CornerRadius="8" Padding="12,10">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border CornerRadius="6" Width="48" Height="48" Background="Transparent" BorderThickness="0" HorizontalAlignment="Center" ClipToBounds="True">
-                        <Image Source="{Binding Icon}" UseLayoutRounding="True" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Stretch="Uniform"/>
+                <StackPanel x:Name="GridUI" Margin="5" Width="96" UseLayoutRounding="True" Visibility="Visible">
+                    <Border CornerRadius="6" Background="Transparent" Width="90" Height="90" ClipToBounds="True">
+                        <Image Source="{Binding Icon}" Stretch="Uniform" UseLayoutRounding="True" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Border>
-                    <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="14,0,0,0" TextTrimming="CharacterEllipsis"/>
-                </Grid>
-            </Border>
+                    <TextBlock Text="{Binding FileName}" FontSize="11" Foreground="{DynamicResource TextPrimary}" TextAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <Border x:Name="ListUI" Margin="0,3" Width="475" CornerRadius="8" Padding="12,10" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border CornerRadius="6" Width="48" Height="48" Background="Transparent" BorderThickness="0" HorizontalAlignment="Center" ClipToBounds="True">
+                            <Image Source="{Binding Icon}" UseLayoutRounding="True" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Stretch="Uniform"/>
+                        </Border>
+                        <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="14,0,0,0" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="List">
+                    <Setter TargetName="GridUI" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="ListUI" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
 
         <ControlTemplate x:Key="MoreButtonTemplate" TargetType="Button">
@@ -123,7 +132,8 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="Bg" CornerRadius="6" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" Padding="2">
-                            <ContentPresenter/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
@@ -144,7 +154,7 @@
         </Style>
 
         <Style x:Key="PocketListBoxStyle" TargetType="ListBox">
-            <Setter Property="ItemTemplate" Value="{StaticResource GridTemplate}"/>
+            <Setter Property="ItemTemplate" Value="{StaticResource UnifiedItemTemplate}"/>
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
@@ -152,20 +162,9 @@
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding CurrentViewMode}" Value="List">
-                    <Setter Property="ItemTemplate" Value="{StaticResource ListTemplate}"/>
-                    <Setter Property="ItemsPanel">
-                        <Setter.Value>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
+
         </Style>
-        
+
     </Window.Resources>
 
     <Window.Triggers>

@@ -483,7 +483,13 @@ namespace PocketDrop
             DependencyObject hit = e.OriginalSource as DependencyObject;
             while (hit != null)
             {
-                if (hit == DeleteSelectedButton || hit is System.Windows.Controls.Primitives.ScrollBar) return;
+                // 1. Ignore Delete, Select All Checkbox, and Scrollbars
+                if (hit == DeleteSelectedButton || hit == SelectAllCheckBox || hit is System.Windows.Controls.Primitives.ScrollBar)
+                    return;
+
+                // 2. THE FIX: Ignore the List and Grid buttons to prevent 90-file drag-and-drop memory spikes!
+                if (hit is Border border && (border.Tag?.ToString() == "List" || border.Tag?.ToString() == "Grid"))
+                    return;
 
                 hit = (hit is Visual || hit is System.Windows.Media.Media3D.Visual3D)
                     ? VisualTreeHelper.GetParent(hit)
@@ -933,6 +939,7 @@ namespace PocketDrop
             if (sender is Border border && border.Tag != null)
             {
                 CurrentViewMode = border.Tag.ToString();
+                startPoint = null;
             }
         }
 
@@ -1445,7 +1452,14 @@ namespace PocketDrop
             // 1. Unselect all files so they don't stay highlighted
             ItemsListBox.UnselectAll();
 
-            // 2. Uncheck toggle button when popup closed by clicking outside
+            // 2. Scroll back to the very top for the next time it opens!
+            var scrollViewer = GetScrollViewer(ItemsListBox);
+            if (scrollViewer != null)
+            {
+                scrollViewer.ScrollToTop();
+            }
+
+            // 3. Uncheck toggle button when popup closed by clicking outside
             ExpandButton.IsChecked = false;
         }
 
@@ -1830,9 +1844,23 @@ namespace PocketDrop
             _idleMemoryTimer.Stop();
             _idleMemoryTimer.Start();
         }
+
+        // Helper to safely find the hidden ScrollViewer inside WPF ListBoxes
+        private ScrollViewer GetScrollViewer(DependencyObject depObj)
+        {
+            if (depObj == null) return null;
+            if (depObj is ScrollViewer scrollViewer) return scrollViewer;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+                var result = GetScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
     }
 
-    // --- The blueprint for a dropped item ---
     public class PocketItem
     {
         public string FileName { get; set; }
