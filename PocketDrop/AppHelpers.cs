@@ -333,9 +333,49 @@ namespace PocketDrop
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+        // --- NEW NATIVE APIS (Blazing Fast) ---
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool QueryFullProcessImageName([System.Runtime.InteropServices.In] IntPtr hProcess, [System.Runtime.InteropServices.In] int dwFlags, [System.Runtime.InteropServices.Out] System.Text.StringBuilder lpExeName, ref int lpdwSize);
+
+        // --- CACHE VARIABLES ---
+        private static string _lastExcludedAppsRaw = null;
+        private static HashSet<string> _cachedExcludedApps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        // Helper to cleanly update the cache only when the user changes settings
+        private static void UpdateExcludedAppsCache()
+        {
+            if (_lastExcludedAppsRaw == App.ExcludedApps) return; // Skip if nothing changed!
+
+            _cachedExcludedApps.Clear();
+            if (!string.IsNullOrWhiteSpace(App.ExcludedApps))
+            {
+                var rules = App.ExcludedApps.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var ruleText in rules)
+                {
+                    string rule = System.IO.Path.GetFileNameWithoutExtension(ruleText.Trim());
+                    if (!string.IsNullOrEmpty(rule))
+                    {
+                        _cachedExcludedApps.Add(rule); // HashSet lookups are instant
+                    }
+                }
+            }
+            _lastExcludedAppsRaw = App.ExcludedApps;
+        }
+
         public static bool IsForegroundAppExcluded()
         {
             if (string.IsNullOrWhiteSpace(App.ExcludedApps)) return false;
+
+            // 1. Ensure our fast-lookup cache is up to date
+            UpdateExcludedAppsCache();
+            if (_cachedExcludedApps.Count == 0) return false;
 
             try
             {
@@ -345,26 +385,33 @@ namespace PocketDrop
                 GetWindowThreadProcessId(hWnd, out uint pid);
                 if (pid == 0) return false;
 
-                using (var process = System.Diagnostics.Process.GetProcessById((int)pid))
+                // 2. Open the process natively with minimal permissions (PROCESS_QUERY_LIMITED_INFORMATION)
+                const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+                IntPtr hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
+                if (hProcess == IntPtr.Zero) return false;
+
+                try
                 {
-                    string pName = process.ProcessName.ToLower();
-
-                    var rules = App.ExcludedApps.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (var ruleText in rules)
+                    // 3. Ask Windows directly for just the text string of the path
+                    int capacity = 1024;
+                    var sb = new System.Text.StringBuilder(capacity);
+                    if (QueryFullProcessImageName(hProcess, 0, sb, ref capacity))
                     {
-                        string rule = System.IO.Path.GetFileNameWithoutExtension(ruleText.Trim()).ToLower();
+                        string exePath = sb.ToString();
+                        string processName = System.IO.Path.GetFileNameWithoutExtension(exePath);
 
-                        if (string.IsNullOrEmpty(rule)) continue;
-
-                        if (pName.Contains(rule))
-                        {
-                            return true;
-                        }
+                        // 4. Instant O(1) lookup against the cache instead of a slow loop
+                        return _cachedExcludedApps.Contains(processName);
                     }
+                }
+                finally
+                {
+                    // Always close the native handle to prevent memory leaks!
+                    CloseHandle(hProcess);
                 }
             }
             catch { }
+
             return false;
         }
     }
