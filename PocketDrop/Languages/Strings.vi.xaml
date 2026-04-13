@@ -14,6 +14,10 @@
     <sys:String x:Key="Text_FilesMissingDesc">Một số tập tin không còn ở vị trí cũ nên đã được gỡ khỏi Pocket. Có thể chúng đã bị xóa hoặc di chuyển đi nơi khác.</sys:String>
     <sys:String x:Key="Text_ClipboardEmptyTitle">Bộ nhớ tạm đang trống</sys:String>
     <sys:String x:Key="Text_ClipboardEmpty">Không tìm thấy tập tin nào trong bộ nhớ tạm!</sys:String>
+    <sys:String x:Key="Text_LargeDropTitle">Xử lý tập tin số lượng lớn</sys:String>
+    <sys:String x:Key="Text_LargeDropMsg">Bạn sắp xử lý {0} tập tin.&#x0a;&#x0a;Quá trình này có thể mất một lúc tùy thuộc vào cấu hình máy của bạn. Tiếp tục chứ?</sys:String>
+    <sys:String x:Key="Text_LargePasteTitle">Dán tập tin số lượng lớn</sys:String>
+    <sys:String x:Key="Text_LargePasteMsg">Bạn sắp dán {0} tập tin.&#x0a;&#x0a;Quá trình này có thể mất một lúc tùy thuộc vào cấu hình máy của bạn. Tiếp tục chứ?</sys:String>
 
     <!-- Main Window - More Menu -->
     <sys:String x:Key="Text_MenuOpen">Mở...</sys:String>

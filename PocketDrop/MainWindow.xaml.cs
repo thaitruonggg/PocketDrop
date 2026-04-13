@@ -236,6 +236,21 @@ namespace PocketDrop
                 if (droppedFiles != null && droppedFiles.Length > 0)
                 {
                     // ==========================================
+                    // THE NEW FIX: Soft Cap with User Consent
+                    // ==========================================
+                    int warningThreshold = 500;
+                    if (droppedFiles.Length > warningThreshold)
+                    {
+                        string titleTemplate = (string)Application.Current.TryFindResource("Text_LargeDropTitle") ?? "Large File Drop";
+                        string messageTemplate = (string)Application.Current.TryFindResource("Text_LargeDropMsg") ?? "You are about to process {0} items.\n\nThis may take a moment to load depending on your hard drive speed. Do you want to continue?";
+
+                        string finalMessage = string.Format(messageTemplate, droppedFiles.Length);
+                        var result = MessageBox.Show(finalMessage, titleTemplate, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                        // If the user says no, instantly abort the drag-and-drop
+                        if (result == MessageBoxResult.No) return;
+                    }
+                    // ==========================================
                     // THE FIX: Fire all tasks concurrently!
                     // ==========================================
                     var processingTasks = droppedFiles.Select(async filePath =>
@@ -365,8 +380,21 @@ namespace PocketDrop
                     files.CopyTo(fileArray, 0);
 
                     // ==========================================
-                    // THE FIX: Concurrent Clipboard Pasting!
+                    // THE NEW FIX: Soft Cap with User Consent
                     // ==========================================
+                    int warningThreshold = 500;
+                    if (fileArray.Length > warningThreshold)
+                    {
+                        string titleTemplate = (string)Application.Current.TryFindResource("Text_LargePasteTitle") ?? "Large Paste Operation";
+                        string messageTemplate = (string)Application.Current.TryFindResource("Text_LargePasteMsg") ?? "You are about to paste {0} items.\n\nThis may take a moment to load. Do you want to continue?";
+
+                        string finalMessage = string.Format(messageTemplate, fileArray.Length);
+                        var result = MessageBox.Show(finalMessage, titleTemplate, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                        if (result == MessageBoxResult.No) return;
+                    }
+
+                    // Process ALL files!
                     var processingTasks = fileArray.Select(async filePath =>
                     {
                         string fileName = Path.GetFileName(filePath);
