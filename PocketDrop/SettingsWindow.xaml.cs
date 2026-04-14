@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Text.Json;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -485,41 +486,57 @@ namespace PocketDrop
                     client.Timeout = TimeSpan.FromSeconds(5);
                     client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
 
-                    string url = "https://raw.githubusercontent.com/naofunyan/PocketDrop/main/version.txt";
-                    string latestVersionString = await client.GetStringAsync(url);
+                    // GitHub API strictly requires a User-Agent header, or it will reject the connection
+                    client.DefaultRequestHeaders.Add("User-Agent", "PocketDrop-App");
 
-                    // ✨ THE FIX: Use the dynamic version instead of "1.0.0"
-                    string currentVersionString = App.GetAppVersion().Replace(" Beta ", "-beta");
+                    // Query the Releases API (This grabs a list of all your releases, newest first)
+                    string url = "https://api.github.com/repos/naofunyan/PocketDrop/releases";
+                    string jsonResponse = await client.GetStringAsync(url);
 
-                    bool hasUpdate = AppHelpers.IsUpdateAvailable(currentVersionString, latestVersionString);
-
-                    if (hasUpdate)
+                    using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
                     {
-                        App.UpdateAvailable = true;
-                        App.UpdateUrl = "https://github.com/naofunyan/PocketDrop/releases/latest";
+                        JsonElement root = doc.RootElement;
 
-                        string updateTitle = (string)Application.Current.Resources["Text_UpdateAvailableTitle"] ?? "Update Available";
-                        string updateMsgTemplate = (string)Application.Current.Resources["Text_UpdateAvailableMsg"] ?? "A new version of PocketDrop ({0}) is available!\n\nWould you like to download it now?";
-                        string updateMsg = string.Format(updateMsgTemplate, latestVersionString.Trim());
-
-                        MessageBoxResult result = MessageBox.Show(updateMsg, updateTitle, MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                        if (result == MessageBoxResult.Yes)
+                        if (root.GetArrayLength() > 0)
                         {
-                            AppHelpers.OpenUrl(App.UpdateUrl);
-                        }
-                        else
-                        {
-                            CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_UpdateAvailableBtn"] ?? "Update Available!";
-                            CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
-                        }
-                    }
-                    else
-                    {
-                        string upToDateTitle = (string)Application.Current.Resources["Text_UpdateUpToDateTitle"] ?? "Up to Date";
-                        string upToDateMsg = (string)Application.Current.Resources["Text_UpdateUpToDateMsg"] ?? "You are already using the latest version of PocketDrop.";
+                            // Grab the "tag_name" from the absolute newest release (e.g., "v1.0.1")
+                            string latestTag = root[0].GetProperty("tag_name").GetString();
 
-                        MessageBox.Show(upToDateMsg, upToDateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+                            // Strip the "v" from the front so it cleanly matches your internal version logic
+                            string latestVersionString = latestTag.TrimStart('v', 'V');
+
+                            string currentVersionString = App.GetAppVersion().Replace(" Beta ", "-beta");
+                            bool hasUpdate = AppHelpers.IsUpdateAvailable(currentVersionString, latestVersionString);
+
+                            if (hasUpdate)
+                            {
+                                App.UpdateAvailable = true;
+                                App.UpdateUrl = "https://github.com/naofunyan/PocketDrop/releases/latest";
+
+                                string updateTitle = (string)Application.Current.Resources["Text_UpdateAvailableTitle"] ?? "Update Available";
+                                string updateMsgTemplate = (string)Application.Current.Resources["Text_UpdateAvailableMsg"] ?? "A new version of PocketDrop ({0}) is available!\n\nWould you like to download it now?";
+                                string updateMsg = string.Format(updateMsgTemplate, latestVersionString.Trim());
+
+                                MessageBoxResult result = MessageBox.Show(updateMsg, updateTitle, MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    AppHelpers.OpenUrl(App.UpdateUrl);
+                                }
+                                else
+                                {
+                                    CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_UpdateAvailableBtn"] ?? "Update Available!";
+                                    CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
+                                }
+                            }
+                            else
+                            {
+                                string upToDateTitle = (string)Application.Current.Resources["Text_UpdateUpToDateTitle"] ?? "Up to Date";
+                                string upToDateMsg = (string)Application.Current.Resources["Text_UpdateUpToDateMsg"] ?? "You are already using the latest version of PocketDrop.";
+
+                                MessageBox.Show(upToDateMsg, upToDateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                        }
                     }
                 }
             }
