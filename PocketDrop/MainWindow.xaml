@@ -170,7 +170,7 @@
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
-                <Storyboard RepeatBehavior="Forever">
+                <Storyboard RepeatBehavior="Forever" Timeline.DesiredFrameRate="{x:Null}">
 
                     <DoubleAnimation Storyboard.TargetName="Blob1Transform" Storyboard.TargetProperty="X" 
                      From="0" To="180" Duration="0:0:9" AutoReverse="True">
@@ -208,6 +208,11 @@
         <Border x:Name="MainContainer" Margin="12" Background="{DynamicResource MicaBase}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="12"
                 RenderTransformOrigin="0.5,0.5" AllowDrop="True" Drop="Window_Drop" DragEnter="Window_DragEnter" DragLeave="Window_DragLeave"
                 PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="Window_PreviewMouseLeftButtonUp" MouseMove="Window_MouseMove">
+
+            <Border.CacheMode>
+                <BitmapCache EnableClearType="True" RenderAtScale="1" SnapsToDevicePixels="True"/>
+            </Border.CacheMode>
+
             <Border.Effect>
                 <DropShadowEffect BlurRadius="24" Color="#000000" Opacity="0.12" Direction="270" ShadowDepth="4"/>
             </Border.Effect>
@@ -221,6 +226,10 @@
 
                 <Canvas Grid.RowSpan="3" ClipToBounds="True" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
+                    <Canvas.CacheMode>
+                        <BitmapCache RenderAtScale="1" SnapsToDevicePixels="True"/>
+                    </Canvas.CacheMode>
+                    
                     <Ellipse Width="150" Height="150" Fill="#EA5B6F" Opacity="0.23" Canvas.Left="-30" Canvas.Top="-30">
                         <Ellipse.Effect>
                             <BlurEffect Radius="25" RenderingBias="Performance"/>

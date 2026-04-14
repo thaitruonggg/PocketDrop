@@ -49,29 +49,10 @@ namespace PocketDrop
         }
 
         // Low-level global mouse hook
-        private const int WH_MOUSE_LL = 14;
         private const int WM_MOUSEMOVE = 0x0200;
         private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_LBUTTONUP = 0x0202;
 
-        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MSLLHOOKSTRUCT
-        {
-            public System.Drawing.Point pt;
-            public uint mouseData, flags, time;
-            public IntPtr dwExtraInfo;
-        }
 
         // Native File Picker
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
@@ -89,14 +70,46 @@ namespace PocketDrop
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        // Native Window Dragging
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        // ==========================================
+        // THE FIX: Add direct hardware mouse state API
+        // ==========================================
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int vKey);
+        public const int VK_LBUTTON = 0x01;
+
+        // ==========================================
+        // THE NEW ARCHITECTURE: Mouse Polling
+        // ==========================================
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        private static DispatcherTimer _mouseTimer;
+
 
         // ================================================ //
         // 2. STATE & VARIABLES
         // ================================================ //
 
         // Mouse Tracking & Shake
-        private static IntPtr _hookHandle = IntPtr.Zero;
-        private static LowLevelMouseProc _hookProc;
         private static ShakeDetector _shakeDetector = new ShakeDetector();
         private static bool _leftButtonHeld = false;
         private static bool _hasSpawnedPocketThisDrag = false;
@@ -153,14 +166,15 @@ namespace PocketDrop
             this.Opacity = 0;
             this.IsHitTestVisible = false;
 
-            // Install global hook only once per application lifetime
-            if (_hookHandle == IntPtr.Zero)
+            // Start the hardware polling loop (Runs at 60 FPS)
+            if (_mouseTimer == null)
             {
-                _hookProc = HookCallback;
-                using (var proc = Process.GetCurrentProcess())
-                using (var mod = proc.MainModule)
-                    _hookHandle = SetWindowsHookEx(WH_MOUSE_LL, _hookProc, GetModuleHandle(mod.ModuleName), 0);
+                _mouseTimer = new DispatcherTimer(DispatcherPriority.Background);
+                _mouseTimer.Interval = TimeSpan.FromMilliseconds(16);
+                _mouseTimer.Tick += MouseTimer_Tick;
+                _mouseTimer.Start();
             }
+
 
             // Clean up heavy temp files from previous sessions
             System.Threading.Tasks.Task.Run(() => CleanupOldShareZips());
@@ -178,11 +192,6 @@ namespace PocketDrop
                     }
                 });
             }
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
         }
 
         // Add safe external kill switch to clear and close window
@@ -735,10 +744,14 @@ namespace PocketDrop
             if (e.OriginalSource == CloseButton || e.Source == MoreButton)
                 return;
 
-            // Tell Windows to take over and drag the physical app window
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                // ==========================================
+                // THE FIX: Bypass WPF and use GPU-accelerated OS dragging
+                // ==========================================
+                ReleaseCapture();
+                var hwnd = new WindowInteropHelper(this).Handle;
+                SendMessage(hwnd, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
 
@@ -1529,70 +1542,65 @@ namespace PocketDrop
         // 7. UTILITY HELPERS
         // ================================================ //
 
-        // Global mouse hook callback
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        private static void MouseTimer_Tick(object sender, EventArgs e)
         {
-            if (nCode >= 0)
+            // 1. Physically check the hardware switch on the left mouse button
+            bool isLeftClickHeld = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+
+            if (isLeftClickHeld)
             {
-                var hookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-                int msg = wParam.ToInt32();
+                if (!App.EnableMouseShake) return;
+                if (_hasSpawnedPocketThisDrag) return;
 
-                if (msg == WM_LBUTTONDOWN)
+                // 2. Physically interrogate the cursor position
+                GetCursorPos(out POINT pt);
+
+                // 3. Run the math
+                bool isShaking = _shakeDetector.CheckForShake(
+                    currentMouseX: pt.X,
+                    currentTimestampMs: Environment.TickCount64,
+                    minDistancePx: App.ShakeMinimumDistance,
+                    maxTimeMs: 1000,
+                    requiredSwings: 3
+                );
+
+                // 4. Spawn the pocket!
+                if (isShaking)
                 {
-                    _leftButtonHeld = true;
-                    _hasSpawnedPocketThisDrag = false;
-
-                    // Note: We removed the heavy OpenProcess caching from here!
-                }
-                else if (msg == WM_LBUTTONUP)
-                {
-                    _leftButtonHeld = false;
-                }
-                else if (msg == WM_MOUSEMOVE && _leftButtonHeld)
-                {
-                    // 1. Instant exits (0 milliseconds, no OS API calls)
-                    if (!App.EnableMouseShake) goto done;
-                    if (_hasSpawnedPocketThisDrag) goto done; // Don't spawn duplicates
-
-                    // 2. Run the incredibly cheap math tracking (0 CPU impact)
-                    bool isShaking = _shakeDetector.CheckForShake(
-                        currentMouseX: hookStruct.pt.X,
-                        currentTimestampMs: Environment.TickCount64,
-                        minDistancePx: App.ShakeMinimumDistance,
-                        maxTimeMs: 1000,
-                        requiredSwings: 3
-                    );
-
-                    // 3. If a physical shake actually completes, THEN do the heavy OS checks
-                    if (isShaking)
+                    try
                     {
-                        // JIT (Just-In-Time) OS Evaluation
-                        if (App.DisableInGameMode && AppHelpers.IsGameModeActive()) goto done;
-                        if (AppHelpers.IsForegroundAppExcluded()) goto done;
+                        if (App.DisableInGameMode && AppHelpers.IsGameModeActive()) return;
+                        if (AppHelpers.IsForegroundAppExcluded()) return;
+                    }
+                    catch { /* Ignore helper crashes and spawn anyway */ }
 
-                        // If it passes the OS checks, lock it down and spawn the UI
-                        _hasSpawnedPocketThisDrag = true;
+                    _hasSpawnedPocketThisDrag = true;
 
+                    if (Application.Current != null && Application.Current.Dispatcher != null)
+                    {
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() =>
                         {
                             var hiddenPocket = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault(w => !w.IsHitTestVisible);
 
                             if (hiddenPocket != null)
                             {
-                                hiddenPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
+                                hiddenPocket.ShowPocketDrop(pt.X, pt.Y);
                             }
                             else
                             {
                                 var newPocket = new MainWindow();
                                 newPocket.Show();
-                                newPocket.ShowPocketDrop(hookStruct.pt.X, hookStruct.pt.Y);
+                                newPocket.ShowPocketDrop(pt.X, pt.Y);
                             }
                         }));
                     }
                 }
             }
-        done:
-            return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
+            else
+            {
+                // Reset the safety switch the moment the user lets go of the mouse button
+                _hasSpawnedPocketThisDrag = false;
+            }
         }
 
         // Building the share payload

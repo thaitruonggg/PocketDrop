@@ -1,0 +1,48 @@
+END USER LICENSE AGREEMENT
+Last updated April 18, 2026
+
+PocketDrop is licensed to You (End-User) by Naofunyan, for use only under the terms of this License Agreement.
+By downloading or using the Licensed Application, You indicate that You agree to be bound by all of the terms and conditions of this License Agreement. The Licensor reserves all rights not expressly granted to You. PocketDrop is to be used on devices that operate with the Windows operating system.
+1. THE APPLICATION
+PocketDrop ("Licensed Application") is a piece of software created to provide users with a local, temporary file staging environment to assist in the manual organization and transfer of files within a local operating system. It is used to serve as a temporary, on-screen utility for holding and moving files. It is strictly a local convenience tool and is not intended for use as a secure data backup system, automated file sync service, or enterprise network management tool.
+The Licensed Application is not tailored to comply with industry-specific regulations (Health Insurance Portability and Accountability Act (HIPAA), Federal Information Security Management Act (FISMA), etc.), so if your interactions would be subjected to such laws, you may not use this Licensed Application. You may not use the Licensed Application in a way that would violate the Gramm-Leach-Bliley Act (GLBA).
+2. SCOPE OF LICENSE
+2.1 This license will also govern any updates of the Licensed Application provided by Licensor that replace, repair, and/or supplement the first Licensed Application, unless a separate license is provided for such update.
+2.2 You may not share or make the Licensed Application available to third parties (unless with Naofunyan's prior written consent), sell, rent, lend, lease or otherwise redistribute the Licensed Application.
+2.3 You may not reverse engineer, translate, disassemble, integrate, decompile, remove, modify, combine, create derivative works or updates of, adapt, or attempt to derive the source code of the Licensed Application, or any part thereof.
+2.4 Violations of the obligations mentioned above may be subject to prosecution and damages.
+2.5 Licensor reserves the right to modify the terms and conditions of licensing.
+2.6 Nothing in this license should be interpreted to restrict third-party terms. When using the Licensed Application, You must ensure that You comply with applicable third-party terms and conditions.
+3. TECHNICAL REQUIREMENTS
+3.1 The Licensed Application requires the Windows 10 operating system or higher. Licensor recommends using the latest version of the operating system.
+3.2 Licensor attempts to keep the Licensed Application updated so that it complies with modified/new versions of the operating system. You are not granted rights to claim such an update.
+3.3 You acknowledge that it is Your responsibility to confirm and determine that the end-user device on which You intend to use the Licensed Application satisfies the technical specifications.
+3.4 Licensor reserves the right to modify the technical specifications as it sees appropriate at any time.
+4. NO MAINTENANCE OR SUPPORT
+4.1 Naofunyan is not obligated, expressed or implied, to provide any maintenance, technical or other support for the Licensed Application.
+4.2 Naofunyan and the End-User acknowledge that the Services have no obligation whatsoever to furnish any maintenance and support services with respect to the Licensed Application.
+5. USE OF DATA
+You acknowledge that Licensor's use of data is subject to Licensor's Privacy Policy, which can be accessed in the Application's settings menu and on the official GitHub repository. The Licensed Application strictly processes files locally on Your device and does not upload Your files to external servers.
+6. USER-GENERATED CONTRIBUTIONS
+The Licensed Application is a local utility and does not offer users the ability to submit, post, or broadcast content to external servers or other users.
+7. CONTRIBUTION LICENSE
+Any feedback, comments, ideas, improvements, or suggestions (collectively, "Suggestions") provided by You to Licensor with respect to the Application shall remain the sole and exclusive property of Licensor. Licensor shall be free to use, copy, modify, publish, or redistribute the Suggestions for any purpose and in any way without any credit or any compensation to You.
+8. WARRANTY & DISCLAIMER
+8.1 Licensor warrants that the Licensed Application is free of spyware, trojan horses, viruses, or any other malware at the time of Your download. Licensor warrants that the Licensed Application works as described in the user documentation.
+8.2 THE APPLICATION IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND. LICENSOR DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. LICENSOR DOES NOT WARRANT THAT THE APPLICATION WILL OPERATE ERROR-FREE OR THAT IT WILL NOT CAUSE DATA LOSS.
+9. PRODUCT CLAIMS
+Naofunyan, and not any third-party distribution platform, is responsible for addressing any claims of the End-User relating to the Licensed Application or the End-User’s possession and/or use of that Licensed Application.
+10. LEGAL COMPLIANCE
+You represent and warrant that You are not located in a country that is subject to a US Government embargo, or that has been designated by the US Government as a "terrorist supporting" country; and that You are not listed on any US Government list of prohibited or restricted parties.
+11. CONTACT INFORMATION
+For general inquiries, complaints, questions or claims concerning the Licensed Application, please contact:
+Naofunyan
+Email: naofunyan@gmail.com
+12. TERMINATION
+The license is valid until terminated by Naofunyan or by You. Your rights under this license will terminate automatically and without notice from Naofunyan if You fail to adhere to any term(s) of this license. Upon License termination, You shall stop all use of the Licensed Application, and destroy all copies.
+13. INTELLECTUAL PROPERTY RIGHTS
+Naofunyan retains full ownership and intellectual property rights over the Licensed Application.
+14. APPLICABLE LAW
+This License Agreement is governed by the laws of Vietnam excluding its conflicts of law rules.
+15. MISCELLANEOUS
+If any of the terms of this agreement should be or become invalid, the validity of the remaining provisions shall not be affected. Invalid terms will be replaced by valid ones formulated in a way that will achieve the primary purpose.
