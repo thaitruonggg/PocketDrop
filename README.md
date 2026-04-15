@@ -20,8 +20,26 @@ PocketDrop is a free and open-source drag and drop utility for Windows.
 
 > [!IMPORTANT]
 > * PocketDrop is currently in active development. The app is functional but may contain bugs or incomplete features. If you encounter any issues, please report them in the Issues tab.
-> ### Limitation of Liability:
+> #### Liability:
 > * This application is provided "AS IS" and used at your own risk. The developers and contributors are not liable for any claims, damages, or other liability — including any legal consequences — arising from or in connection with the software or its use. All responsibility for outcomes rests entirely with the user.
+
+# Technologies
+
+
+# Features
+
+
+# How can it be improved?
+
+# Download
+
+You can check out the [latest release](https://github.com/naofunyan/PocketDrop/releases) to download the latest version of PocketDrop.
+
+- `x64` is for 64-bit Windows.
+- `x86` is for 32-bit Windows.
+- `arm64` is for 64-bit ARM Windows.
+
+Run the installer (`PocketDrop_Setup.exe`) and follow the on-screen steps to install PocketDrop.
 
 # License and Trademarks
 
