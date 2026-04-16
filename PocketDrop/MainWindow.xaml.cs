@@ -115,6 +115,10 @@ namespace PocketDrop
         private static bool _leftButtonHeld = false;
         private static bool _hasSpawnedPocketThisDrag = false;
 
+        // ✨ THE FIX: Anchor tracking variables
+        private static POINT? _shakeAnchor = null;
+        private static bool _shakeInvalidated = false;
+
         // Core Data
         // Holds multiple items and updates the UI automatically
         public ObservableRangeCollection<PocketItem> PocketedItems { get; set; } = new ObservableRangeCollection<PocketItem>();
@@ -378,6 +382,48 @@ namespace PocketDrop
                         Console.WriteLine($"Could not save URL: {ex.Message}");
                     }
                 }
+                else
+                {
+                    // ✨ NEW: Handle raw snippets of text
+                    try
+                    {
+                        string tempFolder = Path.GetTempPath();
+
+                        // Create a preview for the filename (first 20 chars)
+                        string preview = droppedText.Length > 20 ? droppedText.Substring(0, 20).Trim() : droppedText;
+                        preview = string.Join("_", preview.Split(Path.GetInvalidFileNameChars())); // Clean filename
+
+                        string fileName = $"Snippet_{preview}_{Guid.NewGuid().ToString("N").Substring(0, 4)}.txt";
+                        string filePath = Path.Combine(tempFolder, fileName);
+
+                        File.WriteAllText(filePath, droppedText);
+
+                        // Use a standard text icon for snippets
+                        var textIcon = await LoadFileIconAsync(filePath);
+
+                        var textItem = new PocketItem
+                        {
+                            FileName = fileName,
+                            FilePath = filePath,
+                            Icon = textIcon,
+                            IsSnippet = true // ✨ Tell the app this is pure text!
+                        };
+
+                        PocketedItems.Add(textItem);
+
+                        if (!App.SessionHistory.Any(x => x.FilePath == textItem.FilePath))
+                            App.SessionHistory.Add(textItem);
+
+                        StatusText.Visibility = Visibility.Collapsed;
+                        FileIconContainer.Visibility = Visibility.Visible;
+                        UpdateStackPreview();
+                        UpdateItemCountDisplay(PocketedItems.Count);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Could not save text snippet: {ex.Message}");
+                    }
+                }
             }
         }
 
@@ -586,7 +632,7 @@ namespace PocketDrop
             // Abort drag-out if mouse not pressed, no start point, or pocket empty
             if (e.LeftButton != MouseButtonState.Pressed || startPoint == null || PocketedItems.Count == 0)
             {
-                startPoint = null; // Add extra safety reset after drag-out
+                startPoint = null;
                 return;
             }
 
@@ -597,35 +643,68 @@ namespace PocketDrop
             if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                 Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
             {
-                string[] pathsToDrag = new string[PocketedItems.Count];
-                for (int i = 0; i < PocketedItems.Count; i++)
+                DataObject dragData = new DataObject();
+                var itemsToDrag = PocketedItems.ToList();
+                bool allSnippets = itemsToDrag.All(i => i.IsSnippet);
+
+                // ✨ THE FIX: Dual-format payloads for Native Apps and Web/Electron Apps
+                if (allSnippets)
                 {
-                    pathsToDrag[i] = PocketedItems[i].FilePath;
+                    try
+                    {
+                        string combinedText = string.Join(Environment.NewLine + Environment.NewLine, itemsToDrag.Select(i => File.ReadAllText(i.FilePath)));
+
+                        // 1. Standard Windows Formats (Word, Notepad, Telegram)
+                        dragData.SetData(DataFormats.UnicodeText, combinedText);
+                        dragData.SetData(DataFormats.Text, combinedText);
+                        dragData.SetData(DataFormats.StringFormat, combinedText);
+
+                        // 2. Web & Electron Formats (Notion, Discord, Chrome)
+                        dragData.SetData("text/plain", combinedText);
+                    }
+                    catch { }
                 }
+                else
+                {
+                    // Mixed items or physical files -> Use standard FileDrop
+                    string[] pathsToDrag = itemsToDrag.Select(i => i.FilePath).ToArray();
+                    dragData.SetData(DataFormats.FileDrop, pathsToDrag);
 
-                DataObject dragData = new DataObject(DataFormats.FileDrop, pathsToDrag);
+                    // Fallback: If it is a single physical .txt file, try to attach text just in case
+                    if (pathsToDrag.Length == 1 && Path.GetExtension(pathsToDrag[0]).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            var fi = new FileInfo(pathsToDrag[0]);
+                            if (fi.Length < 1024 * 1024)
+                            {
+                                dragData.SetText(File.ReadAllText(pathsToDrag[0]));
+                            }
+                        }
+                        catch { }
+                    }
 
-                // Force Windows Explorer to copy or move on drag-out
-                // 1 = Copy (Leaves original file), 2 = Move (Deletes original file)
-                byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
-                dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
+                    // ✨ THE FIX: Only attach File DropEffects if there are actual physical files!
+                    byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
+                    dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
+                }
 
                 Point tempStart = (Point)startPoint;
                 startPoint = null;
 
                 _isDraggingFromApp = true;
-                DragDropEffects allowedEffects = App.CopyItemToDestination ? DragDropEffects.Copy : DragDropEffects.Move;
-                DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)sender, dragData, allowedEffects);
+
+                // ✨ THE FIX: Allow ALL effects. Notion will negotiate 'Copy', Explorer will negotiate based on 'Preferred DropEffect'
+                DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)sender, dragData, DragDropEffects.All);
                 _isDraggingFromApp = false;
 
-                // Always clear Pocket after successful drop
+                // Always clear Pocket after successful drop (Whether Copy or Move)
                 if (result != DragDropEffects.None)
                 {
                     foreach (var item in PocketedItems)
                     {
                         CleanupTempFile(item.FilePath);
 
-                        // ✨ THE NEW LOGIC: If it's a Move, and the file was swapped for a Temp file, delete the original!
                         if (!App.CopyItemToDestination && item.OriginalFilePath != item.FilePath)
                         {
                             try { if (File.Exists(item.OriginalFilePath)) File.Delete(item.OriginalFilePath); } catch { }
@@ -634,7 +713,6 @@ namespace PocketDrop
 
                     PocketedItems.Clear();
 
-                    // Check auto-close condition after drop
                     if (App.CloseWhenEmptied)
                     {
                         ExpandButton.IsChecked = false;
@@ -655,7 +733,6 @@ namespace PocketDrop
             var openHistoryWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
             if (openHistoryWindow != null)
             {
-                // Use Dispatcher to safely trigger UI update from background thread
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     openHistoryWindow.RefreshHistory();
@@ -665,26 +742,18 @@ namespace PocketDrop
 
         private void ItemsList_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            // Only initiate drag when left mouse button is held
-            if (e.LeftButton != MouseButtonState.Pressed)
-                return;
-
-            // Just-In-Time check: Check for deleted files just before drag-out
+            if (e.LeftButton != MouseButtonState.Pressed) return;
             if (CheckForMissingFiles()) return;
 
-            // Ignore drag if target is not a ListBoxItem
             var hit = e.OriginalSource as DependencyObject;
             while (hit != null && !(hit is ListBoxItem) && !(hit is ListBox))
                 hit = VisualTreeHelper.GetParent(hit);
 
-            if (!(hit is ListBoxItem lbi))
-                return; // Ignore drag on empty list space
+            if (!(hit is ListBoxItem lbi)) return;
 
             var draggedItem = lbi.DataContext as PocketItem;
-            if (draggedItem == null)
-                return;
+            if (draggedItem == null) return;
 
-            // Auto-select item on drag if not already selected
             if (!ItemsListBox.SelectedItems.Contains(draggedItem))
             {
                 ItemsListBox.SelectedItems.Add(draggedItem);
@@ -693,31 +762,63 @@ namespace PocketDrop
             var selectedItems = ItemsListBox.SelectedItems.Cast<PocketItem>().ToList();
             if (selectedItems.Count == 0) return;
 
-            // Gather file paths and prepare drag payload
-            string[] paths = selectedItems.Select(item => item.FilePath).ToArray();
-            DataObject dragData = new DataObject(DataFormats.FileDrop, paths);
+            DataObject dragData = new DataObject();
+            bool allSnippets = selectedItems.All(i => i.IsSnippet);
 
-            byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
-            dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
+            // ✨ THE FIX: Dual-format payloads for Native Apps and Web/Electron Apps
+            if (allSnippets)
+            {
+                try
+                {
+                    string combinedText = string.Join(Environment.NewLine + Environment.NewLine, selectedItems.Select(i => File.ReadAllText(i.FilePath)));
 
-            // ✨ Setup internal reorder tracking variables
+                    // 1. Standard Windows Formats (Word, Notepad, Telegram)
+                    dragData.SetData(DataFormats.UnicodeText, combinedText);
+                    dragData.SetData(DataFormats.Text, combinedText);
+                    dragData.SetData(DataFormats.StringFormat, combinedText);
+
+                    // 2. Web & Electron Formats (Notion, Discord, Chrome)
+                    dragData.SetData("text/plain", combinedText);
+                }
+                catch { }
+            }
+            else
+            {
+                string[] paths = selectedItems.Select(item => item.FilePath).ToArray();
+                dragData.SetData(DataFormats.FileDrop, paths);
+
+                if (paths.Length == 1 && Path.GetExtension(paths[0]).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        var fi = new FileInfo(paths[0]);
+                        if (fi.Length < 1024 * 1024)
+                        {
+                            dragData.SetText(File.ReadAllText(paths[0]));
+                        }
+                    }
+                    catch { }
+                }
+
+                byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
+                dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
+            }
+
             _internalDragPayload = selectedItems.ToList();
             _internalDropHandled = false;
             _isDraggingFromApp = true;
 
-            // Allow 'All' effects so WPF doesn't reject our internal move request
             DragDropEffects result = DragDrop.DoDragDrop(ItemsListBox, dragData, DragDropEffects.All);
 
             _isDraggingFromApp = false;
 
-            // ✨ MERGED LOGIC: Only delete files if the drop was completely outside the app
-            if (!_internalDropHandled && result != DragDropEffects.None && result != DragDropEffects.Copy)
+            // ✨ THE FIX: We now clear the pocket for BOTH external Move and Copy drops!
+            if (!_internalDropHandled && result != DragDropEffects.None)
             {
                 foreach (var item in selectedItems)
                 {
                     CleanupTempFile(item.FilePath);
 
-                    // ✨ THE MOVE LOGIC: Delete the original if it was a Move and we swapped it for a temp file!
                     if (!App.CopyItemToDestination && item.OriginalFilePath != item.FilePath)
                     {
                         try { if (File.Exists(item.OriginalFilePath)) File.Delete(item.OriginalFilePath); } catch { }
@@ -749,9 +850,9 @@ namespace PocketDrop
                 UpdateItemCountDisplay(PocketedItems.Count);
             }
 
-            // ✨ Wipe the memory payload when the drag is completely finished
             _internalDragPayload = null;
         }
+
 
         // Dragging the window
         private void TopBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -2056,12 +2157,34 @@ namespace PocketDrop
             if (isLeftClickHeld)
             {
                 if (!App.EnableMouseShake) return;
-                if (_hasSpawnedPocketThisDrag) return;
+
+                // If we already spawned a pocket, or the shake was marked invalid, abort!
+                if (_hasSpawnedPocketThisDrag || _shakeInvalidated) return;
 
                 // 2. Physically interrogate the cursor position
                 GetCursorPos(out POINT pt);
 
-                // 3. Run the math
+                // ✨ THE FIX: Create a strict "Anchor Box" to separate Shakes from Drags
+                if (_shakeAnchor == null)
+                {
+                    _shakeAnchor = pt; // Record the exact pixel the click started on
+                }
+                else
+                {
+                    // Calculate how far the mouse has drifted from the initial click
+                    int driftX = Math.Abs(pt.X - _shakeAnchor.Value.X);
+                    int driftY = Math.Abs(pt.Y - _shakeAnchor.Value.Y);
+
+                    // If the mouse drifts more than 250px wide or 200px tall, it is a drag/highlight!
+                    // Invalidate the shake so it doesn't accidentally trigger.
+                    if (driftX > 250 || driftY > 200)
+                    {
+                        _shakeInvalidated = true;
+                        return;
+                    }
+                }
+
+                // 3. Run the math (Only runs if we stay inside our Anchor Box!)
                 bool isShaking = _shakeDetector.CheckForShake(
                     currentMouseX: pt.X,
                     currentTimestampMs: Environment.TickCount64,
@@ -2104,8 +2227,10 @@ namespace PocketDrop
             }
             else
             {
-                // Reset the safety switch the moment the user lets go of the mouse button
+                // ✨ Reset all the safety switches the moment the user lets go of the mouse button
                 _hasSpawnedPocketThisDrag = false;
+                _shakeAnchor = null;
+                _shakeInvalidated = false;
             }
         }
 
@@ -2660,6 +2785,9 @@ namespace PocketDrop
         }
 
         public bool IsPinned { get; set; }
+
+        // ✨ NEW TRACKER: Remembers if this was created from highlighted text!
+        public bool IsSnippet { get; set; } = false;
 
         private System.Windows.Media.ImageSource _icon;
         public System.Windows.Media.ImageSource Icon
