@@ -43,6 +43,8 @@ Here's what you can do with PocketDrop:
 
 ## 🗃️ Supported file formats:
 
+PocketDrop is compatible with these popular file formats:
+
 | Format | Support |
 | --- | --- |
 | Text formats | .txt / .rtf / .docx / .csv / .doc / .wps / .wpd / .msg |
@@ -54,6 +56,9 @@ Here's what you can do with PocketDrop:
 | Web Page formats | .html / .htm / .xhtml / .asp / .css / .aspx / .rss |
 | Folders | ✅ |
 
+> [!NOTE]
+> PocketDrop should be compatible with most file formats. If you encounter an issue with a specific format, please let me know in the Issues tab.
+
 ## ⌨️ Keyboard Shortcuts:
 
 Speed up your workflow with these shortcuts (customizable in Settings):
@@ -64,7 +69,7 @@ Speed up your workflow with these shortcuts (customizable in Settings):
 | Create a new Pocket from the clipboard | `Win + Shift + X` |
 
 # 🎯 How can it be improved?
-
+- [ ] \(Optional) Open a followup issue
 
 # 💾 Download
 

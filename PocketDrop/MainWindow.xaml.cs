@@ -154,6 +154,13 @@ namespace PocketDrop
         // Guard to prevent the More Menu from instantly reopening after closing
         private long _lastMoreMenuCloseTime = 0;
 
+        // Drag & Drop Reorder Tracking
+        private static List<PocketItem> _internalDragPayload = null;
+        private bool _internalDropHandled = false;
+        private ListBoxItem _lastHoveredItem = null;
+        private bool _insertAbove = false;
+        private DropLineAdorner _currentAdorner = null;
+
         // ================================================ //
         // 3. LIFECYCLE (STARTUP & SHUTDOWN)
         // ================================================ //
@@ -244,74 +251,41 @@ namespace PocketDrop
 
                 if (droppedFiles != null && droppedFiles.Length > 0)
                 {
-                    // ==========================================
-                    // THE NEW FIX: Soft Cap with User Consent
-                    // ==========================================
                     int warningThreshold = 500;
                     if (droppedFiles.Length > warningThreshold)
                     {
                         string titleTemplate = (string)Application.Current.TryFindResource("Text_LargeDropTitle") ?? "Large File Drop";
-                        string messageTemplate = (string)Application.Current.TryFindResource("Text_LargeDropMsg") ?? "You are about to process {0} items.\n\nThis may take a moment to load depending on your hard drive speed. Do you want to continue?";
+                        string messageTemplate = (string)Application.Current.TryFindResource("Text_LargeDropMsg") ?? "You are about to process {0} items. Do you want to continue?";
 
-                        string finalMessage = string.Format(messageTemplate, droppedFiles.Length);
-                        // ==========================================
-                        // THE FIX: Use our new fully translated Custom Dialog!
-                        // ==========================================
-                        var dialog = new CustomDialog(finalMessage, titleTemplate);
-                        dialog.Owner = this; // Locks it to the main window
-                        dialog.ShowDialog(); // Freezes the app until they click a button
+                        var dialog = new CustomDialog(string.Format(messageTemplate, droppedFiles.Length), titleTemplate) { Owner = this };
+                        dialog.ShowDialog();
 
                         if (dialog.Result == MessageBoxResult.No) return;
                     }
-                    // ==========================================
-                    // THE FIX: Fire all tasks concurrently!
-                    // ==========================================
-                    var processingTasks = droppedFiles.Select(async filePath =>
+
+                    var validItems = new List<PocketItem>();
+
+                    // 1. INSTANTLY process paths with a blank icon
+                    foreach (string filePath in droppedFiles)
                     {
-                        // Scenario 1: Skip file if exact path already exists in Pocket
-                        if (AppHelpers.IsDuplicate(PocketedItems, filePath)) return null;
+                        if (AppHelpers.IsDuplicate(PocketedItems, filePath)) continue;
+                        try { if (File.Exists(filePath) && new FileInfo(filePath).Length == 0) continue; } catch { continue; }
 
-                        // Scenario 2: Reject 0-byte files
-                        try
-                        {
-                            if (File.Exists(filePath))
-                            {
-                                FileInfo fi = new FileInfo(filePath);
-                                if (fi.Length == 0) return null;
-                            }
-                        }
-                        catch { return null; }
-
-                        // Scenario 3: Auto-rename if the name is taken, but the path is different
                         string finalDisplayName = AppHelpers.GetSafeDisplayName(PocketedItems, filePath);
-
-                        // This hits the Bouncer!
-                        System.Windows.Media.ImageSource fileIcon = await LoadFileIconAsync(filePath);
-
-                        return new PocketItem { FileName = finalDisplayName, FilePath = filePath, Icon = fileIcon };
-                    });
-
-                    // Wait for ALL files to finish extracting their icons
-                    var processedItems = await System.Threading.Tasks.Task.WhenAll(processingTasks);
-
-                    // 1. Filter out the nulls (rejected 0-byte or duplicate files)
-                    var validItems = processedItems.Where(item => item != null).ToList();
-
-                    // 2. Sync to the background global history (this doesn't affect the UI, so a loop is fast)
-                    foreach (var newItem in validItems)
-                    {
-                        if (!App.SessionHistory.Any(x => x.FilePath == newItem.FilePath))
-                        {
-                            App.SessionHistory.Add(newItem);
-                        }
+                        validItems.Add(new PocketItem { FileName = finalDisplayName, FilePath = filePath, Icon = null });
                     }
 
-                    // ==========================================
-                    // THE FIX: Add to the UI all at once! (1 UI redraw instead of 100)
-                    // ==========================================
+                    if (validItems.Count == 0) return;
+
+                    // 2. ADD TO UI IMMEDIATELY (Returns control to the user in 0.01 seconds!)
                     PocketedItems.AddRange(validItems);
 
-                    // Refresh UI after items load
+                    foreach (var newItem in validItems)
+                    {
+                        if (!App.SessionHistory.Any(x => x.FilePath == newItem.FilePath)) App.SessionHistory.Add(newItem);
+                    }
+
+                    // Refresh UI
                     StatusText.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
                     UpdateStackPreview();
@@ -320,50 +294,75 @@ namespace PocketDrop
                     {
                         UpdateItemCountDisplay(PocketedItems.Count);
                     }
+
+                    // 3. FIRE AND FORGET THE ICON LOADING IN THE BACKGROUND
+                    foreach (var item in validItems)
+                    {
+                        _ = System.Threading.Tasks.Task.Run(async () =>
+                        {
+                            var loadedIcon = await LoadFileIconAsync(item.FilePath);
+                            if (loadedIcon != null)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    item.Icon = loadedIcon; // Instantly hot-swaps the UI image!
+
+                                    // Only trigger a stack redraw if this item is in the top 13 cards
+                                    if (PocketedItems.IndexOf(item) >= PocketedItems.Count - 13)
+                                    {
+                                        UpdateStackPreview();
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             }
-
             // 2. Handle URL drops from web browsers
             else if (e.Data.GetDataPresent(DataFormats.Text))
             {
                 string droppedText = (string)e.Data.GetData(DataFormats.Text);
 
-                // Check if the text is a valid web link (http or https)
                 if (Uri.TryCreate(droppedText, UriKind.Absolute, out Uri uriResult) &&
                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                 {
                     try
                     {
                         string domain = uriResult.Host.Replace("www.", "");
-
-                        // URL scenario 3: Number multiple dropped links from the same domain
                         string finalDomainName = AppHelpers.GetSafeDisplayName(PocketedItems, domain);
 
                         string tempFolder = Path.GetTempPath();
                         string fileName = $"{domain} Link_{DateTime.Now.Ticks}.url";
                         string filePath = Path.Combine(tempFolder, fileName);
 
-                        // ==========================================
-                        // THE FIX: Use sanitized AbsoluteUri to prevent CRLF / NTLM Injection!
-                        // ==========================================
                         File.WriteAllText(filePath, $"[InternetShortcut]\nURL={uriResult.AbsoluteUri}");
 
-                        ShellObject shellObj = ShellObject.FromParsingName(filePath);
-
-                        var fileIcon = shellObj.Thumbnail.LargeBitmapSource;
-                        fileIcon.Freeze();
-
-                        // Create the URL item
-                        var newUrlItem = new PocketItem { FileName = finalDomainName, FilePath = filePath, Icon = fileIcon };
-                        PocketedItems.Add(newUrlItem);
-
-                        // Sync dropped URL to global list immediately on drop
-                        if (!App.SessionHistory.Any(x => x.FilePath == newUrlItem.FilePath))
+                        using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
                         {
-                            App.SessionHistory.Add(newUrlItem);
+                            var wpfBmp = new BitmapImage();
+                            using (var drawingBmp = shellObj.Thumbnail.Bitmap)
+                            {
+                                using (var ms = new System.IO.MemoryStream())
+                                {
+                                    drawingBmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                    ms.Position = 0;
+                                    wpfBmp.BeginInit();
+                                    wpfBmp.CacheOption = BitmapCacheOption.OnLoad;
+                                    wpfBmp.StreamSource = ms;
+                                    wpfBmp.EndInit();
+                                }
+                            }
+                            wpfBmp.Freeze();
+
+                            var safeUrlItem = new PocketItem { FileName = finalDomainName, FilePath = filePath, Icon = wpfBmp };
+                            PocketedItems.Add(safeUrlItem);
+
+                            if (!App.SessionHistory.Any(x => x.FilePath == safeUrlItem.FilePath))
+                            {
+                                App.SessionHistory.Add(safeUrlItem);
+                            }
                         }
 
-                        // Refresh UI after items load
                         StatusText.Visibility = Visibility.Collapsed;
                         FileIconContainer.Visibility = Visibility.Visible;
                         UpdateStackPreview();
@@ -696,16 +695,18 @@ namespace PocketDrop
             byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
             dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
 
+            // ✨ NEW: Set up our memory-safe tracking variables
+            _internalDragPayload = selectedItems.ToList();
+            _internalDropHandled = false;
             _isDraggingFromApp = true;
-            DragDropEffects allowedEffects = App.CopyItemToDestination ? DragDropEffects.Copy : DragDropEffects.Move;
 
-            // Initiate drag-and-drop operation
-            DragDropEffects result = DragDrop.DoDragDrop(ItemsListBox, dragData, allowedEffects);
+            // ✨ NEW: Allow 'All' effects so WPF doesn't reject our internal move request
+            DragDropEffects result = DragDrop.DoDragDrop(ItemsListBox, dragData, DragDropEffects.All);
 
             _isDraggingFromApp = false;
 
-            // Cleanup after drag-and-drop completes
-            if (result != DragDropEffects.None)
+            // ✨ NEW: Only delete files if the drop was completely outside the app
+            if (!_internalDropHandled && result != DragDropEffects.None && result != DragDropEffects.Copy)
             {
                 foreach (var item in selectedItems)
                 {
@@ -735,6 +736,9 @@ namespace PocketDrop
 
                 UpdateItemCountDisplay(PocketedItems.Count);
             }
+
+            // ✨ NEW: Wipe the memory payload when the drag is completely finished
+            _internalDragPayload = null;
         }
 
         // Dragging the window
@@ -916,16 +920,17 @@ namespace PocketDrop
             int count = PocketedItems.Count;
             if (count == 0) return;
 
-            // Define rotation pattern for stacked card preview
-            // Index 0 = bottom-most (oldest), last index = top (latest).
             double[] angles = { -11, 8, -7, 6, -5, 4, -4, 3, -3, 2, -2, 1, -1 };
             double[] offsetsX = { -7, 6, -5, 4, -4, 3, -3, 2, -2, 1, -1, 1, 0 };
             double[] offsetsY = { 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0 };
 
-            for (int i = 0; i < count; i++)
+            // ✨ THE RENDER BOMB FIX: Only draw the top 13 cards!
+            int maxCardsToShow = angles.Length;
+            int startIndex = Math.Max(0, count - maxCardsToShow);
+
+            for (int i = startIndex; i < count; i++)
             {
-                // i=0 is oldest (bottom), i=count-1 is newest (top)
-                int patternIndex = Math.Min(count - 1 - i, angles.Length - 1);
+                int patternIndex = count - 1 - i;
                 bool isTop = (i == count - 1);
 
                 double angle = isTop ? 0 : angles[patternIndex];
@@ -940,8 +945,7 @@ namespace PocketDrop
                     UseLayoutRounding = true,
                     SnapsToDevicePixels = true
                 };
-                System.Windows.Media.RenderOptions.SetBitmapScalingMode(
-                    img, System.Windows.Media.BitmapScalingMode.HighQuality);
+                System.Windows.Media.RenderOptions.SetBitmapScalingMode(img, System.Windows.Media.BitmapScalingMode.HighQuality);
 
                 var card = new Border
                 {
@@ -1814,19 +1818,20 @@ namespace PocketDrop
         private async System.Threading.Tasks.Task<System.Windows.Media.ImageSource> LoadFileIconAsync(string filePath)
         {
             string ext = Path.GetExtension(filePath).ToLower();
-            string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
+
+            // ✨ MERGED: We add images to the unique list so they don't share the same cached icon!
             string[] uniqueIconExts = { ".exe", ".ico", ".lnk", ".pdf",
                                 ".mp4", ".avi", ".mov", ".wmv", ".mkv",
-                                ".mp3", ".flac", ".m4a"};
+                                ".mp3", ".flac", ".m4a",
+                                ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
 
-            bool isImage = Array.Exists(imageExts, x => x == ext);
             bool isUnique = Array.Exists(uniqueIconExts, x => x == ext);
             bool isDirectory = Directory.Exists(filePath);
 
             string cacheKey = isDirectory ? "folder_icon" : ext;
 
-            // 1. CHECK THE CACHE FIRST (Instant return, bypasses the bouncer!)
-            if (!isImage && !isUnique)
+            // 1. CHECK THE CACHE FIRST
+            if (!isUnique)
             {
                 if (_iconCache.TryGetValue(cacheKey, out var cachedIcon))
                 {
@@ -1835,7 +1840,6 @@ namespace PocketDrop
             }
 
             // 2. WAIT IN LINE
-            // Only let 4 files ask Windows for an icon at the exact same time
             await _iconThrottle.WaitAsync();
 
             try
@@ -1845,32 +1849,37 @@ namespace PocketDrop
                 {
                     try
                     {
-                        if (isImage)
+                        // ✨ THE ULTIMATE FIX: We let the Windows OS Shell handle everything!
+                        // For images, Windows extracts the tiny embedded EXIF thumbnail instantly,
+                        // completely bypassing the massive WPF 4K memory decoding spike.
+                        using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
                         {
-                            BitmapImage img = new BitmapImage();
-                            img.BeginInit();
-                            img.CacheOption = BitmapCacheOption.OnLoad;
-                            img.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                            img.UriSource = new Uri(filePath);
-                            img.DecodePixelWidth = 120;
-                            img.EndInit();
-                            img.Freeze();
-                            return (System.Windows.Media.ImageSource)img;
-                        }
-                        else
-                        {
-                            ShellObject shellObj = ShellObject.FromParsingName(filePath);
-                            var thumb = shellObj.Thumbnail.LargeBitmapSource;
+                            var wpfBmp = new BitmapImage();
 
-                            thumb.Freeze();
+                            using (var drawingBmp = shellObj.Thumbnail.Bitmap)
+                            {
+                                using (var ms = new System.IO.MemoryStream())
+                                {
+                                    // Bounce the tiny OS thumbnail through RAM (Preserves transparency for icons!)
+                                    drawingBmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                    ms.Position = 0;
+
+                                    wpfBmp.BeginInit();
+                                    wpfBmp.CacheOption = BitmapCacheOption.OnLoad;
+                                    wpfBmp.StreamSource = ms;
+                                    wpfBmp.EndInit();
+                                }
+                            }
+
+                            wpfBmp.Freeze();
 
                             // SAVE TO CACHE FOR NEXT TIME
                             if (!isUnique)
                             {
-                                _iconCache.TryAdd(cacheKey, thumb);
+                                _iconCache.TryAdd(cacheKey, wpfBmp);
                             }
 
-                            return (System.Windows.Media.ImageSource)thumb;
+                            return (System.Windows.Media.ImageSource)wpfBmp;
                         }
                     }
                     catch (Exception ex)
@@ -1883,7 +1892,6 @@ namespace PocketDrop
             finally
             {
                 // 4. LEAVE THE LINE 
-                // Always release the throttle so the next file can enter!
                 _iconThrottle.Release();
             }
         }
@@ -1902,13 +1910,184 @@ namespace PocketDrop
             }
             return null;
         }
+
+        // ==========================================
+        // DRAG & DROP ADORNER (Draws the line above the UI)
+        // ==========================================
+        public class DropLineAdorner : System.Windows.Documents.Adorner
+        {
+            private bool _isTopOrLeft;
+            private bool _isGrid;
+
+            public DropLineAdorner(UIElement adornedElement, bool isTopOrLeft, bool isGrid) : base(adornedElement)
+            {
+                _isTopOrLeft = isTopOrLeft;
+                _isGrid = isGrid;
+                IsHitTestVisible = false; // Lets the mouse pass directly through the line
+            }
+
+            protected override void OnRender(DrawingContext drawingContext)
+            {
+                var pen = new Pen(System.Windows.Media.Brushes.DodgerBlue, 3);
+                pen.Freeze(); // Optimizes performance
+
+                double width = AdornedElement.RenderSize.Width;
+                double height = AdornedElement.RenderSize.Height;
+
+                if (_isGrid)
+                {
+                    double x = _isTopOrLeft ? 0 : width;
+                    drawingContext.DrawLine(pen, new Point(x, 0), new Point(x, height));
+                }
+                else
+                {
+                    double y = _isTopOrLeft ? 0 : height;
+                    drawingContext.DrawLine(pen, new Point(0, y), new Point(width, y));
+                }
+            }
+        }
+
+        private void ItemsListBox_DragOver(object sender, DragEventArgs e)
+        {
+            if (_internalDragPayload == null) return;
+
+            e.Effects = DragDropEffects.Move;
+            e.Handled = true;
+
+            // Auto-scroll logic
+            ScrollViewer scrollViewer = GetScrollViewer(ItemsListBox);
+            if (scrollViewer != null)
+            {
+                double tolerance = 40;
+                double scrollSpeed = 8;
+                Point mousePos = e.GetPosition(ItemsListBox);
+
+                if (mousePos.Y < tolerance)
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - scrollSpeed);
+                else if (mousePos.Y > ItemsListBox.ActualHeight - tolerance)
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + scrollSpeed);
+            }
+
+            var hit = e.OriginalSource as DependencyObject;
+            var targetItem = FindAncestor<ListBoxItem>(hit);
+
+            if (targetItem == null)
+            {
+                ClearDragHighlight();
+                return;
+            }
+
+            bool isGrid = this.CurrentViewMode == "Grid";
+
+            // ✨ THE FIX: We no longer cut the file in half! 
+            // Hovering ANYWHERE on the item ALWAYS draws the line on the Left (Grid) or Top (List).
+            bool insertBefore = true;
+
+            if (_lastHoveredItem == targetItem && _insertAbove == insertBefore) return;
+
+            ClearDragHighlight();
+
+            _lastHoveredItem = targetItem;
+            _insertAbove = insertBefore;
+
+            var adornerLayer = System.Windows.Documents.AdornerLayer.GetAdornerLayer(targetItem);
+            if (adornerLayer != null)
+            {
+                _currentAdorner = new DropLineAdorner(targetItem, insertBefore, isGrid);
+                adornerLayer.Add(_currentAdorner);
+            }
+        }
+
+        private void ItemsListBox_DragLeave(object sender, DragEventArgs e)
+        {
+            ClearDragHighlight();
+        }
+
+        private void ClearDragHighlight()
+        {
+            if (_lastHoveredItem != null && _currentAdorner != null)
+            {
+                var adornerLayer = System.Windows.Documents.AdornerLayer.GetAdornerLayer(_lastHoveredItem);
+                adornerLayer?.Remove(_currentAdorner);
+
+                _currentAdorner = null;
+                _lastHoveredItem = null;
+            }
+        }
+
+        private void ItemsListBox_Drop(object sender, DragEventArgs e)
+        {
+            ClearDragHighlight();
+
+            if (_internalDragPayload != null)
+            {
+                _internalDropHandled = true;
+                e.Effects = DragDropEffects.Move;
+
+                var draggedItems = _internalDragPayload;
+                if (draggedItems.Count == 0) return;
+
+                var hit = e.OriginalSource as DependencyObject;
+                var targetItem = FindAncestor<ListBoxItem>(hit);
+
+                int insertIndex = PocketedItems.Count;
+
+                if (targetItem != null)
+                {
+                    var targetData = targetItem.DataContext as PocketItem;
+                    insertIndex = PocketedItems.IndexOf(targetData);
+
+                    // ✨ THE FIX: We deleted the right-side math! 
+                    // We only need to adjust the index if the item we are moving came from ABOVE our drop target.
+                    int originalIndex = PocketedItems.IndexOf(draggedItems[0]);
+                    if (originalIndex < insertIndex) insertIndex--;
+                }
+
+                ItemsListBox.SelectionChanged -= ItemsListBox_SelectionChanged;
+
+                foreach (var item in draggedItems) PocketedItems.Remove(item);
+                if (insertIndex > PocketedItems.Count) insertIndex = PocketedItems.Count;
+                for (int i = 0; i < draggedItems.Count; i++) PocketedItems.Insert(insertIndex + i, draggedItems[i]);
+
+                ItemsListBox.SelectionChanged += ItemsListBox_SelectionChanged;
+                ItemsListBox.UnselectAll();
+
+                UpdateStackPreview();
+                e.Handled = true;
+            }
+        }
+
+        private static T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        {
+            do
+            {
+                if (current is T ancestor) return ancestor;
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+            return null;
+        }
     }
 
-    public class PocketItem
+    public class PocketItem : System.ComponentModel.INotifyPropertyChanged
     {
         public string FileName { get; set; }
         public string FilePath { get; set; }
-        public System.Windows.Media.ImageSource Icon { get; set; }
         public bool IsPinned { get; set; }
+
+        private System.Windows.Media.ImageSource _icon;
+
+        // This tells WPF to automatically update the screen the moment the icon finishes loading!
+        public System.Windows.Media.ImageSource Icon
+        {
+            get => _icon;
+            set
+            {
+                _icon = value;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(Icon)));
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
     }
 }

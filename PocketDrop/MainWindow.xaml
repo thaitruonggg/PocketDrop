@@ -229,7 +229,7 @@
                     <Canvas.CacheMode>
                         <BitmapCache RenderAtScale="1" SnapsToDevicePixels="True"/>
                     </Canvas.CacheMode>
-                    
+
                     <Ellipse Width="150" Height="150" Fill="#EA5B6F" Opacity="0.23" Canvas.Left="-30" Canvas.Top="-30">
                         <Ellipse.Effect>
                             <BlurEffect Radius="25" RenderingBias="Performance"/>
@@ -411,7 +411,8 @@
                                 <ListBox x:Name="ItemsListBox" Grid.Row="1" Margin="8,6,8,8" Padding="0" ItemsSource="{Binding PocketedItems}" SelectionMode="Multiple" 
                                          Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                          PreviewMouseMove="ItemsList_PreviewMouseMove" SelectionChanged="ItemsListBox_SelectionChanged"
-                                         Style="{StaticResource PocketListBoxStyle}" ItemContainerStyle="{StaticResource PocketListBoxItemStyle}">
+                                         Style="{StaticResource PocketListBoxStyle}" ItemContainerStyle="{StaticResource PocketListBoxItemStyle}"
+                                         AllowDrop="True" Drop="ItemsListBox_Drop" DragOver="ItemsListBox_DragOver" DragLeave="ItemsListBox_DragLeave">
                                 </ListBox>
 
                                 <Button x:Name="DeleteSelectedButton" Grid.Row="2" Click="DeleteSelected_Click" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,4,32,12" 
