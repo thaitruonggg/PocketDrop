@@ -25,6 +25,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Xml.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using WinRT;
@@ -1547,12 +1548,141 @@ namespace PocketDrop
             MessageBox.Show(string.Format(msgTemplate, successCount), title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Menu_ImageConvertFormat_Click(object sender, RoutedEventArgs e)
+        private async void Menu_ImageConvertAction_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
             if (imagesToProcess.Count == 0) return;
 
-            // Your format conversion logic will go here!
+            MenuItem clickedItem = sender as MenuItem;
+            string targetExt = clickedItem?.Tag?.ToString();
+            if (string.IsNullOrEmpty(targetExt)) return;
+
+            string extName = targetExt.ToUpper().Replace(".", "");
+
+            if (ExpandButton != null) ExpandButton.IsChecked = false;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
+            if (StatusText != null)
+            {
+                // ✨ DYNAMIC STATUS TEXT
+                string statusTemplate = (string)Application.Current.TryFindResource("Text_ConvertingFormat") ?? "Converting to {0}...";
+                StatusText.Text = string.Format(statusTemplate, extName);
+                StatusText.Visibility = Visibility.Visible;
+            }
+
+            int successCount = 0;
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                // PDFsharp requires this line once per app lifecycle in modern .NET to handle fonts properly
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                string tempFolder = Path.GetTempPath();
+
+                foreach (var img in imagesToProcess)
+                {
+                    try
+                    {
+                        string originalExt = Path.GetExtension(img.FilePath).ToLower();
+                        if (originalExt == targetExt) continue;
+
+                        string filename = Path.GetFileNameWithoutExtension(img.FilePath);
+                        string newFileName = $"{filename}{targetExt}";
+                        string targetFilePath = Path.Combine(tempFolder, $"PocketDrop_Cvt_{Guid.NewGuid().ToString("N").Substring(0, 8)}_{newFileName}");
+
+                        byte[] fileBytes = File.ReadAllBytes(img.FilePath);
+
+                        // --- ROUTE A: Native WPF for PNG / JPG ---
+                        if (targetExt == ".png" || targetExt == ".jpg")
+                        {
+                            using (var ms = new System.IO.MemoryStream(fileBytes))
+                            {
+                                BitmapDecoder decoder = BitmapDecoder.Create(ms, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.None);
+                                BitmapEncoder encoder = targetExt == ".png" ? (BitmapEncoder)new PngBitmapEncoder() : new JpegBitmapEncoder { QualityLevel = 95 };
+
+                                var standardizedFrame = new FormatConvertedBitmap(decoder.Frames[0], System.Windows.Media.PixelFormats.Bgra32, null, 0);
+                                encoder.Frames.Add(BitmapFrame.Create(standardizedFrame));
+
+                                using (var fs = new FileStream(targetFilePath, FileMode.Create, FileAccess.Write))
+                                {
+                                    encoder.Save(fs);
+                                }
+                            }
+                        }
+                        // --- ROUTE B: SkiaSharp for WEBP ---
+                        else if (targetExt == ".webp")
+                        {
+                            using (var ms = new System.IO.MemoryStream(fileBytes))
+                            using (var originalBitmap = SkiaSharp.SKBitmap.Decode(ms))
+                            using (var image = SkiaSharp.SKImage.FromBitmap(originalBitmap))
+                            using (var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Webp, 90))
+                            using (var fs = new FileStream(targetFilePath, FileMode.Create, FileAccess.Write))
+                            {
+                                data.SaveTo(fs);
+                            }
+                        }
+                        // --- ROUTE C: PDFsharp for Individual PDFs ---
+                        else if (targetExt == ".pdf")
+                        {
+                            using (var document = new PdfSharp.Pdf.PdfDocument())
+                            {
+                                var page = document.AddPage();
+                                using (var ms = new System.IO.MemoryStream(fileBytes))
+                                using (var xImage = PdfSharp.Drawing.XImage.FromStream(ms))
+                                {
+                                    page.Width = xImage.PointWidth;
+                                    page.Height = xImage.PointHeight;
+
+                                    using (var gfx = PdfSharp.Drawing.XGraphics.FromPdfPage(page))
+                                    {
+                                        gfx.DrawImage(xImage, 0, 0, page.Width, page.Height);
+                                    }
+                                }
+                                document.Save(targetFilePath);
+                            }
+                        }
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            img.FilePath = targetFilePath;
+                            img.FileName = newFileName;
+                            img.Icon = null;
+                        });
+
+                        successCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Could not convert {img.FileName}: {ex.Message}");
+                    }
+                }
+            });
+
+            // Force the UI to refresh the empty icons we just nulled out
+            foreach (var item in imagesToProcess)
+            {
+                if (item.Icon == null)
+                {
+                    _ = LoadFileIconAsync(item.FilePath).ContinueWith(t =>
+                    {
+                        if (t.Result != null)
+                        {
+                            Application.Current.Dispatcher.Invoke(() => item.Icon = t.Result);
+                        }
+                    });
+                }
+            }
+
+            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
+
+            if (successCount > 0)
+            {
+                // ✨ DYNAMIC POPUP MESSAGE
+                string title = (string)Application.Current.TryFindResource("Text_FormatSuccessTitle") ?? "Success";
+                string msgTemplate = (string)Application.Current.TryFindResource("Text_FormatSuccessMsg") ?? "Successfully converted {0} images to {1}!\n\nThey are ready in your Pocket.";
+
+                MessageBox.Show(string.Format(msgTemplate, successCount, extName), title, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private void Menu_ImageResize_Click(object sender, RoutedEventArgs e)
@@ -1563,12 +1693,89 @@ namespace PocketDrop
             // Your resizing logic will go here!
         }
 
-        private void Menu_ImageCreatePdf_Click(object sender, RoutedEventArgs e)
+        private async void Menu_ImageCreatePdf_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
             if (imagesToProcess.Count == 0) return;
 
-            // Your PDF generation logic will go here!
+            if (ExpandButton != null) ExpandButton.IsChecked = false;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
+            if (StatusText != null)
+            {
+                StatusText.Text = (string)Application.Current.TryFindResource("Text_CreatingPdf") ?? "Creating PDF document...";
+                StatusText.Visibility = Visibility.Visible;
+            }
+
+            // ✨ DYNAMIC FILE NAME
+            string baseFileName = (string)Application.Current.TryFindResource("Text_DefaultPdfName") ?? "MergedDocument";
+
+            string tempFolder = Path.GetTempPath();
+            string targetFilePath = Path.Combine(tempFolder, $"PocketDrop_Doc_{Guid.NewGuid().ToString("N").Substring(0, 8)}_{baseFileName}.pdf");
+            bool success = false;
+
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                try
+                {
+                    System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                    using (var document = new PdfSharp.Pdf.PdfDocument())
+                    {
+                        foreach (var img in imagesToProcess)
+                        {
+                            byte[] fileBytes = File.ReadAllBytes(img.FilePath);
+
+                            var page = document.AddPage();
+                            using (var ms = new System.IO.MemoryStream(fileBytes))
+                            using (var xImage = PdfSharp.Drawing.XImage.FromStream(ms))
+                            {
+                                page.Width = xImage.PointWidth;
+                                page.Height = xImage.PointHeight;
+
+                                using (var gfx = PdfSharp.Drawing.XGraphics.FromPdfPage(page))
+                                {
+                                    gfx.DrawImage(xImage, 0, 0, page.Width, page.Height);
+                                }
+                            }
+                        }
+
+                        document.Save(targetFilePath);
+                        success = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not create PDF: {ex.Message}");
+                }
+            });
+
+            if (success)
+            {
+                var newPdfItem = new PocketItem
+                {
+                    FileName = $"{baseFileName}.pdf", // Uses the translated name!
+                    FilePath = targetFilePath,
+                    IsPinned = false
+                };
+
+                PocketedItems.Add(newPdfItem);
+
+                _ = LoadFileIconAsync(newPdfItem.FilePath).ContinueWith(t =>
+                {
+                    if (t.Result != null) Application.Current.Dispatcher.Invoke(() => newPdfItem.Icon = t.Result);
+                });
+
+                UpdateStackPreview();
+                UpdateItemCountDisplay(PocketedItems.Count);
+
+                string title = (string)Application.Current.TryFindResource("Text_PdfSuccessTitle") ?? "Success";
+                string msgTemplate = (string)Application.Current.TryFindResource("Text_PdfSuccessMsg") ?? "Successfully created a {0}-page PDF document!\n\nIt has been added to your Pocket.";
+
+                MessageBox.Show(string.Format(msgTemplate, imagesToProcess.Count), title, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
         }
 
         // Menu action: Settings

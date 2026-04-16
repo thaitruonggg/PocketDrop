@@ -44,11 +44,26 @@
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
     <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
 
+    <sys:String x:Key="Text_MenuAdvancedTools">Công cụ nâng cao</sys:String>
+    <sys:String x:Key="Text_MenuImagesHeader">Hình ảnh</sys:String>
+    <sys:String x:Key="Text_MenuImageRemoveMetadata">Xóa siêu dữ liệu</sys:String>
+    <sys:String x:Key="Text_MenuImageConvertFormat">Chuyển đổi định dạng</sys:String>
+    <sys:String x:Key="Text_MenuImageResize">Thay đổi kích thước</sys:String>
+    <sys:String x:Key="Text_MenuImageCreatePdf">Tạo PDF</sys:String>
+
     <sys:String x:Key="Text_NoImagesTitle">Lựa chọn không hợp lệ</sys:String>
     <sys:String x:Key="Text_NoImagesDesc">Vui lòng chọn ít nhất một tệp hình ảnh hợp lệ để sử dụng công cụ này.</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Đang làm sạch hình ảnh...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_MetadataSuccessMsg">Đã làm sạch thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
+
+    <sys:String x:Key="Text_ConvertingFormat">Đang chuyển đổi sang {0}...</sys:String>
+    <sys:String x:Key="Text_FormatSuccessTitle">Thành công</sys:String>
+    <sys:String x:Key="Text_FormatSuccessMsg">Đã chuyển đổi thành công {0} hình ảnh sang {1}!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn.</sys:String>
+    <sys:String x:Key="Text_CreatingPdf">Đang tạo tài liệu PDF...</sys:String>
+    <sys:String x:Key="Text_DefaultPdfName">TaiLieuDaGop</sys:String>
+    <sys:String x:Key="Text_PdfSuccessTitle">Thành công</sys:String>
+    <sys:String x:Key="Text_PdfSuccessMsg">Đã tạo thành công tài liệu PDF gồm {0} trang!&#x0a;&#x0a;Tệp đã được thêm vào Pocket của bạn.</sys:String>
 
     <sys:String x:Key="Text_MenuClearItems">Xóa tất cả tập tin</sys:String>
     <sys:String x:Key="Text_MenuSettings">Cài đặt</sys:String>

@@ -19,8 +19,11 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sentry" Version="6.3.1" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
+    <PackageReference Include="PDFsharp" Version="6.2.4" />
+    <PackageReference Include="Sentry" Version="6.3.2" />
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="3.119.2" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.6" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
 

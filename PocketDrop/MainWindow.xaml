@@ -299,15 +299,21 @@
                                 <MenuItem Header="{DynamicResource Text_MenuShare}" Click="Menu_Share_Click" />
                                 <MenuItem Header="{DynamicResource Text_MenuCompressZip}" Click="Menu_CompressZip_Click" />
 
-                                <MenuItem Header="Advanced Tools">
+                                <MenuItem Header="{DynamicResource Text_MenuAdvancedTools}">
 
-                                    <MenuItem Header="Images" IsHitTestVisible="False" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}"/>
+                                    <MenuItem Header="{DynamicResource Text_MenuImagesHeader}" IsHitTestVisible="False" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}"/>
                                     <MenuItem Style="{StaticResource FullWidthSeparator}" IsEnabled="False"/>
 
-                                    <MenuItem Header="Remove metadata" Click="Menu_ImageRemoveMetadata_Click"/>
-                                    <MenuItem Header="Convert format" Click="Menu_ImageConvertFormat_Click"/>
-                                    <MenuItem Header="Resize" Click="Menu_ImageResize_Click"/>
-                                    <MenuItem Header="Create PDF" Click="Menu_ImageCreatePdf_Click"/>
+                                    <MenuItem Header="{DynamicResource Text_MenuImageRemoveMetadata}" Click="Menu_ImageRemoveMetadata_Click"/>
+                                    <MenuItem Header="{DynamicResource Text_MenuImageConvertFormat}">
+                                        <MenuItem Header="To PNG" Tag=".png" Click="Menu_ImageConvertAction_Click"/>
+                                        <MenuItem Header="To JPG" Tag=".jpg" Click="Menu_ImageConvertAction_Click"/>
+                                        <MenuItem Header="To WEBP" Tag=".webp" Click="Menu_ImageConvertAction_Click"/>
+                                        <MenuItem Style="{StaticResource FullWidthSeparator}" IsEnabled="False"/>
+                                        <MenuItem Header="To PDF (Individual)" Tag=".pdf" Click="Menu_ImageConvertAction_Click"/>
+                                    </MenuItem>
+                                    <MenuItem Header="{DynamicResource Text_MenuImageResize}" Click="Menu_ImageResize_Click"/>
+                                    <MenuItem Header="{DynamicResource Text_MenuImageCreatePdf}" Click="Menu_ImageCreatePdf_Click"/>
 
                                 </MenuItem>
 

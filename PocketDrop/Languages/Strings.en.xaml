@@ -44,11 +44,26 @@
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
     <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
 
+    <sys:String x:Key="Text_MenuAdvancedTools">Advanced Tools</sys:String>
+    <sys:String x:Key="Text_MenuImagesHeader">Images</sys:String>
+    <sys:String x:Key="Text_MenuImageRemoveMetadata">Remove metadata</sys:String>
+    <sys:String x:Key="Text_MenuImageConvertFormat">Convert format</sys:String>
+    <sys:String x:Key="Text_MenuImageResize">Resize</sys:String>
+    <sys:String x:Key="Text_MenuImageCreatePdf">Create PDF</sys:String>
+
     <sys:String x:Key="Text_NoImagesTitle">Invalid Selection</sys:String>
     <sys:String x:Key="Text_NoImagesDesc">Please select at least one valid image file to use this tool.</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Cleaning images...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_MetadataSuccessMsg">Successfully cleaned {0} images!&#x0a;&#x0a;They are now ready in your Pocket. Simply drag them out to save them.</sys:String>
+
+    <sys:String x:Key="Text_ConvertingFormat">Converting to {0}...</sys:String>
+    <sys:String x:Key="Text_FormatSuccessTitle">Success</sys:String>
+    <sys:String x:Key="Text_FormatSuccessMsg">Successfully converted {0} images to {1}!&#x0a;&#x0a;They are ready in your Pocket.</sys:String>
+    <sys:String x:Key="Text_CreatingPdf">Creating PDF document...</sys:String>
+    <sys:String x:Key="Text_DefaultPdfName">MergedDocument</sys:String>
+    <sys:String x:Key="Text_PdfSuccessTitle">Success</sys:String>
+    <sys:String x:Key="Text_PdfSuccessMsg">Successfully created a {0}-page PDF document!&#x0a;&#x0a;It has been added to your Pocket.</sys:String>
 
     <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
     <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
