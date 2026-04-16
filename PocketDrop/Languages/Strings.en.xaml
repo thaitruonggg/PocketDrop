@@ -44,6 +44,9 @@
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
     <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
 
+    <sys:String x:Key="Text_NoImagesTitle">Invalid Selection</sys:String>
+    <sys:String x:Key="Text_NoImagesDesc">Please select at least one valid image file to use this tool.</sys:String>
+
     <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
     <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
 

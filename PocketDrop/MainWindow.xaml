@@ -101,11 +101,38 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuItem">
                         <Border x:Name="BgBorder" Background="Transparent" CornerRadius="4" Margin="4,2">
-                            <ContentPresenter Content="{TemplateBinding Header}" Margin="{TemplateBinding Padding}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter Content="{TemplateBinding Header}" Margin="{TemplateBinding Padding}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                                <Path x:Name="RightArrow" Grid.Column="1" Visibility="Collapsed" Margin="16,0,8,0" VerticalAlignment="Center" 
+                                      Data="M0,0 L4,4 L0,8" Stroke="{DynamicResource TextSecondary}" StrokeThickness="1.5" 
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+
+                                <Popup x:Name="SubMenuPopup" Placement="Right" HorizontalOffset="-4" VerticalOffset="-6" 
+                                       IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True" Focusable="False">
+                                    <Border Background="{DynamicResource LayerDefault}" BorderBrush="{DynamicResource StrokeCardDefault}" 
+                                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="0,0,16,16">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="16" Color="#000000" Opacity="0.15" Direction="270" ShadowDepth="4"/>
+                                        </Border.Effect>
+
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </Border>
+                                </Popup>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
                                 <Setter TargetName="BgBorder" Property="Background" Value="#0F000000"/>
+                            </Trigger>
+
+                            <Trigger Property="Role" Value="SubmenuHeader">
+                                <Setter TargetName="RightArrow" Property="Visibility" Value="Visible"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -267,12 +294,27 @@
                                 <ContextMenu.Resources>
                                     <Style TargetType="MenuItem" BasedOn="{StaticResource PocketMenuItemStyle}"/>
                                 </ContextMenu.Resources>
+
                                 <MenuItem x:Name="Menu_DynamicOpen" Header="{DynamicResource Text_MenuOpenWith}" Click="Menu_DynamicOpen_Click" />
                                 <MenuItem Header="{DynamicResource Text_MenuShare}" Click="Menu_Share_Click" />
                                 <MenuItem Header="{DynamicResource Text_MenuCompressZip}" Click="Menu_CompressZip_Click" />
+
+                                <MenuItem Header="More Functions">
+
+                                    <MenuItem Header="Images" IsHitTestVisible="False" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}"/>
+                                    <MenuItem Style="{StaticResource FullWidthSeparator}" IsEnabled="False"/>
+
+                                    <MenuItem Header="Remove metadata" Click="Menu_ImageRemoveMetadata_Click"/>
+                                    <MenuItem Header="Convert format" Click="Menu_ImageConvertFormat_Click"/>
+                                    <MenuItem Header="Resize" Click="Menu_ImageResize_Click"/>
+                                    <MenuItem Header="Create PDF" Click="Menu_ImageCreatePdf_Click"/>
+
+                                </MenuItem>
+
                                 <MenuItem Header="{DynamicResource Text_MenuClearItems}" Click="Menu_ClearItems_Click" />
                                 <MenuItem Style="{StaticResource FullWidthSeparator}" IsEnabled="False"/>
                                 <MenuItem Header="{DynamicResource Text_MenuSettings}" Click="Menu_Settings_Click" />
+
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>

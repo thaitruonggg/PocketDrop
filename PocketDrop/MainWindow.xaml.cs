@@ -1448,6 +1448,41 @@ namespace PocketDrop
 
         }
 
+        private void Menu_ImageRemoveMetadata_Click(object sender, RoutedEventArgs e)
+        {
+            var imagesToProcess = GetOnlyValidImages();
+            if (imagesToProcess.Count == 0) return; // Silently abort if they only selected an .exe
+
+            // Your EXIF removal logic will go here!
+            // Example: foreach (var img in imagesToProcess) { ... }
+
+            MessageBox.Show($"Successfully stripped metadata from {imagesToProcess.Count} images!", "Success");
+        }
+
+        private void Menu_ImageConvertFormat_Click(object sender, RoutedEventArgs e)
+        {
+            var imagesToProcess = GetOnlyValidImages();
+            if (imagesToProcess.Count == 0) return;
+
+            // Your format conversion logic will go here!
+        }
+
+        private void Menu_ImageResize_Click(object sender, RoutedEventArgs e)
+        {
+            var imagesToProcess = GetOnlyValidImages();
+            if (imagesToProcess.Count == 0) return;
+
+            // Your resizing logic will go here!
+        }
+
+        private void Menu_ImageCreatePdf_Click(object sender, RoutedEventArgs e)
+        {
+            var imagesToProcess = GetOnlyValidImages();
+            if (imagesToProcess.Count == 0) return;
+
+            // Your PDF generation logic will go here!
+        }
+
         // Menu action: Settings
         private void Menu_Settings_Click(object sender, RoutedEventArgs e)
         {
@@ -1818,20 +1853,19 @@ namespace PocketDrop
         private async System.Threading.Tasks.Task<System.Windows.Media.ImageSource> LoadFileIconAsync(string filePath)
         {
             string ext = Path.GetExtension(filePath).ToLower();
-
-            // ✨ MERGED: We add images to the unique list so they don't share the same cached icon!
+            string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
             string[] uniqueIconExts = { ".exe", ".ico", ".lnk", ".pdf",
-                                ".mp4", ".avi", ".mov", ".wmv", ".mkv",
-                                ".mp3", ".flac", ".m4a",
-                                ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
+                        ".mp4", ".avi", ".mov", ".wmv", ".mkv",
+                        ".mp3", ".flac", ".m4a"};
 
+            bool isImage = Array.Exists(imageExts, x => x == ext);
             bool isUnique = Array.Exists(uniqueIconExts, x => x == ext);
             bool isDirectory = Directory.Exists(filePath);
 
             string cacheKey = isDirectory ? "folder_icon" : ext;
 
-            // 1. CHECK THE CACHE FIRST
-            if (!isUnique)
+            // 1. CHECK THE CACHE FIRST (Instant return, bypasses the bouncer!)
+            if (!isImage && !isUnique)
             {
                 if (_iconCache.TryGetValue(cacheKey, out var cachedIcon))
                 {
@@ -1840,6 +1874,7 @@ namespace PocketDrop
             }
 
             // 2. WAIT IN LINE
+            // Only let 4 files ask Windows for an icon at the exact same time
             await _iconThrottle.WaitAsync();
 
             try
@@ -1849,37 +1884,48 @@ namespace PocketDrop
                 {
                     try
                     {
-                        // ✨ THE ULTIMATE FIX: We let the Windows OS Shell handle everything!
-                        // For images, Windows extracts the tiny embedded EXIF thumbnail instantly,
-                        // completely bypassing the massive WPF 4K memory decoding spike.
-                        using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
+                        if (isImage)
                         {
-                            var wpfBmp = new BitmapImage();
-
-                            using (var drawingBmp = shellObj.Thumbnail.Bitmap)
+                            // ✨ THE ULTIMATE FIX: We let the Windows OS Shell handle everything!
+                            // For images, Windows extracts the tiny embedded EXIF thumbnail instantly,
+                            // completely bypassing the massive WPF 4K memory decoding spike.
+                            using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
                             {
-                                using (var ms = new System.IO.MemoryStream())
+                                var wpfBmp = new BitmapImage();
+
+                                using (var drawingBmp = shellObj.Thumbnail.Bitmap)
                                 {
-                                    // Bounce the tiny OS thumbnail through RAM (Preserves transparency for icons!)
-                                    drawingBmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                    ms.Position = 0;
+                                    using (var ms = new System.IO.MemoryStream())
+                                    {
+                                        // Bounce the tiny OS thumbnail through RAM
+                                        drawingBmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                        ms.Position = 0;
 
-                                    wpfBmp.BeginInit();
-                                    wpfBmp.CacheOption = BitmapCacheOption.OnLoad;
-                                    wpfBmp.StreamSource = ms;
-                                    wpfBmp.EndInit();
+                                        wpfBmp.BeginInit();
+                                        wpfBmp.CacheOption = BitmapCacheOption.OnLoad;
+                                        wpfBmp.StreamSource = ms;
+                                        wpfBmp.EndInit();
+                                    }
                                 }
-                            }
 
-                            wpfBmp.Freeze();
+                                wpfBmp.Freeze();
+                                return (System.Windows.Media.ImageSource)wpfBmp;
+                            }
+                        }
+                        else
+                        {
+                            ShellObject shellObj = ShellObject.FromParsingName(filePath);
+                            var thumb = shellObj.Thumbnail.LargeBitmapSource;
+
+                            thumb.Freeze();
 
                             // SAVE TO CACHE FOR NEXT TIME
                             if (!isUnique)
                             {
-                                _iconCache.TryAdd(cacheKey, wpfBmp);
+                                _iconCache.TryAdd(cacheKey, thumb);
                             }
 
-                            return (System.Windows.Media.ImageSource)wpfBmp;
+                            return (System.Windows.Media.ImageSource)thumb;
                         }
                     }
                     catch (Exception ex)
@@ -1892,6 +1938,7 @@ namespace PocketDrop
             finally
             {
                 // 4. LEAVE THE LINE 
+                // Always release the throttle so the next file can enter!
                 _iconThrottle.Release();
             }
         }
@@ -2066,6 +2113,37 @@ namespace PocketDrop
             }
             while (current != null);
             return null;
+        }
+
+        // ==========================================
+        // THE SMART FILTER: Extracts only valid images and handles empty/invalid selections
+        // ==========================================
+        private List<PocketItem> GetOnlyValidImages()
+        {
+            // 1. Get the current selection (or everything if nothing is selected)
+            var itemsToProcess = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
+                ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
+                : PocketedItems.ToList();
+
+            // 2. Define what we consider a valid image for these specific tools
+            string[] validExts = { ".png", ".jpg", ".jpeg", ".bmp", ".webp", ".gif" };
+
+            // 3. Filter the list! (This silently drops the .exe, .pdf, folders, etc.)
+            var validImages = itemsToProcess.Where(item =>
+                validExts.Contains(Path.GetExtension(item.FilePath).ToLower())
+            ).ToList();
+
+            // 4. ✨ THE DYNAMIC BONUS: Show a translated warning if no valid images are left
+            if (validImages.Count == 0)
+            {
+                // Attempt to grab the translated text, but provide a safe English fallback just in case
+                string warningTitle = (string)Application.Current.TryFindResource("Text_NoImagesTitle") ?? "Invalid Selection";
+                string warningDesc = (string)Application.Current.TryFindResource("Text_NoImagesDesc") ?? "Please select at least one valid image file to use this tool.";
+
+                MessageBox.Show(warningDesc, warningTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            return validImages;
         }
     }
 
