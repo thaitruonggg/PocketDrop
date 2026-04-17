@@ -1788,6 +1788,175 @@ namespace PocketDrop
             }
         }
 
+        private async void Menu_ImageRotateAction_Click(object sender, RoutedEventArgs e)
+        {
+            var imagesToProcess = GetOnlyValidImages();
+            if (imagesToProcess.Count == 0) return;
+
+            MenuItem clickedItem = sender as MenuItem;
+            if (!int.TryParse(clickedItem?.Tag?.ToString(), out int userDegrees)) return;
+
+            // 1. Prepare UI
+            if (ExpandButton != null) ExpandButton.IsChecked = false;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
+            if (StatusText != null)
+            {
+                StatusText.Text = userDegrees == 0
+                    ? (string)Application.Current.TryFindResource("Text_ResettingImages") ?? "Restoring originals..."
+                    : (string)Application.Current.TryFindResource("Text_RotatingImages") ?? "Rotating images...";
+                StatusText.Visibility = Visibility.Visible;
+            }
+
+            string rotatedSuffix = (string)Application.Current.TryFindResource("Text_RotatedSuffix") ?? "_Rotated";
+            int successCount = 0;
+
+            // 2. Process in background using PURE SkiaSharp math
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                string tempFolder = System.IO.Path.GetTempPath();
+
+                foreach (var img in imagesToProcess)
+                {
+                    try
+                    {
+                        // THE 0-DEGREE FAST RESET
+                        if (userDegrees == 0)
+                        {
+                            if (img.FilePath != img.OriginalFilePath)
+                            {
+                                CleanupTempFile(img.FilePath);
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    img.FilePath = img.OriginalFilePath;
+                                    img.FileName = System.IO.Path.GetFileName(img.OriginalFilePath);
+                                    img.Icon = null;
+                                });
+                                successCount++;
+                            }
+                            continue;
+                        }
+
+                        string ext = System.IO.Path.GetExtension(img.FilePath).ToLower();
+                        string filename = System.IO.Path.GetFileNameWithoutExtension(img.FilePath);
+                        string newFileName = $"{filename}{rotatedSuffix}{ext}";
+                        string targetFilePath = System.IO.Path.Combine(tempFolder, $"PocketDrop_Rot_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}_{newFileName}");
+
+                        byte[] fileBytes = System.IO.File.ReadAllBytes(img.FilePath);
+
+                        using (var ms = new System.IO.MemoryStream(fileBytes))
+                        using (var codec = SkiaSharp.SKCodec.Create(ms))
+                        {
+                            if (codec == null) continue;
+
+                            using (var rawBitmap = SkiaSharp.SKBitmap.Decode(codec))
+                            {
+                                if (rawBitmap == null) continue;
+
+                                // ✨ 1. Read the hidden EXIF orientation to find "True Upright"
+                                int exifDegrees = 0;
+                                switch (codec.EncodedOrigin)
+                                {
+                                    case SkiaSharp.SKEncodedOrigin.BottomRight: exifDegrees = 180; break;
+                                    case SkiaSharp.SKEncodedOrigin.RightTop: exifDegrees = 90; break;
+                                    case SkiaSharp.SKEncodedOrigin.LeftBottom: exifDegrees = 270; break;
+                                }
+
+                                // ✨ 2. Combine EXIF tilt with your requested rotation (-90 becomes 270 for clean math)
+                                int safeUserDegrees = userDegrees < 0 ? userDegrees + 360 : userDegrees;
+                                int totalDegrees = (exifDegrees + safeUserDegrees) % 360;
+
+                                SkiaSharp.SKEncodedImageFormat format = SkiaSharp.SKEncodedImageFormat.Jpeg;
+                                if (ext == ".png") format = SkiaSharp.SKEncodedImageFormat.Png;
+                                else if (ext == ".webp") format = SkiaSharp.SKEncodedImageFormat.Webp;
+                                else if (ext == ".bmp") format = SkiaSharp.SKEncodedImageFormat.Bmp;
+
+                                // ✨ 3. Execute the physical pixel rotation
+                                if (totalDegrees == 0)
+                                {
+                                    // Math resulted in 0 tilt, just re-encode the raw pixels
+                                    using (var image = SkiaSharp.SKImage.FromBitmap(rawBitmap))
+                                    using (var data = image.Encode(format, 95))
+                                    using (var fs = new System.IO.FileStream(targetFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                                    {
+                                        data.SaveTo(fs);
+                                    }
+                                }
+                                else
+                                {
+                                    int newW = (totalDegrees == 90 || totalDegrees == 270) ? rawBitmap.Height : rawBitmap.Width;
+                                    int newH = (totalDegrees == 90 || totalDegrees == 270) ? rawBitmap.Width : rawBitmap.Height;
+
+                                    using (var rotatedBitmap = new SkiaSharp.SKBitmap(new SkiaSharp.SKImageInfo(newW, newH)))
+                                    using (var canvas = new SkiaSharp.SKCanvas(rotatedBitmap))
+                                    {
+                                        canvas.Clear(SkiaSharp.SKColors.Transparent);
+
+                                        // Spin the canvas!
+                                        canvas.Translate(newW / 2f, newH / 2f);
+                                        canvas.RotateDegrees(totalDegrees);
+                                        canvas.Translate(-rawBitmap.Width / 2f, -rawBitmap.Height / 2f);
+                                        canvas.DrawBitmap(rawBitmap, 0, 0);
+
+                                        using (var image = SkiaSharp.SKImage.FromBitmap(rotatedBitmap))
+                                        using (var data = image.Encode(format, 100))
+                                        using (var fs = new System.IO.FileStream(targetFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                                        {
+                                            data.SaveTo(fs);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Update the UI
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            img.FilePath = targetFilePath;
+                            img.FileName = newFileName;
+                            img.Icon = null;
+                        });
+                        successCount++;
+                    }
+                    catch (System.Exception ex)
+                    {
+                        System.Console.WriteLine($"Could not rotate {img.FileName}: {ex.Message}");
+                    }
+                }
+            });
+
+            // 3. Force the UI to redraw the fresh icons AND the stack!
+            foreach (var item in imagesToProcess)
+            {
+                if (item.Icon == null)
+                {
+                    _ = LoadFileIconAsync(item.FilePath).ContinueWith(t =>
+                    {
+                        if (t.Result != null)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                item.Icon = t.Result;
+                                UpdateStackPreview();
+                            });
+                        }
+                    });
+                }
+            }
+
+            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
+
+            if (successCount > 0)
+            {
+                string title = (string)Application.Current.TryFindResource("Text_RotateSuccessTitle") ?? "Success";
+                string msgTemplate = userDegrees == 0
+                    ? (string)Application.Current.TryFindResource("Text_ResetSuccessMsg") ?? "Successfully restored {0} images to their originals!"
+                    : (string)Application.Current.TryFindResource("Text_RotateSuccessMsg") ?? "Successfully rotated {0} images!\n\nThey are ready in your Pocket.";
+
+                MessageBox.Show(string.Format(msgTemplate, successCount), title, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         private async void Menu_ImageResize_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();

@@ -312,6 +312,10 @@
                                         <MenuItem Style="{StaticResource FullWidthSeparator}" IsEnabled="False"/>
                                         <MenuItem Header="To PDF (Individual)" Tag=".pdf" Click="Menu_ImageConvertAction_Click"/>
                                     </MenuItem>
+                                    <MenuItem Header="{DynamicResource Text_MenuImageRotate}">
+                                        <MenuItem Header="{DynamicResource Text_RotateRight}" Tag="90" Click="Menu_ImageRotateAction_Click"/>
+                                        <MenuItem Header="{DynamicResource Text_RotateLeft}" Tag="-90" Click="Menu_ImageRotateAction_Click"/>
+                                    </MenuItem>
                                     <MenuItem Header="{DynamicResource Text_MenuImageResize}" Click="Menu_ImageResize_Click"/>
                                     <MenuItem Header="{DynamicResource Text_MenuImageCreatePdf}" Click="Menu_ImageCreatePdf_Click"/>
 

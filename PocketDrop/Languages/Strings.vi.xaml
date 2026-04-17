@@ -65,6 +65,14 @@
     <sys:String x:Key="Text_PdfSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_PdfSuccessMsg">Đã tạo thành công tài liệu PDF gồm {0} trang!&#x0a;&#x0a;Tệp đã được thêm vào Pocket của bạn.</sys:String>
 
+    <sys:String x:Key="Text_MenuImageRotate">Xoay hình ảnh</sys:String>
+    <sys:String x:Key="Text_RotateRight">Xoay phải 90°</sys:String>
+    <sys:String x:Key="Text_RotateLeft">Xoay trái 90°</sys:String>
+    <sys:String x:Key="Text_RotatingImages">Đang xoay hình ảnh...</sys:String>
+    <sys:String x:Key="Text_RotatedSuffix">_Rotated</sys:String>
+    <sys:String x:Key="Text_RotateSuccessTitle">Thành công</sys:String>
+    <sys:String x:Key="Text_RotateSuccessMsg">Đã xoay thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn.</sys:String>
+
     <sys:String x:Key="Text_ResizingImages">Đang thay đổi kích thước...</sys:String>
     <sys:String x:Key="Text_ResizedSuffix">_Resized</sys:String>
     <sys:String x:Key="Text_ResizeSuccessTitle">Thành công</sys:String>

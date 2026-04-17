@@ -65,6 +65,14 @@
     <sys:String x:Key="Text_PdfSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_PdfSuccessMsg">Successfully created a {0}-page PDF document!&#x0a;&#x0a;It has been added to your Pocket.</sys:String>
 
+    <sys:String x:Key="Text_MenuImageRotate">Rotate Image</sys:String>
+    <sys:String x:Key="Text_RotateRight">Rotate Right 90°</sys:String>
+    <sys:String x:Key="Text_RotateLeft">Rotate Left 90°</sys:String>
+    <sys:String x:Key="Text_RotatingImages">Rotating images...</sys:String>
+    <sys:String x:Key="Text_RotatedSuffix">_Rotated</sys:String>
+    <sys:String x:Key="Text_RotateSuccessTitle">Success</sys:String>
+    <sys:String x:Key="Text_RotateSuccessMsg">Successfully rotated {0} images!&#x0a;&#x0a;They are ready in your Pocket.</sys:String>
+
     <sys:String x:Key="Text_ResizingImages">Resizing images...</sys:String>
     <sys:String x:Key="Text_ResizedSuffix">_Resized</sys:String>
     <sys:String x:Key="Text_ResizeSuccessTitle">Success</sys:String>
