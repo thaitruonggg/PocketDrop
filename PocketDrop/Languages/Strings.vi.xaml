@@ -13,7 +13,7 @@
     <sys:String x:Key="Text_FilesMissingTitle">Không tìm thấy tập tin</sys:String>
     <sys:String x:Key="Text_FilesMissingDesc">Một số tập tin không còn ở vị trí cũ nên đã được gỡ khỏi Pocket. Có thể chúng đã bị xóa hoặc di chuyển đi nơi khác.</sys:String>
     <sys:String x:Key="Text_ClipboardEmptyTitle">Bộ nhớ tạm đang trống</sys:String>
-    <sys:String x:Key="Text_ClipboardEmpty">Không tìm thấy tập tin nào trong bộ nhớ tạm!</sys:String>
+    <sys:String x:Key="Text_ClipboardEmpty">Không tìm thấy tập tin nào trong bộ nhớ tạm</sys:String>
     <sys:String x:Key="Text_LargeDropTitle">Xử lý tập tin số lượng lớn</sys:String>
     <sys:String x:Key="Text_LargeDropMsg">Bạn sắp xử lý {0} tập tin.&#x0a;&#x0a;Quá trình này có thể mất một lúc tùy thuộc vào cấu hình máy của bạn. Tiếp tục chứ?</sys:String>
     <sys:String x:Key="Text_LargePasteTitle">Dán tập tin số lượng lớn</sys:String>
@@ -44,49 +44,46 @@
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
     <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
 
-    <sys:String x:Key="Text_MenuAdvancedTools">Công cụ nâng cao</sys:String>
+    <!-- Main Window - More Menu - Advanced Tools -->
+    <sys:String x:Key="Text_MenuAdvancedTools">Nâng cao</sys:String>
     <sys:String x:Key="Text_MenuImagesHeader">Hình ảnh</sys:String>
-    <sys:String x:Key="Text_MenuImageRemoveMetadata">Xóa siêu dữ liệu</sys:String>
-    <sys:String x:Key="Text_MenuImageConvertFormat">Chuyển đổi định dạng</sys:String>
-    <sys:String x:Key="Text_MenuImageResize">Thay đổi kích thước</sys:String>
-    <sys:String x:Key="Text_MenuImageCreatePdf">Tạo PDF</sys:String>
-
     <sys:String x:Key="Text_NoImagesTitle">Lựa chọn không hợp lệ</sys:String>
-    <sys:String x:Key="Text_NoImagesDesc">Vui lòng chọn ít nhất một tệp hình ảnh hợp lệ để sử dụng công cụ này.</sys:String>
+    <sys:String x:Key="Text_NoImagesDesc">Vui lòng chọn ít nhất một tập tin hình ảnh hợp lệ để tiếp tục.</sys:String>
+
+    <sys:String x:Key="Text_MenuImageRemoveMetadata">Xóa siêu dữ liệu</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Đang làm sạch hình ảnh...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_MetadataSuccessMsg">Đã làm sạch thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
-
+    
+    <sys:String x:Key="Text_MenuImageConvertFormat">Chuyển đổi định dạng</sys:String>
     <sys:String x:Key="Text_ConvertingFormat">Đang chuyển đổi sang {0}...</sys:String>
     <sys:String x:Key="Text_FormatSuccessTitle">Thành công</sys:String>
-    <sys:String x:Key="Text_FormatSuccessMsg">Đã chuyển đổi thành công {0} hình ảnh sang {1}!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn.</sys:String>
-    <sys:String x:Key="Text_CreatingPdf">Đang tạo tài liệu PDF...</sys:String>
-    <sys:String x:Key="Text_DefaultPdfName">TaiLieuDaGop</sys:String>
-    <sys:String x:Key="Text_PdfSuccessTitle">Thành công</sys:String>
-    <sys:String x:Key="Text_PdfSuccessMsg">Đã tạo thành công tài liệu PDF gồm {0} trang!&#x0a;&#x0a;Tệp đã được thêm vào Pocket của bạn.</sys:String>
+    <sys:String x:Key="Text_FormatSuccessMsg">Đã chuyển đổi thành công {0} hình ảnh sang {1}!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
 
     <sys:String x:Key="Text_MenuImageRotate">Xoay hình ảnh</sys:String>
-    <sys:String x:Key="Text_RotateRight">Xoay phải 90°</sys:String>
-    <sys:String x:Key="Text_RotateLeft">Xoay trái 90°</sys:String>
+    <sys:String x:Key="Text_RotateRight">Xoay phải</sys:String>
+    <sys:String x:Key="Text_RotateLeft">Xoay trái</sys:String>
     <sys:String x:Key="Text_RotatingImages">Đang xoay hình ảnh...</sys:String>
-    <sys:String x:Key="Text_RotatedSuffix">_Rotated</sys:String>
+    <sys:String x:Key="Text_RotatedSuffix">_Mới</sys:String>
     <sys:String x:Key="Text_RotateSuccessTitle">Thành công</sys:String>
-    <sys:String x:Key="Text_RotateSuccessMsg">Đã xoay thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn.</sys:String>
+    <sys:String x:Key="Text_RotateSuccessMsg">Đã xoay thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
 
+    <sys:String x:Key="Text_MenuImageCreatePdf">Tạo PDF</sys:String>
+    <sys:String x:Key="Text_CreatingPdf">Đang tạo tài liệu PDF...</sys:String>
+    <sys:String x:Key="Text_DefaultPdfName">PDF_da_gop</sys:String>
+    <sys:String x:Key="Text_PdfSuccessTitle">Thành công</sys:String>
+    <sys:String x:Key="Text_PdfSuccessMsg">Đã tạo thành công tài liệu PDF gồm {0} trang!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
+
+    <sys:String x:Key="Text_MenuImageResize">Thay đổi kích thước</sys:String>
     <sys:String x:Key="Text_ResizingImages">Đang thay đổi kích thước...</sys:String>
-    <sys:String x:Key="Text_ResizedSuffix">_Resized</sys:String>
+    <sys:String x:Key="Text_ResizedSuffix">_Mới</sys:String>
     <sys:String x:Key="Text_ResizeSuccessTitle">Thành công</sys:String>
-    <sys:String x:Key="Text_ResizeSuccessMsg">Đã thay đổi kích thước thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn.</sys:String>
-
-    <sys:String x:Key="Text_MenuClearItems">Xóa tất cả tập tin</sys:String>
-    <sys:String x:Key="Text_MenuSettings">Cài đặt</sys:String>
-
-
+    <sys:String x:Key="Text_ResizeSuccessMsg">Đã thay đổi kích thước thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
     <sys:String x:Key="Text_ResizeImagesTitle">Thay đổi kích thước</sys:String>
-    <sys:String x:Key="Text_ResizeImagesDesc">Cấu hình kích thước mục tiêu và hành vi.</sys:String>
+    <sys:String x:Key="Text_ResizeImagesDesc">Tùy chỉnh kích thước và các cài đặt mong muốn.</sys:String>
     <sys:String x:Key="Text_Width">Chiều rộng</sys:String>
     <sys:String x:Key="Text_Height">Chiều cao</sys:String>
-    <sys:String x:Key="Text_ResizeMode">Chế độ</sys:String>
+    <sys:String x:Key="Text_ResizeMode">Chế độ thu phóng</sys:String>
     <sys:String x:Key="Text_ModeFit">Vừa vặn (Fit)</sys:String>
     <sys:String x:Key="Text_ModeFill">Lấp đầy (Fill)</sys:String>
     <sys:String x:Key="Text_ModeStretch">Kéo giãn (Stretch)</sys:String>
@@ -95,6 +92,12 @@
     <sys:String x:Key="Text_UnitPercentages">Phần trăm</sys:String>
     <sys:String x:Key="Text_UnitCentimeters">Centimet</sys:String>
     <sys:String x:Key="Text_ResizeBtn">Áp dụng</sys:String>
+    <sys:String x:Key="Text_InvalidInputTitle">Đầu vào không hợp lệ</sys:String>
+    <sys:String x:Key="Text_InvalidInputMsg">Vui lòng nhập ít nhất một giá trị hợp lệ.</sys:String>
+
+    <sys:String x:Key="Text_MenuClearItems">Xóa tất cả tập tin</sys:String>
+    <sys:String x:Key="Text_MenuSettings">Cài đặt</sys:String>
+
 
     <!-- My Pockets Window -->
     <sys:String x:Key="Text_SavedPocketsTitle">Các Pocket của bạn</sys:String>
@@ -136,7 +139,7 @@
     <sys:String x:Key="Text_StartupErrorMsg">Không thể cập nhật thiết lập khởi động.</sys:String>
 
     <!-- Settings Window - General -->
-    <sys:String x:Key="Text_AppearanceBehavior">Cài Đặt Chung</sys:String>
+    <sys:String x:Key="Text_AppearanceBehavior">Cài đặt chung</sys:String>
     <sys:String x:Key="Text_AppTheme">Giao diện hệ thống</sys:String>
     <sys:String x:Key="Text_ThemeSystem">Hệ thống</sys:String>
     <sys:String x:Key="Text_ThemeLight">Sáng</sys:String>
@@ -160,7 +163,7 @@
     <sys:String x:Key="Text_ClipboardShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt cho hành động này.</sys:String>
     <!-- Settings Window - Pocket Activation - Shortcut Dialog -->
     <sys:String x:Key="Text_EditShortcutTitle">Tùy chỉnh phím tắt</sys:String>
-    <sys:String x:Key="Text_ChangeShortcute">Phím tắt kích hoạt mới</sys:String>
+    <sys:String x:Key="Text_ChangeShortcut">Phím tắt kích hoạt mới</sys:String>
     <sys:String x:Key="Text_Reset">Khôi phục</sys:String>
     <sys:String x:Key="Text_Clear">Xóa</sys:String>
     <sys:String x:Key="Text_Save">Lưu</sys:String>

@@ -49,12 +49,6 @@ namespace PocketDrop
             void ShowShareUIForWindow(IntPtr appWindow);
         }
 
-        // Low-level global mouse hook
-        private const int WM_MOUSEMOVE = 0x0200;
-        private const int WM_LBUTTONDOWN = 0x0201;
-        private const int WM_LBUTTONUP = 0x0202;
-
-
         // Native File Picker
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         private static extern int SHOpenWithDialog(IntPtr hwndParent, ref OPENASINFO poainfo);
@@ -81,17 +75,12 @@ namespace PocketDrop
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
-        // ==========================================
-        // THE FIX: Add direct hardware mouse state API
-        // ==========================================
+        // Hardware Mouse State API
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(int vKey);
         public const int VK_LBUTTON = 0x01;
 
-        // ==========================================
-        // THE NEW ARCHITECTURE: Mouse Polling
-        // ==========================================
-
+        // Mouse Polling Architecture
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetCursorPos(out POINT lpPoint);
@@ -112,18 +101,14 @@ namespace PocketDrop
 
         // Mouse Tracking & Shake
         private static ShakeDetector _shakeDetector = new ShakeDetector();
-        private static bool _leftButtonHeld = false;
         private static bool _hasSpawnedPocketThisDrag = false;
-
-        // ✨ THE FIX: Anchor tracking variables
         private static POINT? _shakeAnchor = null;
         private static bool _shakeInvalidated = false;
 
         // Core Data
-        // Holds multiple items and updates the UI automatically
         public ObservableRangeCollection<PocketItem> PocketedItems { get; set; } = new ObservableRangeCollection<PocketItem>();
         public bool IsGhost { get; set; } = false;
-        private bool _isDraggingFromApp = false; // The safety flag to prevent self-drops
+        private bool _isDraggingFromApp = false;
         private Point? startPoint = null;
 
         // Share Lifecycle
@@ -131,7 +116,7 @@ namespace PocketDrop
         private DataTransferManager _shareManager;
 
         // View Mode Binding
-        private string _currentViewMode = "Grid"; // Default to Grid
+        private string _currentViewMode = "Grid";
         public string CurrentViewMode
         {
             get => _currentViewMode;
@@ -145,18 +130,12 @@ namespace PocketDrop
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // Thread-safe icon cache to prevent memory leaks during mass file drops
+        // Thread-safe icon cache & concurrency bouncer
         private static System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource> _iconCache = new System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource>(StringComparer.OrdinalIgnoreCase);
-        // ==========================================
-        // THE NEW FIX: The Concurrency Bouncer
-        // Limits icon extraction to 4 concurrent threads to protect the OS
-        // ==========================================
         private static readonly System.Threading.SemaphoreSlim _iconThrottle = new System.Threading.SemaphoreSlim(4, 4);
 
-        // Prevents infinite loops when syncing the "Select All" checkbox with the list
+        // UI State Locks
         private bool _isUpdatingSelectAll = false;
-
-        // Guard to prevent the More Menu from instantly reopening after closing
         private long _lastMoreMenuCloseTime = 0;
 
         // Drag & Drop Reorder Tracking
@@ -178,7 +157,7 @@ namespace PocketDrop
             this.Opacity = 0;
             this.IsHitTestVisible = false;
 
-            // Start the hardware polling loop (Runs at 60 FPS)
+            // Start the hardware polling loop
             if (_mouseTimer == null)
             {
                 _mouseTimer = new DispatcherTimer(DispatcherPriority.Background);
@@ -186,7 +165,6 @@ namespace PocketDrop
                 _mouseTimer.Tick += MouseTimer_Tick;
                 _mouseTimer.Start();
             }
-
 
             // Clean up heavy temp files from previous sessions
             System.Threading.Tasks.Task.Run(() => CleanupOldShareZips());
@@ -197,7 +175,7 @@ namespace PocketDrop
                 var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ContextMenu.IsOpenProperty, typeof(ContextMenu));
                 dpd.AddValueChanged(MoreButton.ContextMenu, (s, e) =>
                 {
-                    // The exact microsecond the menu is told to close, update the shield!
+                    // Update the guard the moment the menu is told to close
                     if (MoreButton.ContextMenu.IsOpen == false)
                     {
                         _lastMoreMenuCloseTime = Environment.TickCount64;
@@ -270,7 +248,7 @@ namespace PocketDrop
 
                     var validItems = new List<PocketItem>();
 
-                    // 1. INSTANTLY process paths with a blank icon
+                    // 1. Instantly process paths with a blank icon
                     foreach (string filePath in droppedFiles)
                     {
                         if (AppHelpers.IsDuplicate(PocketedItems, filePath)) continue;
@@ -282,7 +260,7 @@ namespace PocketDrop
 
                     if (validItems.Count == 0) return;
 
-                    // 2. ADD TO UI IMMEDIATELY (Returns control to the user in 0.01 seconds!)
+                    // 2. Add to UI immediately for instant response
                     PocketedItems.AddRange(validItems);
 
                     foreach (var newItem in validItems)
@@ -300,7 +278,7 @@ namespace PocketDrop
                         UpdateItemCountDisplay(PocketedItems.Count);
                     }
 
-                    // 3. FIRE AND FORGET THE ICON LOADING IN THE BACKGROUND
+                    // 3. Fire and forget: load the icon in the background
                     foreach (var item in validItems)
                     {
                         _ = System.Threading.Tasks.Task.Run(async () =>
@@ -310,7 +288,7 @@ namespace PocketDrop
                             {
                                 Application.Current.Dispatcher.Invoke(() =>
                                 {
-                                    item.Icon = loadedIcon; // Instantly hot-swaps the UI image!
+                                    item.Icon = loadedIcon; // Instantly hot-swaps the UI image
 
                                     // Only trigger a stack redraw if this item is in the top 13 cards
                                     if (PocketedItems.IndexOf(item) >= PocketedItems.Count - 13)
@@ -384,7 +362,7 @@ namespace PocketDrop
                 }
                 else
                 {
-                    // ✨ NEW: Handle raw snippets of text
+                    // Handle raw snippets of text
                     try
                     {
                         string tempFolder = Path.GetTempPath();
@@ -406,7 +384,7 @@ namespace PocketDrop
                             FileName = fileName,
                             FilePath = filePath,
                             Icon = textIcon,
-                            IsSnippet = true // ✨ Tell the app this is pure text!
+                            IsSnippet = true // Tell the app this is pure text
                         };
 
                         PocketedItems.Add(textItem);
@@ -438,9 +416,6 @@ namespace PocketDrop
                     string[] fileArray = new string[files.Count];
                     files.CopyTo(fileArray, 0);
 
-                    // ==========================================
-                    // THE NEW FIX: Soft Cap with User Consent
-                    // ==========================================
                     int warningThreshold = 500;
                     if (fileArray.Length > warningThreshold)
                     {
@@ -448,17 +423,15 @@ namespace PocketDrop
                         string messageTemplate = (string)Application.Current.TryFindResource("Text_LargePasteMsg") ?? "You are about to paste {0} items.\n\nThis may take a moment to load. Do you want to continue?";
 
                         string finalMessage = string.Format(messageTemplate, fileArray.Length);
-                        // ==========================================
-                        // THE FIX: Use our new fully translated Custom Dialog!
-                        // ==========================================
+
                         var dialog = new CustomDialog(finalMessage, titleTemplate);
-                        dialog.Owner = this; // Locks it to the main window
-                        dialog.ShowDialog(); // Freezes the app until they click a button
+                        dialog.Owner = this;
+                        dialog.ShowDialog();
 
                         if (dialog.Result == MessageBoxResult.No) return;
                     }
 
-                    // Process ALL files!
+                    // Process all files
                     var processingTasks = fileArray.Select(async filePath =>
                     {
                         string fileName = Path.GetFileName(filePath);
@@ -478,9 +451,7 @@ namespace PocketDrop
                         }
                     }
 
-                    // ==========================================
-                    // THE FIX: Add to the UI all at once! 
-                    // ==========================================
+                    // Add to the UI all at once
                     PocketedItems.AddRange(processedItems);
 
                     // Refresh UI after paste load
@@ -517,9 +488,7 @@ namespace PocketDrop
         // Track click to prepare file drag-out
         private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // ==========================================
-            // THE FIX: Tell the Global Mouse Hook to abort shake detection!
-            // ==========================================
+            // Tell the Global Mouse Hook to abort shake detection
             _hasSpawnedPocketThisDrag = true;
 
             Point pos = e.GetPosition(this); // Get exact mouse coordinates relative to the window
@@ -587,7 +556,7 @@ namespace PocketDrop
                 if (hit == DeleteSelectedButton || hit == SelectAllCheckBox || hit is System.Windows.Controls.Primitives.ScrollBar)
                     return;
 
-                // 2. THE FIX: Ignore the List and Grid buttons to prevent 90-file drag-and-drop memory spikes!
+                // 2. Ignore the List and Grid buttons to prevent memory spikes
                 if (hit is Border border && (border.Tag?.ToString() == "List" || border.Tag?.ToString() == "Grid"))
                     return;
 
@@ -614,7 +583,7 @@ namespace PocketDrop
             }
             catch
             {
-                // Safely fail if the element is inside a Popup (which lives in a separate window layer)
+                // Safely fail if the element is inside a Popup
                 return false;
             }
         }
@@ -647,19 +616,19 @@ namespace PocketDrop
                 var itemsToDrag = PocketedItems.ToList();
                 bool allSnippets = itemsToDrag.All(i => i.IsSnippet);
 
-                // ✨ THE FIX: Dual-format payloads for Native Apps and Web/Electron Apps
+                // Dual-format payloads for Native Apps and Web/Electron Apps
                 if (allSnippets)
                 {
                     try
                     {
                         string combinedText = string.Join(Environment.NewLine + Environment.NewLine, itemsToDrag.Select(i => File.ReadAllText(i.FilePath)));
 
-                        // 1. Standard Windows Formats (Word, Notepad, Telegram)
+                        // 1. Standard Windows Formats
                         dragData.SetData(DataFormats.UnicodeText, combinedText);
                         dragData.SetData(DataFormats.Text, combinedText);
                         dragData.SetData(DataFormats.StringFormat, combinedText);
 
-                        // 2. Web & Electron Formats (Notion, Discord, Chrome)
+                        // 2. Web & Electron Formats
                         dragData.SetData("text/plain", combinedText);
                     }
                     catch { }
@@ -684,7 +653,7 @@ namespace PocketDrop
                         catch { }
                     }
 
-                    // ✨ THE FIX: Only attach File DropEffects if there are actual physical files!
+                    // Only attach File DropEffects if there are actual physical files!
                     byte[] dropEffect = new byte[] { (byte)(App.CopyItemToDestination ? 1 : 2), 0, 0, 0 };
                     dragData.SetData("Preferred DropEffect", new System.IO.MemoryStream(dropEffect));
                 }
@@ -694,7 +663,6 @@ namespace PocketDrop
 
                 _isDraggingFromApp = true;
 
-                // ✨ THE FIX: Allow ALL effects. Notion will negotiate 'Copy', Explorer will negotiate based on 'Preferred DropEffect'
                 DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)sender, dragData, DragDropEffects.All);
                 _isDraggingFromApp = false;
 
@@ -765,19 +733,19 @@ namespace PocketDrop
             DataObject dragData = new DataObject();
             bool allSnippets = selectedItems.All(i => i.IsSnippet);
 
-            // ✨ THE FIX: Dual-format payloads for Native Apps and Web/Electron Apps
+            // Dual-format payloads for Native Apps and Web/Electron Apps
             if (allSnippets)
             {
                 try
                 {
                     string combinedText = string.Join(Environment.NewLine + Environment.NewLine, selectedItems.Select(i => File.ReadAllText(i.FilePath)));
 
-                    // 1. Standard Windows Formats (Word, Notepad, Telegram)
+                    // 1. Standard Windows Formats
                     dragData.SetData(DataFormats.UnicodeText, combinedText);
                     dragData.SetData(DataFormats.Text, combinedText);
                     dragData.SetData(DataFormats.StringFormat, combinedText);
 
-                    // 2. Web & Electron Formats (Notion, Discord, Chrome)
+                    // 2. Web & Electron Formats
                     dragData.SetData("text/plain", combinedText);
                 }
                 catch { }
@@ -812,7 +780,6 @@ namespace PocketDrop
 
             _isDraggingFromApp = false;
 
-            // ✨ THE FIX: We now clear the pocket for BOTH external Move and Copy drops!
             if (!_internalDropHandled && result != DragDropEffects.None)
             {
                 foreach (var item in selectedItems)
@@ -863,9 +830,7 @@ namespace PocketDrop
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                // ==========================================
-                // THE FIX: Bypass WPF and use GPU-accelerated OS dragging
-                // ==========================================
+                // Bypass WPF and use GPU-accelerated OS-level dragging
                 ReleaseCapture();
                 var hwnd = new WindowInteropHelper(this).Handle;
                 SendMessage(hwnd, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
@@ -1037,7 +1002,7 @@ namespace PocketDrop
             double[] offsetsX = { -7, 6, -5, 4, -4, 3, -3, 2, -2, 1, -1, 1, 0 };
             double[] offsetsY = { 5, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0 };
 
-            // ✨ THE RENDER BOMB FIX: Only draw the top 13 cards!
+            // Only draw the top 13 cards
             int maxCardsToShow = angles.Length;
             int startIndex = Math.Max(0, count - maxCardsToShow);
 
@@ -1135,8 +1100,7 @@ namespace PocketDrop
 
                 _isUpdatingSelectAll = false; // Unlock the events
             }
-            // ----------------------
-
+            
             if (selectedCount > 0)
             {
                 long totalBytes = 0;
@@ -1561,6 +1525,7 @@ namespace PocketDrop
 
         }
 
+        // Menu action: Image - Remove Metadata
         private async void Menu_ImageRemoveMetadata_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
@@ -1649,8 +1614,7 @@ namespace PocketDrop
             MessageBox.Show(string.Format(msgTemplate, successCount), title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-
-
+        // Menu action: Image - Convert Format
         private async void Menu_ImageConvertAction_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
@@ -1666,7 +1630,6 @@ namespace PocketDrop
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
             if (StatusText != null)
             {
-                // ✨ DYNAMIC STATUS TEXT
                 string statusTemplate = (string)Application.Current.TryFindResource("Text_ConvertingFormat") ?? "Converting to {0}...";
                 StatusText.Text = string.Format(statusTemplate, extName);
                 StatusText.Visibility = Visibility.Visible;
@@ -1676,7 +1639,7 @@ namespace PocketDrop
 
             await System.Threading.Tasks.Task.Run(() =>
             {
-                // PDFsharp requires this line once per app lifecycle in modern .NET to handle fonts properly
+                // PDFsharp requires this once per app lifecycle in modern .NET for proper font handling
                 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
                 string tempFolder = Path.GetTempPath();
@@ -1694,7 +1657,7 @@ namespace PocketDrop
 
                         byte[] fileBytes = File.ReadAllBytes(img.FilePath);
 
-                        // --- ROUTE A: Native WPF for PNG / JPG ---
+                        // Route A: Native WPF for PNG / JPG
                         if (targetExt == ".png" || targetExt == ".jpg")
                         {
                             using (var ms = new System.IO.MemoryStream(fileBytes))
@@ -1711,7 +1674,7 @@ namespace PocketDrop
                                 }
                             }
                         }
-                        // --- ROUTE B: SkiaSharp for WEBP ---
+                        // Route B: SkiaSharp for WEBP
                         else if (targetExt == ".webp")
                         {
                             using (var ms = new System.IO.MemoryStream(fileBytes))
@@ -1723,7 +1686,7 @@ namespace PocketDrop
                                 data.SaveTo(fs);
                             }
                         }
-                        // --- ROUTE C: PDFsharp for Individual PDFs ---
+                        // Route C: PDFsharp for Individual PDFs
                         else if (targetExt == ".pdf")
                         {
                             using (var document = new PdfSharp.Pdf.PdfDocument())
@@ -1760,7 +1723,7 @@ namespace PocketDrop
                 }
             });
 
-            // Force the UI to refresh the empty icons we just nulled out
+            // Force the UI to refresh the icons that were just cleared
             foreach (var item in imagesToProcess)
             {
                 if (item.Icon == null)
@@ -1780,7 +1743,6 @@ namespace PocketDrop
 
             if (successCount > 0)
             {
-                // ✨ DYNAMIC POPUP MESSAGE
                 string title = (string)Application.Current.TryFindResource("Text_FormatSuccessTitle") ?? "Success";
                 string msgTemplate = (string)Application.Current.TryFindResource("Text_FormatSuccessMsg") ?? "Successfully converted {0} images to {1}!\n\nThey are ready in your Pocket.";
 
@@ -1788,6 +1750,7 @@ namespace PocketDrop
             }
         }
 
+        // Menu action: Image - Rotate
         private async void Menu_ImageRotateAction_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
@@ -1801,16 +1764,14 @@ namespace PocketDrop
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
             if (StatusText != null)
             {
-                StatusText.Text = userDegrees == 0
-                    ? (string)Application.Current.TryFindResource("Text_ResettingImages") ?? "Restoring originals..."
-                    : (string)Application.Current.TryFindResource("Text_RotatingImages") ?? "Rotating images...";
+                StatusText.Text = (string)Application.Current.TryFindResource("Text_RotatingImages") ?? "Rotating images...";
                 StatusText.Visibility = Visibility.Visible;
             }
 
             string rotatedSuffix = (string)Application.Current.TryFindResource("Text_RotatedSuffix") ?? "_Rotated";
             int successCount = 0;
 
-            // 2. Process in background using PURE SkiaSharp math
+            // 2. Process in the background using pure SkiaSharp math
             await System.Threading.Tasks.Task.Run(() =>
             {
                 string tempFolder = System.IO.Path.GetTempPath();
@@ -1819,23 +1780,6 @@ namespace PocketDrop
                 {
                     try
                     {
-                        // THE 0-DEGREE FAST RESET
-                        if (userDegrees == 0)
-                        {
-                            if (img.FilePath != img.OriginalFilePath)
-                            {
-                                CleanupTempFile(img.FilePath);
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    img.FilePath = img.OriginalFilePath;
-                                    img.FileName = System.IO.Path.GetFileName(img.OriginalFilePath);
-                                    img.Icon = null;
-                                });
-                                successCount++;
-                            }
-                            continue;
-                        }
-
                         string ext = System.IO.Path.GetExtension(img.FilePath).ToLower();
                         string filename = System.IO.Path.GetFileNameWithoutExtension(img.FilePath);
                         string newFileName = $"{filename}{rotatedSuffix}{ext}";
@@ -1852,7 +1796,7 @@ namespace PocketDrop
                             {
                                 if (rawBitmap == null) continue;
 
-                                // ✨ 1. Read the hidden EXIF orientation to find "True Upright"
+                                // 1. Read the hidden EXIF orientation to determine true upright
                                 int exifDegrees = 0;
                                 switch (codec.EncodedOrigin)
                                 {
@@ -1861,7 +1805,7 @@ namespace PocketDrop
                                     case SkiaSharp.SKEncodedOrigin.LeftBottom: exifDegrees = 270; break;
                                 }
 
-                                // ✨ 2. Combine EXIF tilt with your requested rotation (-90 becomes 270 for clean math)
+                                // 2. Combine EXIF tilt with the requested rotation (-90 becomes 270 for clean math)
                                 int safeUserDegrees = userDegrees < 0 ? userDegrees + 360 : userDegrees;
                                 int totalDegrees = (exifDegrees + safeUserDegrees) % 360;
 
@@ -1870,12 +1814,12 @@ namespace PocketDrop
                                 else if (ext == ".webp") format = SkiaSharp.SKEncodedImageFormat.Webp;
                                 else if (ext == ".bmp") format = SkiaSharp.SKEncodedImageFormat.Bmp;
 
-                                // ✨ 3. Execute the physical pixel rotation
+                                // 3. Execute the physical pixel rotation
                                 if (totalDegrees == 0)
                                 {
-                                    // Math resulted in 0 tilt, just re-encode the raw pixels
+                                    // If the result is 0° tilt (e.g. EXIF 90° + rotation -90°), re-encode the upright pixels as-is
                                     using (var image = SkiaSharp.SKImage.FromBitmap(rawBitmap))
-                                    using (var data = image.Encode(format, 95))
+                                    using (var data = image.Encode(format, 100))
                                     using (var fs = new System.IO.FileStream(targetFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
                                     {
                                         data.SaveTo(fs);
@@ -1891,12 +1835,13 @@ namespace PocketDrop
                                     {
                                         canvas.Clear(SkiaSharp.SKColors.Transparent);
 
-                                        // Spin the canvas!
+                                        // Spin the canvas
                                         canvas.Translate(newW / 2f, newH / 2f);
                                         canvas.RotateDegrees(totalDegrees);
                                         canvas.Translate(-rawBitmap.Width / 2f, -rawBitmap.Height / 2f);
                                         canvas.DrawBitmap(rawBitmap, 0, 0);
 
+                                        // Encoding with max quality at 100
                                         using (var image = SkiaSharp.SKImage.FromBitmap(rotatedBitmap))
                                         using (var data = image.Encode(format, 100))
                                         using (var fs = new System.IO.FileStream(targetFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
@@ -1924,7 +1869,7 @@ namespace PocketDrop
                 }
             });
 
-            // 3. Force the UI to redraw the fresh icons AND the stack!
+            // 3. Force the UI to redraw the fresh icons and the stack
             foreach (var item in imagesToProcess)
             {
                 if (item.Icon == null)
@@ -1949,14 +1894,13 @@ namespace PocketDrop
             if (successCount > 0)
             {
                 string title = (string)Application.Current.TryFindResource("Text_RotateSuccessTitle") ?? "Success";
-                string msgTemplate = userDegrees == 0
-                    ? (string)Application.Current.TryFindResource("Text_ResetSuccessMsg") ?? "Successfully restored {0} images to their originals!"
-                    : (string)Application.Current.TryFindResource("Text_RotateSuccessMsg") ?? "Successfully rotated {0} images!\n\nThey are ready in your Pocket.";
+                string msgTemplate = (string)Application.Current.TryFindResource("Text_RotateSuccessMsg") ?? "Successfully rotated {0} images!\n\nThey are ready in your Pocket.";
 
                 MessageBox.Show(string.Format(msgTemplate, successCount), title, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
+        // Menu action: Image - Resize
         private async void Menu_ImageResize_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
@@ -1980,7 +1924,6 @@ namespace PocketDrop
                 StatusText.Visibility = Visibility.Visible;
             }
 
-            // ✨ DYNAMIC FILE SUFFIX (Fetched before the background thread starts!)
             string resizedSuffix = (string)Application.Current.TryFindResource("Text_ResizedSuffix") ?? "_Resized";
 
             int successCount = 0;
@@ -1998,7 +1941,7 @@ namespace PocketDrop
                         string ext = System.IO.Path.GetExtension(img.FilePath).ToLower();
                         string filename = System.IO.Path.GetFileNameWithoutExtension(img.FilePath);
 
-                        // ✨ Applies the translated suffix to the file
+                        // Applies the translated suffix to the file
                         string newFileName = $"{filename}{resizedSuffix}{ext}";
                         string targetFilePath = System.IO.Path.Combine(tempFolder, $"PocketDrop_Rsz_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}_{newFileName}");
 
@@ -2012,7 +1955,7 @@ namespace PocketDrop
                             int originalW = originalBitmap.Width;
                             int originalH = originalBitmap.Height;
 
-                            // STEP A: Convert user inputs to a Target Pixel Box based on the specific image
+                            // Step A: Convert user inputs to a Target Pixel Box based on the specific image
                             double targetBoxW = 0;
                             double targetBoxH = 0;
 
@@ -2032,7 +1975,7 @@ namespace PocketDrop
                                 targetBoxH = (inputH / 2.54) * standardDpi;
                             }
 
-                            // STEP B: PowerToys Behavior - If one box is 0 (blank), auto-calculate it to maintain ratio!
+                            // Step B: If one box is 0 (blank), auto-calculate it to maintain ratio
                             if (targetBoxW > 0 && targetBoxH <= 0)
                             {
                                 targetBoxH = originalH * (targetBoxW / originalW);
@@ -2042,7 +1985,7 @@ namespace PocketDrop
                                 targetBoxW = originalW * (targetBoxH / originalH);
                             }
 
-                            // STEP C: Calculate actual Skia resize dimensions based on Mode
+                            // Step C: Calculate actual Skia resize dimensions based on Mode
                             int scaleW = originalW;
                             int scaleH = originalH;
 
@@ -2068,17 +2011,16 @@ namespace PocketDrop
                                 }
                             }
 
-                            // Ensure we don't try to render a 0px image
+                            // Ensure the image has non-zero dimensions before rendering
                             if (scaleW <= 0 || scaleH <= 0) continue;
 
-                            // STEP D: Perform High-Quality Skia Resize
+                            // Step D: Perform High-Quality Skia Resize
                             using (var resizedBitmap = originalBitmap.Resize(new SkiaSharp.SKImageInfo(scaleW, scaleH), SkiaSharp.SKFilterQuality.High))
                             using (var scaledImage = SkiaSharp.SKImage.FromBitmap(resizedBitmap))
                             {
                                 SkiaSharp.SKImage finalImage = scaledImage;
 
-                                // STEP E: If 'Fill', perform a center-crop to cut off the bleeding edges!
-                                // (We only do this if the user actually provided BOTH inputs to create a hard bounding box)
+                                // Step E: If 'Fill', perform a center-crop to cut off the bleeding edges
                                 if (mode == ImageResizeMode.Fill && inputW > 0 && inputH > 0)
                                 {
                                     int cropBoxW = (int)targetBoxW;
@@ -2091,7 +2033,7 @@ namespace PocketDrop
                                     finalImage = scaledImage.Subset(new SkiaSharp.SKRectI(left, top, left + cropBoxW, top + cropBoxH));
                                 }
 
-                                // STEP F: Encode to match the original file format
+                                // Step F: Encode to match the original file format
                                 SkiaSharp.SKEncodedImageFormat format = SkiaSharp.SKEncodedImageFormat.Jpeg;
                                 if (ext == ".png") format = SkiaSharp.SKEncodedImageFormat.Png;
                                 else if (ext == ".webp") format = SkiaSharp.SKEncodedImageFormat.Webp;
@@ -2124,7 +2066,7 @@ namespace PocketDrop
                 }
             });
 
-            // 4. Force the UI to refresh the empty icons we just nulled out
+            // 4. Force the UI to refresh the icons that were just cleared
             foreach (var item in imagesToProcess)
             {
                 if (item.Icon == null)
@@ -2148,6 +2090,7 @@ namespace PocketDrop
             }
         }
 
+        // Menu action: Image - Create PDF
         private async void Menu_ImageCreatePdf_Click(object sender, RoutedEventArgs e)
         {
             var imagesToProcess = GetOnlyValidImages();
@@ -2161,7 +2104,6 @@ namespace PocketDrop
                 StatusText.Visibility = Visibility.Visible;
             }
 
-            // ✨ DYNAMIC FILE NAME
             string baseFileName = (string)Application.Current.TryFindResource("Text_DefaultPdfName") ?? "MergedDocument";
 
             string tempFolder = Path.GetTempPath();
@@ -2208,7 +2150,7 @@ namespace PocketDrop
             {
                 var newPdfItem = new PocketItem
                 {
-                    FileName = $"{baseFileName}.pdf", // Uses the translated name!
+                    FileName = $"{baseFileName}.pdf",
                     FilePath = targetFilePath,
                     IsPinned = false
                 };
@@ -2258,10 +2200,10 @@ namespace PocketDrop
             double xNudge = -18;
             double xOffset = ((targetSize.Width - popupSize.Width) / 2.0) + xNudge;
 
-            // 2. Plan A: Spawn BELOW the app
+            // 2. Plan A: Spawn below the app
             double yBelow = targetSize.Height + 0;
 
-            // 3. Plan B: Spawn ABOVE the app
+            // 3. Plan B: Spawn above the app
             // Increase bottom margin to clear invisible border and drop shadow
             double yAbove = -popupSize.Height - 40;
 
@@ -2327,13 +2269,13 @@ namespace PocketDrop
             {
                 if (!App.EnableMouseShake) return;
 
-                // If we already spawned a pocket, or the shake was marked invalid, abort!
+                // Abort if a pocket was already spawned or the shake was marked invalid
                 if (_hasSpawnedPocketThisDrag || _shakeInvalidated) return;
 
                 // 2. Physically interrogate the cursor position
                 GetCursorPos(out POINT pt);
 
-                // ✨ THE FIX: Create a strict "Anchor Box" to separate Shakes from Drags
+                // Create a strict "Anchor Box" to separate Shakes from Drags
                 if (_shakeAnchor == null)
                 {
                     _shakeAnchor = pt; // Record the exact pixel the click started on
@@ -2344,8 +2286,7 @@ namespace PocketDrop
                     int driftX = Math.Abs(pt.X - _shakeAnchor.Value.X);
                     int driftY = Math.Abs(pt.Y - _shakeAnchor.Value.Y);
 
-                    // If the mouse drifts more than 250px wide or 200px tall, it is a drag/highlight!
-                    // Invalidate the shake so it doesn't accidentally trigger.
+                    // If the mouse drifts more than 250px wide or 200px tall, treat it as a drag or selection and invalidate the shake
                     if (driftX > 250 || driftY > 200)
                     {
                         _shakeInvalidated = true;
@@ -2353,7 +2294,7 @@ namespace PocketDrop
                     }
                 }
 
-                // 3. Run the math (Only runs if we stay inside our Anchor Box!)
+                // 3. Run the math (only runs if the pointer stays within the anchor box)
                 bool isShaking = _shakeDetector.CheckForShake(
                     currentMouseX: pt.X,
                     currentTimestampMs: Environment.TickCount64,
@@ -2362,7 +2303,7 @@ namespace PocketDrop
                     requiredSwings: 3
                 );
 
-                // 4. Spawn the pocket!
+                // 4. Spawn the pocket
                 if (isShaking)
                 {
                     try
@@ -2370,7 +2311,7 @@ namespace PocketDrop
                         if (App.DisableInGameMode && AppHelpers.IsGameModeActive()) return;
                         if (AppHelpers.IsForegroundAppExcluded()) return;
                     }
-                    catch { /* Ignore helper crashes and spawn anyway */ }
+                    catch { /* Ignore helper errors and spawn anyway */ }
 
                     _hasSpawnedPocketThisDrag = true;
 
@@ -2396,7 +2337,7 @@ namespace PocketDrop
             }
             else
             {
-                // ✨ Reset all the safety switches the moment the user lets go of the mouse button
+                // Reset all safety flags when the mouse button is released
                 _hasSpawnedPocketThisDrag = false;
                 _shakeAnchor = null;
                 _shakeInvalidated = false;
@@ -2597,7 +2538,7 @@ namespace PocketDrop
             if (PopupCountNumberText != null) PopupCountNumberText.Text = count.ToString();
             if (PopupCountSizeText != null) PopupCountSizeText.Text = ""; // Clear file size
 
-            // THE FIX: Use SetResourceReference to change the word while keeping the live language binding!
+            // Use SetResourceReference to change the word while keeping the live language binding
             string resourceKey = count == 1 ? "Text_Item" : "Text_Items";
             if (CountLabelText != null) CountLabelText.SetResourceReference(TextBlock.TextProperty, resourceKey);
             if (PopupCountLabelText != null) PopupCountLabelText.SetResourceReference(TextBlock.TextProperty, resourceKey);
@@ -2624,6 +2565,7 @@ namespace PocketDrop
             return false;
         }
 
+        // Load file icon
         private async System.Threading.Tasks.Task<System.Windows.Media.ImageSource> LoadFileIconAsync(string filePath)
         {
             string ext = Path.GetExtension(filePath).ToLower();
@@ -2638,7 +2580,7 @@ namespace PocketDrop
 
             string cacheKey = isDirectory ? "folder_icon" : ext;
 
-            // 1. CHECK THE CACHE FIRST (Instant return, bypasses the bouncer!)
+            // 1. Check the cache first for an instant return, bypassing the lookup
             if (!isImage && !isUnique)
             {
                 if (_iconCache.TryGetValue(cacheKey, out var cachedIcon))
@@ -2647,22 +2589,19 @@ namespace PocketDrop
                 }
             }
 
-            // 2. WAIT IN LINE
-            // Only let 4 files ask Windows for an icon at the exact same time
+            // 2. Limit concurrent icon requests to 4 at a time
             await _iconThrottle.WaitAsync();
 
             try
             {
-                // 3. IF IT'S OUR TURN, ASK WINDOWS
+                // 3. Request the icon from Windows when ready
                 return await System.Threading.Tasks.Task.Run(() =>
                 {
                     try
                     {
                         if (isImage)
                         {
-                            // ✨ THE ULTIMATE FIX: We let the Windows OS Shell handle everything!
-                            // For images, Windows extracts the tiny embedded EXIF thumbnail instantly,
-                            // completely bypassing the massive WPF 4K memory decoding spike.
+                            // For images, Windows extracts the embedded EXIF thumbnail directly, bypassing WPF's full 4K decoding overhead
                             using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
                             {
                                 var wpfBmp = new BitmapImage();
@@ -2693,7 +2632,7 @@ namespace PocketDrop
 
                             thumb.Freeze();
 
-                            // SAVE TO CACHE FOR NEXT TIME
+                            // Save to cache for next time
                             if (!isUnique)
                             {
                                 _iconCache.TryAdd(cacheKey, thumb);
@@ -2711,13 +2650,12 @@ namespace PocketDrop
             }
             finally
             {
-                // 4. LEAVE THE LINE 
-                // Always release the throttle so the next file can enter!
+                // 4. Always release the throttle so the next file can proceed
                 _iconThrottle.Release();
             }
         }
 
-        // Helper to safely find the hidden ScrollViewer inside WPF ListBoxes
+        // Helper to safely locate the hidden ScrollViewer inside a WPF ListBox
         private ScrollViewer GetScrollViewer(DependencyObject depObj)
         {
             if (depObj == null) return null;
@@ -2732,9 +2670,7 @@ namespace PocketDrop
             return null;
         }
 
-        // ==========================================
-        // DRAG & DROP ADORNER (Draws the line above the UI)
-        // ==========================================
+        // Drag & drop adorner — draws the insertion line above the UI
         public class DropLineAdorner : System.Windows.Documents.Adorner
         {
             private bool _isTopOrLeft;
@@ -2800,8 +2736,7 @@ namespace PocketDrop
 
             bool isGrid = this.CurrentViewMode == "Grid";
 
-            // ✨ THE FIX: We no longer cut the file in half! 
-            // Hovering ANYWHERE on the item ALWAYS draws the line on the Left (Grid) or Top (List).
+            // Hovering anywhere on the item always draws the line on the left (grid) or top (list)
             bool insertBefore = true;
 
             if (_lastHoveredItem == targetItem && _insertAbove == insertBefore) return;
@@ -2858,8 +2793,7 @@ namespace PocketDrop
                     var targetData = targetItem.DataContext as PocketItem;
                     insertIndex = PocketedItems.IndexOf(targetData);
 
-                    // ✨ THE FIX: We deleted the right-side math! 
-                    // We only need to adjust the index if the item we are moving came from ABOVE our drop target.
+                    // Adjust the index only if the item being moved came from above the drop target
                     int originalIndex = PocketedItems.IndexOf(draggedItems[0]);
                     if (originalIndex < insertIndex) insertIndex--;
                 }
@@ -2889,28 +2823,25 @@ namespace PocketDrop
             return null;
         }
 
-        // ==========================================
-        // THE SMART FILTER: Extracts only valid images and handles empty/invalid selections
-        // ==========================================
+        // Smart filter: Extracts only valid images and handles empty or invalid selections
         private List<PocketItem> GetOnlyValidImages()
         {
-            // 1. Get the current selection (or everything if nothing is selected)
+            // 1. Get the current selection, or all items if nothing is selected
             var itemsToProcess = (ItemsListBox != null && ItemsListBox.SelectedItems.Count > 0)
                 ? ItemsListBox.SelectedItems.Cast<PocketItem>().ToList()
                 : PocketedItems.ToList();
 
-            // 2. Define what we consider a valid image for these specific tools
+            // 2. Define what counts as a valid image for these tools
             string[] validExts = { ".png", ".jpg", ".jpeg", ".bmp", ".webp", ".gif" };
 
-            // 3. Filter the list! (This silently drops the .exe, .pdf, folders, etc.)
+            // 3. Filter the list, silently dropping non-image files such as .exe, .pdf, and folders
             var validImages = itemsToProcess.Where(item =>
                 validExts.Contains(Path.GetExtension(item.FilePath).ToLower())
             ).ToList();
 
-            // 4. ✨ THE DYNAMIC BONUS: Show a translated warning if no valid images are left
+            // 4. Show a warning if no valid images remain
             if (validImages.Count == 0)
             {
-                // Attempt to grab the translated text, but provide a safe English fallback just in case
                 string warningTitle = (string)Application.Current.TryFindResource("Text_NoImagesTitle") ?? "Invalid Selection";
                 string warningDesc = (string)Application.Current.TryFindResource("Text_NoImagesDesc") ?? "Please select at least one valid image file to use this tool.";
 
@@ -2934,7 +2865,7 @@ namespace PocketDrop
             }
         }
 
-        // ✨ THE FIX: A permanent memory of where the file originally came from
+        // Stores the file's original source path
         private string _originalFilePath;
         public string OriginalFilePath => _originalFilePath;
 
@@ -2946,7 +2877,7 @@ namespace PocketDrop
             {
                 _filePath = value;
 
-                // Automatically capture the original path the first time this is set!
+                // Automatically capture the original path on first assignment
                 if (string.IsNullOrEmpty(_originalFilePath)) _originalFilePath = value;
 
                 PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(FilePath)));
@@ -2954,8 +2885,6 @@ namespace PocketDrop
         }
 
         public bool IsPinned { get; set; }
-
-        // ✨ NEW TRACKER: Remembers if this was created from highlighted text!
         public bool IsSnippet { get; set; } = false;
 
         private System.Windows.Media.ImageSource _icon;

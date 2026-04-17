@@ -13,10 +13,10 @@
     <sys:String x:Key="Text_FilesMissingTitle">Files missing</sys:String>
     <sys:String x:Key="Text_FilesMissingDesc">Some files could not be found and were removed from the Pocket. They may have been deleted or moved outside of PocketDrop.</sys:String>
     <sys:String x:Key="Text_ClipboardEmpty">No files found in clipboard!</sys:String>
-    <sys:String x:Key="Text_ClipboardEmptyTitle">Clipboard Empty</sys:String>
-    <sys:String x:Key="Text_LargeDropTitle">Mass file drop</sys:String>
+    <sys:String x:Key="Text_ClipboardEmptyTitle">Clipboard empty</sys:String>
+    <sys:String x:Key="Text_LargeDropTitle">Mass file detected</sys:String>
     <sys:String x:Key="Text_LargeDropMsg">You are about to process {0} items.&#x0a;&#x0a;This may take a moment depending on your hardware. Continue?</sys:String>
-    <sys:String x:Key="Text_LargePasteTitle">Mass file paste</sys:String>
+    <sys:String x:Key="Text_LargePasteTitle">Mass file detected</sys:String>
     <sys:String x:Key="Text_LargePasteMsg">You are about to paste {0} items.&#x0a;&#x0a;This may take a moment depending on your hardware. Continue?</sys:String>
 
     <sys:String x:Key="Text_BtnYes">Yes</sys:String>
@@ -27,11 +27,11 @@
 
     <sys:String x:Key="Text_MenuShare">Share with...</sys:String>
     <sys:String x:Key="Text_CompressingShare">Compressing...</sys:String>
-    <sys:String x:Key="Text_ShareFolderErrorTitle">Share Action Failed</sys:String>
+    <sys:String x:Key="Text_ShareFolderErrorTitle">Share action failed</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorDesc">Folders cannot be shared directly. Please use 'Compress to ZIP' first or enable Auto-Compress in Settings.</sys:String>
-    <sys:String x:Key="Text_ShareCompressErrorTitle">Compression Error</sys:String>
+    <sys:String x:Key="Text_ShareCompressErrorTitle">Compression error</sys:String>
     <sys:String x:Key="Text_ShareCompressErrorDesc">Failed to compress the folder.</sys:String>
-    <sys:String x:Key="Text_ShareErrorTitle">Share Error</sys:String>
+    <sys:String x:Key="Text_ShareErrorTitle">Share error</sys:String>
     <sys:String x:Key="Text_ShareTitleSingle">Sharing 1 item from PocketDrop</sys:String>
     <sys:String x:Key="Text_ShareTitleMultiple">Sharing {0} items from PocketDrop</sys:String>
     <sys:String x:Key="Text_ErrorPrefix">Error:</sys:String>
@@ -40,53 +40,46 @@
     <sys:String x:Key="Text_Reason">Reason:</sys:String>
 
     <sys:String x:Key="Text_MenuCompressZip">Compress to ZIP...</sys:String>
-    <sys:String x:Key="Text_SaveZipTitle">Save ZIP Archive</sys:String>
+    <sys:String x:Key="Text_SaveZipTitle">Save ZIP archive</sys:String>
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
     <sys:String x:Key="Text_SaveZipFilter">ZIP Archives (*.zip)|*.zip</sys:String>
 
-    <sys:String x:Key="Text_MenuAdvancedTools">Advanced Tools</sys:String>
+    <!-- Main Window - More Menu - Advanced Tools -->
+    <sys:String x:Key="Text_MenuAdvancedTools">Advanced tools</sys:String>
     <sys:String x:Key="Text_MenuImagesHeader">Images</sys:String>
+    <sys:String x:Key="Text_NoImagesTitle">Invalid selection</sys:String>
+    <sys:String x:Key="Text_NoImagesDesc">Please select at least one valid image file to continue.</sys:String>
+       
     <sys:String x:Key="Text_MenuImageRemoveMetadata">Remove metadata</sys:String>
-    <sys:String x:Key="Text_MenuImageConvertFormat">Convert format</sys:String>
-    <sys:String x:Key="Text_MenuImageResize">Resize</sys:String>
-    <sys:String x:Key="Text_MenuImageCreatePdf">Create PDF</sys:String>
-
-    <sys:String x:Key="Text_NoImagesTitle">Invalid Selection</sys:String>
-    <sys:String x:Key="Text_NoImagesDesc">Please select at least one valid image file to use this tool.</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Cleaning images...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Success</sys:String>
-    <sys:String x:Key="Text_MetadataSuccessMsg">Successfully cleaned {0} images!&#x0a;&#x0a;They are now ready in your Pocket. Simply drag them out to save them.</sys:String>
+    <sys:String x:Key="Text_MetadataSuccessMsg">Successfully cleaned {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
 
+    <sys:String x:Key="Text_MenuImageConvertFormat">Convert format</sys:String>
     <sys:String x:Key="Text_ConvertingFormat">Converting to {0}...</sys:String>
     <sys:String x:Key="Text_FormatSuccessTitle">Success</sys:String>
-    <sys:String x:Key="Text_FormatSuccessMsg">Successfully converted {0} images to {1}!&#x0a;&#x0a;They are ready in your Pocket.</sys:String>
-    <sys:String x:Key="Text_CreatingPdf">Creating PDF document...</sys:String>
-    <sys:String x:Key="Text_DefaultPdfName">MergedDocument</sys:String>
-    <sys:String x:Key="Text_PdfSuccessTitle">Success</sys:String>
-    <sys:String x:Key="Text_PdfSuccessMsg">Successfully created a {0}-page PDF document!&#x0a;&#x0a;It has been added to your Pocket.</sys:String>
+    <sys:String x:Key="Text_FormatSuccessMsg">Successfully converted {0} images to {1}!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
 
-    <sys:String x:Key="Text_MenuImageRotate">Rotate Image</sys:String>
-    <sys:String x:Key="Text_RotateRight">Rotate Right 90°</sys:String>
-    <sys:String x:Key="Text_RotateLeft">Rotate Left 90°</sys:String>
+    <sys:String x:Key="Text_MenuImageRotate">Rotate image</sys:String>
+    <sys:String x:Key="Text_RotateRight">Rotate Right</sys:String>
+    <sys:String x:Key="Text_RotateLeft">Rotate Left</sys:String>
     <sys:String x:Key="Text_RotatingImages">Rotating images...</sys:String>
     <sys:String x:Key="Text_RotatedSuffix">_Rotated</sys:String>
     <sys:String x:Key="Text_RotateSuccessTitle">Success</sys:String>
-    <sys:String x:Key="Text_RotateSuccessMsg">Successfully rotated {0} images!&#x0a;&#x0a;They are ready in your Pocket.</sys:String>
+    <sys:String x:Key="Text_RotateSuccessMsg">Successfully rotated {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
 
-    <sys:String x:Key="Text_ResizingImages">Resizing images...</sys:String>
-    <sys:String x:Key="Text_ResizedSuffix">_Resized</sys:String>
-    <sys:String x:Key="Text_ResizeSuccessTitle">Success</sys:String>
-    <sys:String x:Key="Text_ResizeSuccessMsg">Successfully resized {0} images!&#x0a;&#x0a;They are ready in your Pocket.</sys:String>
+    <sys:String x:Key="Text_MenuImageCreatePdf">Create PDF</sys:String>
+    <sys:String x:Key="Text_CreatingPdf">Creating PDF document...</sys:String>
+    <sys:String x:Key="Text_DefaultPdfName">Merged_Document</sys:String>
+    <sys:String x:Key="Text_PdfSuccessTitle">Success</sys:String>
+    <sys:String x:Key="Text_PdfSuccessMsg">Successfully created a {0}-page PDF document!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
 
-    <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
-    <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
-
-
-    <sys:String x:Key="Text_ResizeImagesTitle">Resize Images</sys:String>
-    <sys:String x:Key="Text_ResizeImagesDesc">Configure your target dimensions and behavior.</sys:String>
+    <sys:String x:Key="Text_MenuImageResize">Resize</sys:String>
+    <sys:String x:Key="Text_ResizeImagesTitle">Resize images</sys:String>
+    <sys:String x:Key="Text_ResizeImagesDesc">Configure your target dimensions and settings.</sys:String>
     <sys:String x:Key="Text_Width">Width</sys:String>
     <sys:String x:Key="Text_Height">Height</sys:String>
-    <sys:String x:Key="Text_ResizeMode">Resize Mode</sys:String>
+    <sys:String x:Key="Text_ResizeMode">Resize mode</sys:String>
     <sys:String x:Key="Text_ModeFit">Fit</sys:String>
     <sys:String x:Key="Text_ModeFill">Fill</sys:String>
     <sys:String x:Key="Text_ModeStretch">Stretch</sys:String>
@@ -95,6 +88,16 @@
     <sys:String x:Key="Text_UnitPercentages">Percentages</sys:String>
     <sys:String x:Key="Text_UnitCentimeters">Centimeters</sys:String>
     <sys:String x:Key="Text_ResizeBtn">Resize</sys:String>
+    <sys:String x:Key="Text_ResizingImages">Resizing images...</sys:String>
+    <sys:String x:Key="Text_ResizedSuffix">_Resized</sys:String>
+    <sys:String x:Key="Text_ResizeSuccessTitle">Success</sys:String>
+    <sys:String x:Key="Text_ResizeSuccessMsg">Successfully resized {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
+    <sys:String x:Key="Text_InvalidInputTitle">Invalid input</sys:String>
+    <sys:String x:Key="Text_InvalidInputMsg">Please enter at least one valid number.</sys:String>
+
+    <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
+    <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
+
 
     <!-- My Pockets Window -->
     <sys:String x:Key="Text_SavedPocketsTitle">My Pockets</sys:String>
@@ -121,18 +124,18 @@
     <sys:String x:Key="Text_OpenFileError">Could not open the file:</sys:String>
 
     <sys:String x:Key="Text_SortDefault">Default</sys:String>
-    <sys:String x:Key="Text_SortDefaultTooltip">Sort: Default Order</sys:String>
+    <sys:String x:Key="Text_SortDefaultTooltip">Sort: Default order</sys:String>
     <sys:String x:Key="Text_ToastRestoredDefault">Default Sort</sys:String>
     <sys:String x:Key="Text_SortAtoZ">A - Z</sys:String>
     <sys:String x:Key="Text_SortAtoZTooltip">Sort: Alphabetical</sys:String>
     <sys:String x:Key="Text_ToastSortedAtoZ">Sorted A to Z</sys:String>
     <sys:String x:Key="Text_SortZtoA">Z - A</sys:String>
-    <sys:String x:Key="Text_SortZtoATooltip">Sort: Reverse Alphabetical</sys:String>
+    <sys:String x:Key="Text_SortZtoATooltip">Sort: Reverse alphabetical</sys:String>
     <sys:String x:Key="Text_ToastSortedZtoA">Sorted Z to A</sys:String>
 
     <!-- Settings Window -->
     <sys:String x:Key="Text_SettingsTitle">Settings</sys:String>
-    <sys:String x:Key="Text_StartupErrorTitle">Permission Error</sys:String>
+    <sys:String x:Key="Text_StartupErrorTitle">Permission error</sys:String>
     <sys:String x:Key="Text_StartupErrorMsg">Could not update startup settings.</sys:String>
 
     <!-- Settings Window - General -->
@@ -159,17 +162,17 @@
     <sys:String x:Key="Text_ClipboardShortcut">Create a new Pocket from the clipboard</sys:String>
     <sys:String x:Key="Text_ClipboardShortcutDesc">Customize the keyboard shortcut for this action.</sys:String>
     <!-- Settings Window - Pocket Activation - Shortcut Dialog -->
-    <sys:String x:Key="Text_EditShortcutTitle">Edit Shortcut</sys:String>
-    <sys:String x:Key="Text_ChangeShortcute">New activation shortcut</sys:String>
+    <sys:String x:Key="Text_EditShortcutTitle">Edit shortcut</sys:String>
+    <sys:String x:Key="Text_ChangeShortcut">New activation shortcut</sys:String>
     <sys:String x:Key="Text_Reset">Reset</sys:String>
     <sys:String x:Key="Text_Clear">Clear</sys:String>
     <sys:String x:Key="Text_Save">Save</sys:String>
-    <sys:String x:Key="Text_MsgInvalidShortcutTitle">Invalid Shortcut</sys:String>
+    <sys:String x:Key="Text_MsgInvalidShortcutTitle">Invalid shortcut</sys:String>
     <sys:String x:Key="Text_MsgNeedModifier">Shortcuts must include at least one modifier key (Windows, Ctrl, Alt, or Shift).</sys:String>
     <sys:String x:Key="Text_MsgNeedValidKey">Please press a valid key combination before saving.</sys:String>
-    <sys:String x:Key="Text_MsgConflictTitle">Conflict Detected</sys:String>
+    <sys:String x:Key="Text_MsgConflictTitle">Conflict detected</sys:String>
     <sys:String x:Key="Text_MsgConflictDesc">This combination is currently in use by another app or reserved by Windows.&#x0a;&#x0a;Please choose a different shortcut.</sys:String>
-    <sys:String x:Key="Text_ShortcutErrorTitle">Shortcut Error</sys:String>
+    <sys:String x:Key="Text_ShortcutErrorTitle">Shortcut error</sys:String>
     <sys:String x:Key="Text_ShortcutErrorMsg">Windows blocked this shortcut!&#x0a;&#x0a;This usually means another background app (like Snipping Tool, PowerToys, or a graphics overlay) is already holding this key hostage.&#x0a;&#x0a;Please try a different letter.</sys:String>
 
     <sys:String x:Key="Text_ShakeMouse">Shake to open a new Pocket</sys:String>
@@ -233,14 +236,14 @@
     <sys:String x:Key="Text_AboutHeader">About</sys:String>
     <sys:String x:Key="Text_Close">Close</sys:String>
 
-    <sys:String x:Key="Text_UpdateAvailableTitle">Update Available</sys:String>
+    <sys:String x:Key="Text_UpdateAvailableTitle">Update available</sys:String>
     <sys:String x:Key="Text_UpdateAvailableMsg">A new version of PocketDrop ({0}) is available!&#x0a;&#x0a;Would you like to download it now?</sys:String>
     <sys:String x:Key="Text_CheckingUpdate">Checking...</sys:String>
-    <sys:String x:Key="Text_UpdateAvailableBtn">Update Available</sys:String>
+    <sys:String x:Key="Text_UpdateAvailableBtn">Update available</sys:String>
     <sys:String x:Key="Text_CheckUpdatesBtn">Check for updates</sys:String>
-    <sys:String x:Key="Text_UpdateUpToDateTitle">Up to Date</sys:String>
+    <sys:String x:Key="Text_UpdateUpToDateTitle">Up to date</sys:String>
     <sys:String x:Key="Text_UpdateUpToDateMsg">You are already using the latest version of PocketDrop.</sys:String>
-    <sys:String x:Key="Text_UpdateCheckFailedTitle">Update Check Failed</sys:String>
+    <sys:String x:Key="Text_UpdateCheckFailedTitle">Update check failed</sys:String>
     <sys:String x:Key="Text_UpdateCheckFailedMsg">Could not connect to the update server. Please check your internet connection and try again.</sys:String>
 
     <sys:String x:Key="Text_Copyright">Developed by Naofunyan. © 2026&#x0a;Licensed under the GNU GPLv3.</sys:String>

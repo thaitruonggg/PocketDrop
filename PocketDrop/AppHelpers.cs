@@ -344,14 +344,14 @@ namespace PocketDrop
         [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool QueryFullProcessImageName([System.Runtime.InteropServices.In] IntPtr hProcess, [System.Runtime.InteropServices.In] int dwFlags, [System.Runtime.InteropServices.Out] System.Text.StringBuilder lpExeName, ref int lpdwSize);
 
-        // --- CACHE VARIABLES ---
+        // Cache variables
         private static string _lastExcludedAppsRaw = null;
         private static HashSet<string> _cachedExcludedApps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         // Helper to cleanly update the cache only when the user changes settings
         private static void UpdateExcludedAppsCache()
         {
-            if (_lastExcludedAppsRaw == App.ExcludedApps) return; // Skip if nothing changed!
+            if (_lastExcludedAppsRaw == App.ExcludedApps) return; // Skip if nothing changed
 
             _cachedExcludedApps.Clear();
             if (!string.IsNullOrWhiteSpace(App.ExcludedApps))
@@ -406,7 +406,7 @@ namespace PocketDrop
                 }
                 finally
                 {
-                    // Always close the native handle to prevent memory leaks!
+                    // Close the native handle to prevent memory leaks
                     CloseHandle(hProcess);
                 }
             }
@@ -431,7 +431,7 @@ namespace PocketDrop
                     Items.Add(item);
                 }
 
-                // 2. Fire a single "Reset" flare to tell the WPF UI to draw the new items exactly once!
+                // 2. Fire a single "Reset" flare to tell the WPF UI to draw the new items exactly once
                 OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
         }

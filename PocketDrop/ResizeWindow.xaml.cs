@@ -1,4 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿// PocketDrop
+// Copyright (C) 2026 Naofunyan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// any later version.
+
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -48,7 +56,10 @@ namespace PocketDrop
             }
             else
             {
-                MessageBox.Show("Please enter at least one valid number.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning);
+                string title = (string)Application.Current.TryFindResource("Text_InvalidInputTitle") ?? "Invalid Input";
+                string message = (string)Application.Current.TryFindResource("Text_InvalidInputMsg") ?? "Please enter at least one valid number.";
+
+                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

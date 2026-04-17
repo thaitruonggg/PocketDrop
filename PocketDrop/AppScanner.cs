@@ -71,8 +71,7 @@ namespace PocketDrop
 
                                 seenPaths.Add(exePath);
 
-                                // THE FIX: Just create the AppItem and pass the path. 
-                                // Do NOT extract the icon here! The AppItem will do it lazily.
+                                // Create the AppItem and pass the path
                                 appList.Add(new AppItem
                                 {
                                     AppName = displayName,
@@ -107,9 +106,8 @@ namespace PocketDrop
                             icon.Handle,
                             Int32Rect.Empty,
                             BitmapSizeOptions.FromEmptyOptions());
-
-                        // Freeze the image for UI thread access
-                        bitmapSource.Freeze();
+                       
+                        bitmapSource.Freeze(); // Freeze the image for UI thread access
 
                         return bitmapSource;
                     }

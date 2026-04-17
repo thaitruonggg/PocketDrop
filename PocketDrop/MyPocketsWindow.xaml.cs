@@ -41,15 +41,11 @@ namespace PocketDrop
         {
             InitializeComponent();
 
-            // Bind it EXACTLY ONCE here!
             HistoryListBox.ItemsSource = App.SessionHistory;
             RefreshHistory();
-            // PRO TIP: Tell this window to automatically run RefreshHistory() 
-            // anytime the background data changes!
+            // Tell this window to automatically run RefreshHistory() anytime the background data changes
             App.SessionHistory.CollectionChanged += (s, e) =>
             {
-                // Because the background data might change on a background thread, 
-                // we safely route the UI update to the Dispatcher.
                 Application.Current.Dispatcher.Invoke(() => RefreshHistory());
             };
         }

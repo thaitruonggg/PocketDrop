@@ -791,7 +791,7 @@
                                     <StackPanel>
                                         <TextBlock Text="{DynamicResource Text_PrivacyPolicy}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" TextWrapping="Wrap" MouseLeftButtonDown="PrivacyPolicy_Click"/>
                                         <TextBlock Text="{DynamicResource Text_ThirdParty}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" Margin="0,0,0,14" TextWrapping="Wrap" MouseLeftButtonDown="ThirdParty_Click"/>
-                                        <TextBlock Text="{DynamicResource Text_RateReview}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" MouseLeftButtonDown="Rate_Click"/>
+                                        <!--<TextBlock Text="{DynamicResource Text_RateReview}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" MouseLeftButtonDown="Rate_Click"/>-->
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
