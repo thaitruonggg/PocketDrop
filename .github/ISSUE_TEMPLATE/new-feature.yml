@@ -1,0 +1,35 @@
+name: 💡 Feature request
+description: Have an idea? Help improve PocketDrop by suggesting a new feature, workflow improvement, or enhancement.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please share the details of your idea so we can understand how it would improve PocketDrop.
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 Describe the new features or enhancements
+      description: Tell us exactly how this new feature should work in PocketDrop.
+      placeholder: |
+        Example: "A button in the screen X that allows to do Y".
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: 💡 Why would this be a great addition to PocketDrop?
+      description: Tell us how this feature would make your day-to-day tasks easier or more enjoyable.
+      placeholder: |
+        Example: "It will allow to do Y that is needed for Z"
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 🖼️ Help us visualize it (Optional)
+      description: Feel free to drop in screenshots, links, or examples of how other apps do this. Anything that helps us visualize your idea is super helpful!
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to share this with us! We are excited to review your idea and see if it can be implemented.
