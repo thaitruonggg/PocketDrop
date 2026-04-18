@@ -7,7 +7,7 @@ body:
       value: |
         Please share as much detail as possible below so we can track down the issue and get it fixed!
   - type: textarea
-    id: description
+    id: sys-info
     attributes:
       label: ℹ️ System information
       description: |
@@ -57,7 +57,7 @@ body:
     attributes:
       label: Extra fields
       options:
-        - label: "I have used the search function <kbd>Ctrl</kbd> + <kbd>F</kbd> to check if an issue already exists"
+        - label: "I have used the search function (Ctrl + F) to check if an issue already exists"
           required: true
   - type: markdown
     attributes:
