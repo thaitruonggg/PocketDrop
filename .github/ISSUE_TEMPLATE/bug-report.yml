@@ -23,7 +23,8 @@ body:
     attributes:
       label: 📝 Describe your issue
       description: Describe the unexpected behavior you encountered.
-      placeholder: Example: "When I drag a .png file into the Pocket, it shows an error message."
+      placeholder: |
+        Example: "When I drag a .png file into the Pocket, it shows an error message."
     validations:
       required: true
   - type: textarea

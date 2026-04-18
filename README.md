@@ -16,7 +16,7 @@
 
 # ℹ️ About
 
-PocketDrop is a free, open-source Windows utility built for effortless file management. It delivers a seamless drag-and-drop experience packed with powerful built-in tools, so you can get things done without ever leaving your current workspace.
+PocketDrop is a free, open-source Windows utility built for effortless file management. It delivers a seamless drag-and-drop experience packed with powerful built-in tools, so you can get things done without ever leaving your workflow.
 
 > [!IMPORTANT]
 > * PocketDrop is currently in active development. The app is functional but may contain bugs or incomplete features. If you encounter any issues, please report them in the Issues tab.
