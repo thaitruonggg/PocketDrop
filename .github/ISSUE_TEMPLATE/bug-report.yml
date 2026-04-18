@@ -45,7 +45,8 @@ body:
     attributes:
       label: 🎯 Expected behavior
       description: Tell us what should have happened if the bug didn't occur.
-      placeholder: Example: I expected the .png file to be saved inside the Pocket.
+      placeholder: |
+        Example: I expected the .png file to be saved inside the Pocket.
   - type: textarea
     id: screenshots
     attributes:
