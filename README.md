@@ -10,7 +10,7 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/Naofunyan/PocketDrop?style=for-the-badge&color=ffc857)](https://github.com/Naofunyan/PocketDrop/stargazers)
 [![GitHub Downloads](https://img.shields.io/github/downloads/Naofunyan/PocketDrop/total?style=for-the-badge&color=2FA084)](https://github.com/Naofunyan/PocketDrop/releases)
 
-⭐️ If you like the project, leave a star ⭐️
+⭐️ If you find PocketDrop useful, please leave a star to support the project. ⭐️
 
 </div>
 
@@ -72,7 +72,7 @@ Speed up your workflow with these shortcuts (customizable in Settings):
 | 📋 Create a new Pocket from the clipboard | `Win + Shift + X` |
 
 # 🎯 How can it be improved?
-- [ ] \Direct upload to cloud services (Google Drive, OneDrive).
+- [ ] Direct upload to cloud services (Google Drive, OneDrive).
 
 # 💾 Download
 
