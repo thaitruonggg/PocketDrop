@@ -49,7 +49,7 @@ WizardStyle=modern
 
 [Files]
 ; This tells Inno Setup to grab the 40MB+ file from the GitHub build folder
-Source: "PublishOutput\PocketDrop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "GH_Publish\PocketDrop.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Tasks]
 ; Creates a checkbox on the "Select Additional Tasks" page of the installer

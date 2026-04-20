@@ -47,7 +47,7 @@ jobs:
         -p:IncludeNativeLibrariesForSelfExtract=true \
         -p:IncludeAllContentForSelfExtract=true \
         -p:EnableCompressionInSingleFile=true \
-        -o PublishOutput
+        -o GH_Publish
 
     - name: Compile Inno Setup
       run: iscc /DMyAppArch="${{ matrix.arch }}" ./Setup.iss
