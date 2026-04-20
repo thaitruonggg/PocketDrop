@@ -6,12 +6,27 @@
 ; Define your version once here, and it updates everywhere!
 #define MyAppVersion "1.0.0"
 
+[Files]
+; 1. Grab the main executable file
+; NOTE: You must change the "Source" path to match your actual Visual Studio output folder!
+Source: "C:\Users\sherl\OneDrive - Naofunyan\Documents\Github\PocketDrop\PocketDrop\bin\Release\net10.0-windows10.0.19041.0\publish\win-x64"; DestDir: "{app}"; Flags: ignoreversion
+
 [Setup]
 ; App Information
 AppName=PocketDrop
 AppVersion={#MyAppVersion}
 AppPublisher=Naofunyan
 AppCopyright=Copyright (C) 2026 Naofunyan
+
+[Tasks]
+; Creates a checkbox on the "Select Additional Tasks" page of the installer
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+
+[Icons]
+; Creates the Start Menu shortcut
+Name: "{autoprograms}\PocketDrop"; Filename: "{app}\PocketDrop.exe"
+; Creates the Desktop shortcut (only if the user checked the box)
+Name: "{autodesktop}\PocketDrop"; Filename: "{app}\PocketDrop.exe"; Tasks: desktopicon
 
 DisableWelcomePage=no
 
@@ -43,6 +58,6 @@ OutputDir=Output
 OutputBaseFilename=PocketDrop_Setup_{#MyAppArch}_{#MyAppVersion}
 
 ; Makes the installer smaller and faster
-Compression=lzma2
-SolidCompression=yes
+Compression=zip
+SolidCompression=no
 WizardStyle=modern

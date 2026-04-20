@@ -526,19 +526,23 @@ namespace PocketDrop
                                         CheckUpdateBtn.IsEnabled = false;
 
                                         // 2. Dig into the GitHub JSON to find the actual .exe download link
-                                        // (Assuming the installer is the first file in your release assets)
                                         string downloadUrl = root[0].GetProperty("assets")[0].GetProperty("browser_download_url").GetString();
-                                        string tempInstallerPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "PocketDrop_Update.exe");
 
-                                        // 3. Download the .exe to the hidden Windows Temp folder
+                                        // 3. Use LocalAppData folder
+                                        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                                        string updateFolder = System.IO.Path.Combine(localAppData, "PocketDrop", "Updates");
+                                        System.IO.Directory.CreateDirectory(updateFolder);
+
+                                        string tempInstallerPath = System.IO.Path.Combine(updateFolder, "PocketDrop_Update.exe");
+
+                                        // 3. Download the .exe to the custom updates folder
                                         byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl);
                                         await System.IO.File.WriteAllBytesAsync(tempInstallerPath, fileBytes);
 
-                                        // 4. Fire the installer in completely silent mode
+                                        // 4. Fire the installer in standard Silent mode (Shows progress, but auto-clicks Next)
                                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                                         {
                                             FileName = tempInstallerPath,
-                                            // /SILENT hides the UI. /SUPPRESSMSGBOXES hides errors. /NORESTART prevents Windows from rebooting.
                                             Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART",
                                             UseShellExecute = true
                                         });

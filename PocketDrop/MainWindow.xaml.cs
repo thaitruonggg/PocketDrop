@@ -2417,14 +2417,14 @@ namespace PocketDrop
             }
         }
 
-        // Clean up leftover ZIPs from previous share sessions
+        // Clean up leftover ZIPs and Update Installers from previous sessions
         private void CleanupOldShareZips()
         {
             try
             {
                 string tempPath = Path.GetTempPath();
 
-                // Find all custom ZIP files in the temp folder
+                // 1. Find all custom ZIP files in the temp folder
                 string[] oldZips = Directory.GetFiles(tempPath, "PocketDrop_Share_*.zip");
 
                 foreach (string zip in oldZips)
@@ -2434,6 +2434,27 @@ namespace PocketDrop
                     if (fi.CreationTime < DateTime.Now.AddHours(-1))
                     {
                         File.Delete(zip);
+                    }
+                }
+
+                // 2. Sweep old Update Installers
+                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string updateFolder = Path.Combine(localAppData, "PocketDrop", "Updates");
+
+                if (Directory.Exists(updateFolder))
+                {
+                    // Find any leftover .exe files in the Updates folder
+                    string[] oldInstallers = Directory.GetFiles(updateFolder, "*.exe");
+                    foreach (string installer in oldInstallers)
+                    {
+                        try
+                        {
+                            File.Delete(installer);
+                        }
+                        catch
+                        {
+                            // If the file is locked for some reason, just ignore it and try again next time
+                        }
                     }
                 }
             }
