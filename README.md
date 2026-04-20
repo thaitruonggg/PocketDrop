@@ -78,7 +78,7 @@ Speed up your workflow with these shortcuts (customizable in Settings):
 
 ## 💾 Download
 
-> [!NOTE]
+> [!WARNING]
 > **Note for Windows users (Microsoft Defender SmartScreen)**
 > As PocketDrop is a new open-source application, Windows SmartScreen may flag the installer as an "unrecognized app" and block the download in Microsoft Edge.
 >
@@ -100,32 +100,31 @@ Run the installer (`PocketDrop_Setup.exe`) and follow the on-screen steps to ins
 
 ## 🎬 PocketDrop in motion
 
-<table>
+<table width="100%">
   <tr>
-    <td align="center">
-      <img src="PocketDrop/Assets/feature1.gif" width="380" alt="Shake to summon" />
+    <td align="center" width="48%">
+      <img src="PocketDrop/Assets/feature1.gif" width="100%" alt="Shake to summon" />
       <br />
       <b>1. Shake to summon</b>
     </td>
-    <td align="center">
-      <img src="PocketDrop/Assets/feature2.gif" width="380" alt="Access saved files in My Pocket" />
+    <td align="center" width="48%">
+      <img src="PocketDrop/Assets/feature2.gif" width="100%" alt="Access saved files in My Pocket" />
       <br />
       <b>2. Access saved files in My Pocket</b>
     </td>
   </tr>
 </table>
-
 <br>
 
 <table>
   <tr>
-    <td align="center">
-      <img src="PocketDrop/Assets/feature3.gif" width="380" alt="Open, share, and more with built-in tools" />
+    <td align="center" width="48%">
+      <img src="PocketDrop/Assets/feature3.gif" width="100%" alt="Open, share, and more with built-in tools" />
       <br />
       <b>3. Open, share, and more with built-in tools</b>
     </td>
-    <td align="center">
-      <img src="PocketDrop/Assets/feature4.gif" width="380" alt="Manage everything from the system tray" />
+    <td align="center" width="48%">
+      <img src="PocketDrop/Assets/feature4.gif" width="100%" alt="Manage everything from the system tray" />
       <br />
       <b>4. Manage everything from the system tray</b>
     </td>

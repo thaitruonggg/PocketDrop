@@ -2305,8 +2305,8 @@ namespace PocketDrop
                     int driftX = Math.Abs(pt.X - _shakeAnchor.Value.X);
                     int driftY = Math.Abs(pt.Y - _shakeAnchor.Value.Y);
 
-                    // If the mouse drifts more than 250px wide or 200px tall, treat it as a drag or selection and invalidate the shake
-                    if (driftX > 250 || driftY > 200)
+                    // If the mouse drifts more than 350px wide or 250px tall, treat it as a drag or selection and invalidate the shake
+                    if (driftX > 350 || driftY > 250)
                     {
                         _shakeInvalidated = true;
                         return;
@@ -2318,8 +2318,8 @@ namespace PocketDrop
                     currentMouseX: pt.X,
                     currentTimestampMs: Environment.TickCount64,
                     minDistancePx: App.ShakeMinimumDistance,
-                    maxTimeMs: 1000,
-                    requiredSwings: 3
+                    maxTimeMs: 650,
+                    requiredSwings: 4
                 );
 
                 // 4. Spawn the pocket
