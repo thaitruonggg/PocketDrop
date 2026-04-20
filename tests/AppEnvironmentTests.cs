@@ -9,7 +9,7 @@ namespace PocketDrop_Tests
         public void IsGameModeActive_ShouldExecuteWithoutCrashing()
         {
             // Act
-            // We just verify the shell32 DLL import doesn't throw a catastrophic exception
+            // Verify the shell32 DLL import doesn't throw a catastrophic exception
             // during the test execution in standard environments.
             var exception = Record.Exception(() => AppHelpers.IsGameModeActive());
 
