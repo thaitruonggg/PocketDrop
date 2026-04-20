@@ -48,8 +48,8 @@ SolidCompression=no
 WizardStyle=modern
 
 [Files]
-; Grab the single bundled executable from the GitHub publish folder
-Source: "publish\PocketDrop.exe"; DestDir: "{app}"; Flags: ignoreversion
+; This tells Inno Setup to grab the 40MB+ file from the GitHub build folder
+Source: "PublishOutput\PocketDrop.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Tasks]
 ; Creates a checkbox on the "Select Additional Tasks" page of the installer
