@@ -538,8 +538,8 @@ namespace PocketDrop
                                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                                         {
                                             FileName = tempInstallerPath,
-                                            // /VERYSILENT hides the UI. /SUPPRESSMSGBOXES hides errors. /NORESTART prevents Windows from rebooting.
-                                            Arguments = "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART",
+                                            // /SILENT hides the UI. /SUPPRESSMSGBOXES hides errors. /NORESTART prevents Windows from rebooting.
+                                            Arguments = "/SILENT /SUPPRESSMSGBOXES /NORESTART",
                                             UseShellExecute = true
                                         });
 
