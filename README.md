@@ -16,7 +16,7 @@
 
 ## ℹ️ About
 
-PocketDrop is a free, open-source Windows utility built for effortless file management. It delivers a seamless drag-and-drop experience packed with powerful built-in tools, so you can get things done without ever leaving your workflow.
+PocketDrop is a free, open-source utility that delivers a seamless drag-and-drop experience with powerful built-in tools. Drag files into your floating Pocket, then move, share, or process them whenever you're ready - so you can get things done without ever breaking your workflow.
 
 > [!IMPORTANT]
 > * PocketDrop is currently in active development. The app is functional but may contain bugs or incomplete features. If you encounter any issues, please report them in the [Issues](https://github.com/Naofunyan/PocketDrop/issues) tab.
@@ -85,6 +85,36 @@ You can check out the [latest release](https://github.com/naofunyan/PocketDrop/r
 Run the installer (`PocketDrop_Setup.exe`) and follow the on-screen steps to install PocketDrop.
 
 ## 🎬 PocketDrop in motion
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="YOUR_FIRST_GIF_LINK.gif" width="450" alt="Shake to summon" />
+      <br />
+      <b>1. Shake to summon</b>
+    </td>
+    <td align="center">
+      <img src="YOUR_SECOND_GIF_LINK.gif" width="450" alt="Built-in tools" />
+      <br />
+      <b>2. Built-in tools</b>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="YOUR_FIRST_GIF_LINK.gif" width="450" alt="Shake to summon" />
+      <br />
+      <b>1. Shake to summon</b>
+    </td>
+    <td align="center">
+      <img src="YOUR_SECOND_GIF_LINK.gif" width="450" alt="Built-in tools" />
+      <br />
+      <b>2. Built-in tools</b>
+    </td>
+  </tr>
+</table>
 
 ## ⚖️ License
 
