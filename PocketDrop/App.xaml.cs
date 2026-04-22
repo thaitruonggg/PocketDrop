@@ -97,6 +97,55 @@ namespace PocketDrop
         {
             base.OnStartup(e);
 
+            // ================================================ //
+            // WALKIE-TALKIE RECEIVERS
+            // ================================================ //
+            AppGlobals.RequestNewPocket += () =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var newPocket = new MainWindow();
+                    newPocket.Show();
+                    newPocket.Opacity = 1;
+                    newPocket.IsHitTestVisible = true;
+                    newPocket.Activate();
+                });
+            };
+
+            AppGlobals.RequestPocketsForceClose += () =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var openPockets = System.Windows.Application.Current.Windows.OfType<MainWindow>().ToList();
+                    foreach (var pocket in openPockets)
+                    {
+                        if (pocket.IsLoaded && pocket.Visibility == Visibility.Visible && pocket.Opacity >= 0.99)
+                            pocket.ForceClose();
+                    }
+                });
+            };
+
+            AppGlobals.RequestPocketsRefresh += () =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var openPockets = System.Windows.Application.Current.Windows.OfType<MainWindow>().ToList();
+                    foreach (var pocket in openPockets)
+                    {
+                        if (pocket.IsLoaded) pocket.RefreshPocketUI();
+                    }
+                });
+            };
+
+            AppGlobals.RequestHistoryRefresh += () =>
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var openHistoryWindow = System.Windows.Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
+                    if (openHistoryWindow != null) openHistoryWindow.RefreshHistory();
+                });
+            };
+
             // 1. Safely read Language and Theme from the Registry
             try
             {

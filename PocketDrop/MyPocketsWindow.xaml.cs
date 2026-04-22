@@ -163,11 +163,7 @@ namespace PocketDrop
         // Spawn a new Pocket
         private void AddPocket_Click(object sender, RoutedEventArgs e)
         {
-            var newPocket = new MainWindow();
-            newPocket.Show();
-            newPocket.Opacity = 1;
-            newPocket.IsHitTestVisible = true;
-            newPocket.Activate();
+            AppGlobals.RequestNewPocket?.Invoke(); // Broadcast the signal!
         }
 
         private void TabHome_Click(object sender, RoutedEventArgs e)
@@ -480,14 +476,7 @@ namespace PocketDrop
             RefreshHistory();
 
             // 4. Only close Pockets that are visible on screen.
-            var openPockets = Application.Current.Windows.OfType<MainWindow>().ToList();
-            foreach (var pocket in openPockets)
-            {
-                if (pocket.IsLoaded && pocket.Visibility == Visibility.Visible && pocket.Opacity >= 0.99)
-                {
-                    pocket.ForceClose();
-                }
-            }
+            AppGlobals.RequestPocketsForceClose?.Invoke();
         }
 
         private void DeleteSelected_Click(object sender, RoutedEventArgs e)
@@ -526,14 +515,7 @@ namespace PocketDrop
             RefreshHistory();
 
             // Notify any open floating Pockets to refresh visuals
-            var openPockets = Application.Current.Windows.OfType<MainWindow>().ToList();
-            foreach (var pocket in openPockets)
-            {
-                if (pocket.IsLoaded)
-                {
-                    pocket.RefreshPocketUI();
-                }
-            }
+            AppGlobals.RequestPocketsRefresh?.Invoke();
         }
     }
 }

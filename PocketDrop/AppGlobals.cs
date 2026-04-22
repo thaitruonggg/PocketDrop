@@ -144,5 +144,13 @@ namespace PocketDrop
             }
             catch { }
         }
+
+        // ================================================ //
+        // 4. CROSS-WINDOW COMMUNICATION
+        // ================================================ //
+        public static Action RequestNewPocket;
+        public static Action RequestPocketsRefresh;
+        public static Action RequestPocketsForceClose;
+        public static Action RequestHistoryRefresh;
     }
 }

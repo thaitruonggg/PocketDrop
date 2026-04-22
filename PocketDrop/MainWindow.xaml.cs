@@ -461,14 +461,7 @@ namespace PocketDrop
                     UpdateItemCountDisplay(PocketedItems.Count);
 
                     // Ping the window: Notify My Pockets window to refresh in real-time
-                    var openHistoryWindow = Application.Current.Windows.OfType<SavedPocketsWindow>().FirstOrDefault();
-                    if (openHistoryWindow != null)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            openHistoryWindow.RefreshHistory();
-                        }));
-                    }
+                    AppGlobals.RequestHistoryRefresh?.Invoke(); // Broadcast the signal!
                 }
                 else
                 {
