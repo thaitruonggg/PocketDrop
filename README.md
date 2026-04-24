@@ -10,7 +10,7 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/Naofunyan/PocketDrop?style=for-the-badge&color=D49F3E&v=1)](https://github.com/Naofunyan/PocketDrop/stargazers)
 [![GitHub Downloads](https://img.shields.io/github/downloads/Naofunyan/PocketDrop/total?style=for-the-badge&color=52A772&v=1)](https://github.com/naofunyan/PocketDrop/releases)
 
-⭐️ If you find PocketDrop useful, please leave a star to support the project ⭐️
+⭐️ If you find PocketDrop useful, consider leaving a star to support the project ⭐️
 
 </div>
 
@@ -73,6 +73,11 @@ Speed up your workflow with these shortcuts (customizable in Settings):
 | 📋 Create a new Pocket from the clipboard | <kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> |
 
 ## 🎯 How can it be improved?
+
+### Architecture
+- [ ] Implement MVVM design pattern.
+
+### Functionality
 - [ ] Publish PocketDrop to Microsoft Store.
 - [ ] Direct upload to cloud services (Google Drive, OneDrive).
 
