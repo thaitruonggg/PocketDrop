@@ -16,7 +16,7 @@
     <SolidColorBrush x:Key="AccentDefault" Color="#4CC2FF"/>
 
     <SolidColorBrush x:Key="IconHaloBackground" Color="#33FFFFFF"/>
-    <SolidColorBrush x:Key="AccentText" Color="#60CDFF"/>
+    <SolidColorBrush x:Key="AccentText" Color="#005FB8"/>
 
     <SolidColorBrush x:Key="BrandAccent" Color="#FF5252"/>
 

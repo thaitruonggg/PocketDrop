@@ -18,12 +18,10 @@ namespace PocketDrop
 {
     public static class AppHelpers
     {
-        // ================================================ //
-        // Global HTTP Client (Prevents Socket Exhaustion)
-        // ================================================ //
+        // 1. Shared HTTP client instance to prevent socket exhaustion
         public static readonly System.Net.Http.HttpClient GlobalClient = new System.Net.Http.HttpClient();
 
-        // Static constructor to configure the client once when the app starts
+        // Configure the HTTP client once on startup
         static AppHelpers()
         {
             GlobalClient.Timeout = TimeSpan.FromSeconds(5);
@@ -31,12 +29,11 @@ namespace PocketDrop
             GlobalClient.DefaultRequestHeaders.Add("User-Agent", "PocketDrop-App");
         }
 
-        // ================================================ //
-        // File size calculation
-        // ================================================ //
+
+        // 2. File size calculation
         public static string FormatBytes(long bytes)
         {
-            // ✨ FIX: Handle negative inputs and zero safely to prevent Math.Log crashes
+            // Guard against zero and negative inputs to avoid Math.Log errors
             if (bytes <= 0) return "0 B";
 
             string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
@@ -45,9 +42,8 @@ namespace PocketDrop
             return $"{num.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)} {suffixes[place]}";
         }
 
-        // ================================================ //
-        // Duplicate detection
-        // ================================================ //
+
+        // 3. Duplicate detection
         public static bool IsDuplicate(IEnumerable<PocketItem> currentItems, string newFilePath)
         {
             if (string.IsNullOrEmpty(newFilePath)) return false;
@@ -55,19 +51,18 @@ namespace PocketDrop
                 item.FilePath.Equals(newFilePath, StringComparison.OrdinalIgnoreCase));
         }
 
-        // ================================================ //
-        // Remove dead files
-        // ================================================ //
+
+        // 4. Remove dead files
         public static bool RemoveDeadFiles(IList<PocketItem> currentItems)
         {
             bool removedAny = false;
 
-            // Iterate backward to safely delete items during loop
+            // Iterate in reverse to safely remove items during the loop
             for (int i = currentItems.Count - 1; i >= 0; i--)
             {
                 string path = currentItems[i].FilePath;
 
-                // Remove entry if file and directory no longer exist on disk
+                // Remove entries whose file and directory no longer exist
                 if (!File.Exists(path) && !Directory.Exists(path))
                 {
                     currentItems.RemoveAt(i);
@@ -77,9 +72,8 @@ namespace PocketDrop
             return removedAny;
         }
 
-        // ================================================ //
-        // Shake detection
-        // ================================================ //
+
+        // 5. Shake detection
         public class ShakeDetector
         {
             private Queue<long> _swingTimestamps = new Queue<long>();
@@ -103,24 +97,24 @@ namespace PocketDrop
 
                 int newDir = deltaX > 0 ? 1 : -1;
 
-                // Detect direction change swing in shake algorithm
+                // Detect direction change for shake detection
                 if (_currentDir != 0 && newDir != _currentDir)
                 {
-                    // Calculate travel distance before each direction change
+                    // Calculate distance traveled between direction changes
                     int swingDistance = Math.Abs(_lastX - _swingOriginX);
 
                     if (swingDistance >= minDistancePx)
                     {
-                        _swingTimestamps.Enqueue(currentTimestampMs); // Record timestamp on valid swing detection
+                        _swingTimestamps.Enqueue(currentTimestampMs); // Record timestamp when a valid swing is detected
                     }
 
-                    _swingOriginX = _lastX; // Reset origin for the new swing direction
+                    _swingOriginX = _lastX; // Reset origin for the next swing
                 }
 
                 _currentDir = newDir;
                 _lastX = currentMouseX;
 
-                // Prune swings outside the time window
+                // Dismiss swings outside the time window
                 while (_swingTimestamps.Count > 0 && (currentTimestampMs - _swingTimestamps.Peek()) > maxTimeMs)
                 {
                     _swingTimestamps.Dequeue();
@@ -129,7 +123,7 @@ namespace PocketDrop
                 // Check if swing count meets shake threshold
                 if (_swingTimestamps.Count >= requiredSwings)
                 {
-                    _swingTimestamps.Clear(); // Reset state to prevent immediate re-trigger
+                    _swingTimestamps.Clear(); // Reset state to prevent re-triggering
                     _isFirstMove = true;
                     return true;
                 }
@@ -138,9 +132,8 @@ namespace PocketDrop
             }
         }
 
-        // ================================================ //
-        // Collision renamer 
-        // ================================================ //
+
+        // 6. Collision renamer 
         public static string GetSafeDisplayName(IEnumerable<PocketItem> currentItems, string originalPath)
         {
             string originalName = Path.GetFileName(originalPath);
@@ -150,7 +143,7 @@ namespace PocketDrop
             string finalDisplayName = originalName;
             int counter = 1;
 
-            // Increment suffix until unique filename is found
+            // Increment suffix until the filename is unique
             while (currentItems.Any(item => item.FileName.Equals(finalDisplayName, StringComparison.OrdinalIgnoreCase)))
             {
                 finalDisplayName = $"{nameWithoutExt} ({counter}){extension}";
@@ -160,16 +153,15 @@ namespace PocketDrop
             return finalDisplayName;
         }
 
-        // ================================================ //
-        // Pocket placement
-        // ================================================ //
+
+        // 7. Pocket placement
         public static Point CalculateWindowPosition(int placementMode, double cursorX, double cursorY, double w, double h, double workAreaLeft, double workAreaTop, double workAreaRight, double workAreaBottom)
         {
             // Default position (Near Mouse)
             double targetLeft = cursorX - (w / 2) + 40;
             double targetTop = cursorY - h - 80;
 
-            // Keep "Near Mouse" safely on screen
+            // Clamp "Near Mouse" position to stay within screen bounds
             targetLeft = Math.Max(workAreaLeft + 8, Math.Min(targetLeft, workAreaRight - w - 8));
             targetTop = Math.Max(workAreaTop + 8, Math.Min(targetTop, workAreaBottom - h - 8));
 
@@ -212,21 +204,18 @@ namespace PocketDrop
             return new Point(targetLeft, targetTop);
         }
 
-        // ================================================ //
-        // Calculate My Pocket position
-        // ================================================ //
+
+        // 8. Calculate My Pocket position
         public static Point CalculateTaskbarSnapPosition(double windowWidth, double windowHeight, double workAreaWidth, double workAreaHeight, double shadowMargin)
         {
-            // Align window to edge accounting for shadow margin bleed
             double targetLeft = workAreaWidth - windowWidth + shadowMargin;
             double targetTop = workAreaHeight - windowHeight + shadowMargin;
 
             return new Point(targetLeft, targetTop);
         }
 
-        // ================================================ //
-        // Detect Windows dark mode
-        // ================================================ //
+
+        // 9. Detect Windows dark mode
         public static bool IsWindowsInDarkMode()
         {
             try
@@ -244,9 +233,8 @@ namespace PocketDrop
             return false;
         }
 
-        // ================================================ //
-        // Run at startup
-        // ================================================ //
+
+        // 10. Run at startup
         public static bool IsRunAtStartupEnabled()
         {
             try
@@ -284,10 +272,8 @@ namespace PocketDrop
             return false; // Failed
         }
 
-        // ================================================ //
-        // Version check
-        // ================================================ //
-        // URL Launcher
+
+        // 11. Version check
         public static void OpenUrl(string url)
         {
             try
@@ -300,17 +286,14 @@ namespace PocketDrop
             }
             catch (Exception ex)
             {
-                // 1. Tag it with the context
                 ex.Data.Add("PocketDrop Context", "URL Error");
-
-                // 2. Send it off to Sentry
                 SentrySdk.CaptureException(ex);
             }
         }
 
         public static bool IsUpdateAvailable(string currentVersionText, string onlineVersionText)
         {
-            // Trim version string to strip whitespace and newlines
+            // Trim whitespace and newlines from the version string
             string currentClean = currentVersionText?.Trim() ?? "";
             string onlineClean = onlineVersionText?.Trim() ?? "";
 
@@ -320,13 +303,12 @@ namespace PocketDrop
                 return latest > current;
             }
 
-            // Return false on malformed or error version string
+            // Return false if the version string is malformed or an error
             return false;
         }
 
-        // ================================================ //
-        // Game mode detection
-        // ================================================ //
+
+        // 12. Game mode detection
         [System.Runtime.InteropServices.DllImport("shell32.dll")]
         private static extern int SHQueryUserNotificationState(out int pquns);
 
@@ -342,16 +324,19 @@ namespace PocketDrop
             catch { return false; }
         }
 
-        // ================================================ //
-        // Foreground window detection
-        // ================================================ //
+
+        // 13. Foreground window detection
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
+        // Register Win+Shift+Z and Win+Shift+X as global hotkeys
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        // --- CENTRALIZED NATIVE APIS ---
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -365,8 +350,6 @@ namespace PocketDrop
             public int X;
             public int Y;
         }
-
-        // --- NEW NATIVE APIS (Blazing Fast) ---
         [System.Runtime.InteropServices.DllImport("kernel32.dll")]
         private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
@@ -377,14 +360,13 @@ namespace PocketDrop
         [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool QueryFullProcessImageName([System.Runtime.InteropServices.In] IntPtr hProcess, [System.Runtime.InteropServices.In] int dwFlags, [System.Runtime.InteropServices.Out] System.Text.StringBuilder lpExeName, ref int lpdwSize);
 
-        // Cache variables
         private static string _lastExcludedAppsRaw = null;
         private static HashSet<string> _cachedExcludedApps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        // Helper to cleanly update the cache only when the user changes settings
+        // Update the cache only when settings change
         private static void UpdateExcludedAppsCache()
         {
-            if (_lastExcludedAppsRaw == AppGlobals.ExcludedApps) return; // Skip if nothing changed
+            if (_lastExcludedAppsRaw == AppGlobals.ExcludedApps) return;
 
             _cachedExcludedApps.Clear();
             if (!string.IsNullOrWhiteSpace(AppGlobals.ExcludedApps))
@@ -395,7 +377,7 @@ namespace PocketDrop
                     string rule = System.IO.Path.GetFileNameWithoutExtension(ruleText.Trim());
                     if (!string.IsNullOrEmpty(rule))
                     {
-                        _cachedExcludedApps.Add(rule); // HashSet lookups are instant
+                        _cachedExcludedApps.Add(rule);
                     }
                 }
             }
@@ -406,7 +388,6 @@ namespace PocketDrop
         {
             if (string.IsNullOrWhiteSpace(AppGlobals.ExcludedApps)) return false;
 
-            // 1. Ensure our fast-lookup cache is up to date
             UpdateExcludedAppsCache();
             if (_cachedExcludedApps.Count == 0) return false;
 
@@ -418,14 +399,12 @@ namespace PocketDrop
                 GetWindowThreadProcessId(hWnd, out uint pid);
                 if (pid == 0) return false;
 
-                // 2. Open the process natively with minimal permissions (PROCESS_QUERY_LIMITED_INFORMATION)
                 const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
                 IntPtr hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
                 if (hProcess == IntPtr.Zero) return false;
 
                 try
                 {
-                    // 3. Ask Windows directly for just the text string of the path
                     int capacity = 1024;
                     var sb = new System.Text.StringBuilder(capacity);
                     if (QueryFullProcessImageName(hProcess, 0, sb, ref capacity))
@@ -433,13 +412,11 @@ namespace PocketDrop
                         string exePath = sb.ToString();
                         string processName = System.IO.Path.GetFileNameWithoutExtension(exePath);
 
-                        // 4. Instant O(1) lookup against the cache instead of a slow loop
                         return _cachedExcludedApps.Contains(processName);
                     }
                 }
                 finally
                 {
-                    // Close the native handle to prevent memory leaks
                     CloseHandle(hProcess);
                 }
             }
@@ -448,33 +425,28 @@ namespace PocketDrop
             return false;
         }
 
-        // ================================================ //
-        // 10. High-Performance UI Collection
-        // ================================================ //
+
+        // 14. High-Performance UI Collection
         public class ObservableRangeCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>
         {
-            // Adds a massive batch of items while suppressing UI updates until the very end
             public void AddRange(IEnumerable<T> collection)
             {
                 if (collection == null) throw new ArgumentNullException(nameof(collection));
 
-                // 1. Add items silently to the underlying base list (does NOT alert the UI)
                 foreach (var item in collection)
                 {
                     Items.Add(item);
                 }
 
-                // 2. Fire a single "Reset" flare to tell the WPF UI to draw the new items exactly once
                 OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
         }
 
-        // ================================================ //
-        // Security Utilities
-        // ================================================ //
+
+        // 15. Security Utilities
         public static bool VerifyFileHash(string filePath, string expectedHash)
         {
-            // Opt-in security: pass if no hash file was found on GitHub
+            // Skip hash check if no hash file exists on GitHub
             if (string.IsNullOrWhiteSpace(expectedHash)) return true;
 
             using (var sha256 = System.Security.Cryptography.SHA256.Create())

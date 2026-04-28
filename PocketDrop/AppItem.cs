@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace PocketDrop
 {
-    // 1. Add INotifyPropertyChanged so it can talk to the UI
+    // Implement INotifyPropertyChanged for UI binding
     public class AppItem : INotifyPropertyChanged
     {
         public string AppName { get; set; }
@@ -21,12 +21,11 @@ namespace PocketDrop
         private ImageSource _appIcon;
         private bool _isIconLoading = false;
 
-        // 2. The "Lazy" Property replaces old AppIcon property
         public ImageSource AppIcon
         {
             get
             {
-                // Fetch the icon on demand if it hasn't been loaded yet
+                // Load the icon on demand if not yet cached
                 if (_appIcon == null && !_isIconLoading && !string.IsNullOrEmpty(ExePath))
                 {
                     _isIconLoading = true;
@@ -37,11 +36,11 @@ namespace PocketDrop
             set
             {
                 _appIcon = value;             
-                OnPropertyChanged(nameof(AppIcon)); // Notify WPF that the image has loaded
+                OnPropertyChanged(nameof(AppIcon)); // Notify WPF that the icon property has changed
             }
         }
 
-        // 3. Extracts the icon on a background thread so the UI never freezes
+        // Extract the icon on a background thread to avoid blocking the UI
         private async void LoadIconAsync()
         {
             var icon = await Task.Run(() => AppScanner.GetIconFromExe(ExePath));

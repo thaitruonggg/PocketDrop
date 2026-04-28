@@ -1,4 +1,12 @@
-﻿using System;
+﻿// PocketDrop
+// Copyright (C) 2026 Naofunyan
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// any later version.
+
+using System;
 using Microsoft.Win32;
 using static PocketDrop.AppHelpers;
 
@@ -10,13 +18,13 @@ namespace PocketDrop
         // 1. GLOBAL VARIABLES
         // ================================================ //
 
-        // Global master list to hold every file dropped during this session
+        // Track all files dropped in the current session
         public static ObservableRangeCollection<PocketItem> SessionHistory = new ObservableRangeCollection<PocketItem>();
 
-        // ✨ NEW: O(1) Fast-Lookup Cache
+        // O(1) Fast-Lookup Cache
         public static System.Collections.Generic.HashSet<string> SessionHistoryPaths = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        // ✨ NEW: Auto-Sync Engine (The HashSet perfectly mirrors the list automatically!)
+        // Keep the hash set in sync with the file list
         static AppGlobals()
         {
             SessionHistory.CollectionChanged += (s, e) =>
@@ -40,7 +48,7 @@ namespace PocketDrop
             };
         }
 
-        // Global flag so the rest of the app knows an update is waiting
+        // Flag to indicate a pending update
         public static bool UpdateAvailable = false;
         public static string UpdateUrl = "https://github.com/naofunyan/PocketDrop/releases/latest";
 
@@ -57,7 +65,7 @@ namespace PocketDrop
             return "1.0.0"; // Fallback
         }
 
-        // Required OS constants for registering the hotkeys
+        // Add required OS constants for hotkey registration
         public const uint MOD_ALT = 0x0001;
         public const uint MOD_CTRL = 0x0002;
         public const uint MOD_SHIFT = 0x0004;
@@ -71,7 +79,7 @@ namespace PocketDrop
         // General
         public static int AppTheme = 0; // 0 = System, 1 = Light, 2 = Dark
         public static string AppLanguage = "English";
-        public static bool HasSeenWelcome = false; // ✨ NEW
+        public static bool HasSeenWelcome = false;
 
         // Pocket Activation - Hotkey Preferences
         public static uint PocketKeyVK = 0x5A;
@@ -112,7 +120,7 @@ namespace PocketDrop
         // 3. REGISTRY SAVE & LOAD LOGIC
         // ================================================ //
 
-        // Read all user preferences from Windows
+        // Load all user preferences from the registry
         public static void LoadSettings()
         {
             try
@@ -126,6 +134,9 @@ namespace PocketDrop
                     PocketModifiers = Convert.ToUInt32(key.GetValue("PocketModifiers", MOD_WIN | MOD_SHIFT));
                     ClipboardModifiers = Convert.ToUInt32(key.GetValue("ClipboardModifiers", MOD_WIN | MOD_SHIFT));
 
+                    AppTheme = Convert.ToInt32(key.GetValue("AppTheme", 0));
+                    AppLanguage = key.GetValue("AppLanguage", "English").ToString();
+                    HasSeenWelcome = Convert.ToBoolean(key.GetValue("HasSeenWelcome", false));
                     EnableMouseShake = Convert.ToBoolean(key.GetValue("EnableMouseShake", true));
                     ShakeMinimumDistance = Convert.ToInt32(key.GetValue("ShakeMinimumDistance", 100));
                     DisableInGameMode = Convert.ToBoolean(key.GetValue("DisableInGameMode", true));
@@ -136,9 +147,6 @@ namespace PocketDrop
                     CloseWhenOpenWith = Convert.ToBoolean(key.GetValue("CloseWhenOpenWith", false));
                     CloseWhenShare = Convert.ToBoolean(key.GetValue("CloseWhenShare", true));
                     CloseWhenCompress = Convert.ToBoolean(key.GetValue("CloseWhenCompress", false));
-                    AppTheme = Convert.ToInt32(key.GetValue("AppTheme", 0));
-                    AppLanguage = key.GetValue("AppLanguage", "English").ToString();
-                    HasSeenWelcome = Convert.ToBoolean(key.GetValue("HasSeenWelcome", false)); // ✨ NEW
                     CopyItemToDestination = Convert.ToBoolean(key.GetValue("CopyItemToDestination", true));
                     AutoCompressFoldersShare = Convert.ToBoolean(key.GetValue("AutoCompressFoldersShare", true));
                 }
@@ -159,6 +167,9 @@ namespace PocketDrop
                     key.SetValue("ClipboardKeyVK", (int)ClipboardKeyVK);
                     key.SetValue("PocketModifiers", (int)PocketModifiers);
                     key.SetValue("ClipboardModifiers", (int)ClipboardModifiers);
+                    key.SetValue("AppTheme", AppTheme);
+                    key.SetValue("AppLanguage", AppLanguage);
+                    key.SetValue("HasSeenWelcome", HasSeenWelcome);
                     key.SetValue("EnableMouseShake", EnableMouseShake);
                     key.SetValue("ShakeMinimumDistance", ShakeMinimumDistance);
                     key.SetValue("DisableInGameMode", DisableInGameMode);
@@ -169,9 +180,6 @@ namespace PocketDrop
                     key.SetValue("CloseWhenOpenWith", CloseWhenOpenWith);
                     key.SetValue("CloseWhenShare", CloseWhenShare);
                     key.SetValue("CloseWhenCompress", CloseWhenCompress);
-                    key.SetValue("AppTheme", AppTheme);
-                    key.SetValue("AppLanguage", AppLanguage);
-                    key.SetValue("HasSeenWelcome", HasSeenWelcome); // ✨ NEW
                     key.SetValue("CopyItemToDestination", CopyItemToDestination);
                     key.SetValue("AutoCompressFoldersShare", AutoCompressFoldersShare);
                 }
