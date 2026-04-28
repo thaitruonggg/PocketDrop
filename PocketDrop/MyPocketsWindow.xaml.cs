@@ -372,13 +372,51 @@ namespace PocketDrop
 
                     if (filePaths.Length > 0)
                     {
+                        // ✨ NEW: Match standard Windows drag behavior!
+                        bool isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                        bool isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+                        // Start with the user's default setting
+                        bool isCopy = AppGlobals.CopyItemToDestination;
+
+                        // Apply Windows overrides
+                        if (isShiftDown) isCopy = false;      // Shift forces a Move
+                        else if (isCtrlDown) isCopy = true;   // Ctrl forces a Copy
+
                         DataObject dragData = new DataObject(DataFormats.FileDrop, filePaths);
+
+                        // ✨ NEW: Tell Windows File Explorer what to do using the DropEffect Stream
+                        using (var dropEffectStream = new System.IO.MemoryStream(new byte[] { (byte)(isCopy ? 1 : 2), 0, 0, 0 }))
+                        {
+                            dragData.SetData("Preferred DropEffect", dropEffectStream);
+                        }
 
                         // Reset the trackers before the drag locks the thread
                         _listDragStart = null;
                         _dragCandidates = null;
 
-                        DragDrop.DoDragDrop(element, dragData, DragDropEffects.Copy);
+                        DragDropEffects result = DragDrop.DoDragDrop(element, dragData, DragDropEffects.All);
+
+                        // ✨ NEW: If it was a successful move, clean up the original file and the History UI
+                        if (result != DragDropEffects.None && !isCopy)
+                        {
+                            foreach (var item in selectedItems)
+                            {
+                                // If the dragged file was a modified temp file (like a resized image), 
+                                // we must also delete the original file to complete the illusion of a full move.
+                                if (item.OriginalFilePath != item.FilePath)
+                                {
+                                    try { if (System.IO.File.Exists(item.OriginalFilePath)) System.IO.File.Delete(item.OriginalFilePath); } catch { }
+                                }
+
+                                // Remove it from the global RAM
+                                AppGlobals.SessionHistory.Remove(item);
+                            }
+
+                            // Instantly update the UI to show the file is gone
+                            RefreshHistory();
+                            AppGlobals.TriggerPocketsRefresh();
+                        }
                     }
                 }
             }

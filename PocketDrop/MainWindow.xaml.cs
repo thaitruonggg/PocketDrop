@@ -184,6 +184,9 @@ namespace PocketDrop
         // Drag hover effects
         private void Window_DragEnter(object sender, DragEventArgs e)
         {
+            // ✨ NEW: If we are just reordering or dragging files out, ignore the glow!
+            if (_isDraggingFromApp) return;
+
             if (e.Data.GetDataPresent(DataFormats.FileDrop) || e.Data.GetDataPresent(DataFormats.Text))
             {
                 DragGlowBorder.Visibility = Visibility.Visible; // Activate overlay on drag enter
@@ -707,6 +710,17 @@ namespace PocketDrop
             {
                 var itemsToDrag = PocketedItems.ToList();
 
+                // ✨ NEW: Match standard Windows drag behavior!
+                bool isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                bool isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+                // Start with the user's default setting
+                bool isCopy = AppGlobals.CopyItemToDestination;
+
+                // Apply Windows overrides
+                if (isShiftDown) isCopy = false;      // Shift forces a Move
+                else if (isCtrlDown) isCopy = true;   // Ctrl forces a Copy
+
                 // ✨ THE REFACTOR: 45 lines of code reduced to 2!
                 using var dropEffectStream = new System.IO.MemoryStream(new byte[] { (byte)(AppGlobals.CopyItemToDestination ? 1 : 2), 0, 0, 0 });
                 DataObject dragData = BuildDragPayload(itemsToDrag, dropEffectStream);
@@ -792,6 +806,17 @@ namespace PocketDrop
 
             var selectedItems = ItemsListBox.SelectedItems.Cast<PocketItem>().ToList();
             if (selectedItems.Count == 0) return;
+
+            // ✨ NEW: Match standard Windows drag behavior!
+            bool isShiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+            bool isCtrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+            // Start with the user's default setting
+            bool isCopy = AppGlobals.CopyItemToDestination;
+
+            // Apply Windows overrides
+            if (isShiftDown) isCopy = false;      // Shift forces a Move
+            else if (isCtrlDown) isCopy = true;   // Ctrl forces a Copy
 
             // ✨ THE REFACTOR: Another 45 lines of code gone!
             using var dropEffectStream = new System.IO.MemoryStream(new byte[] { (byte)(AppGlobals.CopyItemToDestination ? 1 : 2), 0, 0, 0 });
@@ -2724,8 +2749,8 @@ namespace PocketDrop
             string ext = Path.GetExtension(filePath).ToLower();
             string[] imageExts = { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp" };
             string[] uniqueIconExts = { ".exe", ".ico", ".lnk", ".pdf",
-                        ".mp4", ".avi", ".mov", ".wmv", ".mkv",
-                        ".mp3", ".flac", ".m4a"};
+                ".mp4", ".avi", ".mov", ".wmv", ".mkv",
+                ".mp3", ".flac", ".m4a"};
 
             bool isImage = Array.Exists(imageExts, x => x == ext);
             bool isUnique = Array.Exists(uniqueIconExts, x => x == ext);
@@ -2780,20 +2805,39 @@ namespace PocketDrop
                         }
                         else
                         {
-                            // ✨ FIX: Wrapped the native COM object in a using statement so it gets destroyed!
+                            // Wrapped the native COM object in a using statement so it gets destroyed
                             using (ShellObject shellObj = ShellObject.FromParsingName(filePath))
                             {
-                                var thumb = shellObj.Thumbnail.LargeBitmapSource;
+                                var unmanagedThumb = shellObj.Thumbnail.LargeBitmapSource;
 
-                                thumb.Freeze();
+                                // ✨ THE FATAL FLAW FIX: 
+                                // Deep-copy the unmanaged COM image into safe, managed WPF memory
+                                var wpfBmp = new BitmapImage();
+                                using (var ms = new System.IO.MemoryStream())
+                                {
+                                    // Encode the unmanaged source to a PNG stream
+                                    var encoder = new PngBitmapEncoder();
+                                    encoder.Frames.Add(BitmapFrame.Create(unmanagedThumb));
+                                    encoder.Save(ms);
+
+                                    ms.Position = 0;
+
+                                    // Load it back into a purely managed BitmapImage
+                                    wpfBmp.BeginInit();
+                                    wpfBmp.CacheOption = BitmapCacheOption.OnLoad; // CRITICAL: Copies pixels to RAM
+                                    wpfBmp.StreamSource = ms;
+                                    wpfBmp.EndInit();
+                                }
+
+                                wpfBmp.Freeze(); // Lock it so it can be shared across the UI thread
 
                                 // Save to cache for next time
                                 if (!isUnique)
                                 {
-                                    _iconCache.TryAdd(cacheKey, thumb);
+                                    _iconCache.TryAdd(cacheKey, wpfBmp);
                                 }
 
-                                return (System.Windows.Media.ImageSource)thumb;
+                                return (System.Windows.Media.ImageSource)wpfBmp;
                             }
                         }
                     }
@@ -2896,8 +2940,50 @@ namespace PocketDrop
 
             bool isGrid = this.CurrentViewMode == "Grid";
 
-            // Hovering anywhere on the item always draws the line on the left (grid) or top (list)
-            bool insertBefore = true;
+            // Calculate if the mouse is on the first half or second half of the item
+            Point pos = e.GetPosition(targetItem);
+            bool insertBefore = isGrid
+                ? pos.X < (targetItem.ActualWidth / 2)
+                : pos.Y < (targetItem.ActualHeight / 2);
+
+            // ✨ NEW: THE WRAP-AROUND FIX ✨
+            // Only jump to the next item if it's on the SAME physical row
+            if (!insertBefore)
+            {
+                int index = ItemsListBox.ItemContainerGenerator.IndexFromContainer(targetItem);
+
+                if (index >= 0 && index < ItemsListBox.Items.Count - 1)
+                {
+                    var nextItem = (ListBoxItem)ItemsListBox.ItemContainerGenerator.ContainerFromIndex(index + 1);
+                    if (nextItem != null)
+                    {
+                        if (isGrid)
+                        {
+                            try
+                            {
+                                // Check their actual vertical positions on the screen
+                                Point targetUiPos = targetItem.TransformToAncestor(ItemsListBox).Transform(new Point(0, 0));
+                                Point nextUiPos = nextItem.TransformToAncestor(ItemsListBox).Transform(new Point(0, 0));
+
+                                // If they share the same Y line (with a 10px margin of error), they are on the same row.
+                                // If true, snap the line to the left of the next item to close the gap.
+                                if (Math.Abs(targetUiPos.Y - nextUiPos.Y) < 10)
+                                {
+                                    targetItem = nextItem;
+                                    insertBefore = true;
+                                }
+                            }
+                            catch { } // Failsafe: if UI isn't ready, just keep drawing on the right edge
+                        }
+                        else
+                        {
+                            // In standard vertical List view, always snap to the top of the next item
+                            targetItem = nextItem;
+                            insertBefore = true;
+                        }
+                    }
+                }
+            }
 
             if (_lastHoveredItem == targetItem && _insertAbove == insertBefore) return;
 
@@ -2933,7 +3019,14 @@ namespace PocketDrop
 
         private void ItemsListBox_Drop(object sender, DragEventArgs e)
         {
+            // ✨ FIX: Capture the exact target where the blue line was drawn BEFORE clearing it
+            var finalTargetItem = _lastHoveredItem;
+            bool finalInsertAbove = _insertAbove;
+
             ClearDragHighlight();
+
+            // ✨ NEW: Force the main window glow to hide, just in case!
+            DragGlowBorder.Visibility = Visibility.Collapsed;
 
             if (_internalDragPayload != null)
             {
@@ -2943,15 +3036,15 @@ namespace PocketDrop
                 var draggedItems = _internalDragPayload;
                 if (draggedItems.Count == 0) return;
 
-                var hit = e.OriginalSource as DependencyObject;
-                var targetItem = FindAncestor<ListBoxItem>(hit);
-
                 int insertIndex = PocketedItems.Count;
 
-                if (targetItem != null)
+                if (finalTargetItem != null)
                 {
-                    var targetData = targetItem.DataContext as PocketItem;
+                    var targetData = finalTargetItem.DataContext as PocketItem;
                     insertIndex = PocketedItems.IndexOf(targetData);
+
+                    // If the blue line was drawn on the right/bottom (this only happens on the very last item now)
+                    if (!finalInsertAbove) insertIndex++;
 
                     // Adjust the index only if the item being moved came from above the drop target
                     int originalIndex = PocketedItems.IndexOf(draggedItems[0]);

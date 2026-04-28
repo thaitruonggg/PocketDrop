@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <SolidColorBrush x:Key="MicaBase" Color="#F7F3F3F3"/>
-    <SolidColorBrush x:Key="LayerDefault" Color="#F7FFFFFF"/>
+    <SolidColorBrush x:Key="LayerDefault" Color="#f0f4f9"/>
     <SolidColorBrush x:Key="LayerAlt" Color="#F7F9F9F9"/>
 
     <SolidColorBrush x:Key="StrokeCardDefault" Color="#33000000"/>

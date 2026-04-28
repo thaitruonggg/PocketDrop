@@ -71,6 +71,7 @@ namespace PocketDrop
         // General
         public static int AppTheme = 0; // 0 = System, 1 = Light, 2 = Dark
         public static string AppLanguage = "English";
+        public static bool HasSeenWelcome = false; // ✨ NEW
 
         // Pocket Activation - Hotkey Preferences
         public static uint PocketKeyVK = 0x5A;
@@ -137,6 +138,7 @@ namespace PocketDrop
                     CloseWhenCompress = Convert.ToBoolean(key.GetValue("CloseWhenCompress", false));
                     AppTheme = Convert.ToInt32(key.GetValue("AppTheme", 0));
                     AppLanguage = key.GetValue("AppLanguage", "English").ToString();
+                    HasSeenWelcome = Convert.ToBoolean(key.GetValue("HasSeenWelcome", false)); // ✨ NEW
                     CopyItemToDestination = Convert.ToBoolean(key.GetValue("CopyItemToDestination", true));
                     AutoCompressFoldersShare = Convert.ToBoolean(key.GetValue("AutoCompressFoldersShare", true));
                 }
@@ -169,6 +171,7 @@ namespace PocketDrop
                     key.SetValue("CloseWhenCompress", CloseWhenCompress);
                     key.SetValue("AppTheme", AppTheme);
                     key.SetValue("AppLanguage", AppLanguage);
+                    key.SetValue("HasSeenWelcome", HasSeenWelcome); // ✨ NEW
                     key.SetValue("CopyItemToDestination", CopyItemToDestination);
                     key.SetValue("AutoCompressFoldersShare", AutoCompressFoldersShare);
                 }

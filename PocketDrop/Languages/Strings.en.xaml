@@ -1,7 +1,37 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-    
+
+    <!-- Welcome Window -->
+    <sys:String x:Key="Text_Welcome">Welcome to PocketDrop  ( •̀ ω •́ )</sys:String>
+    <sys:String x:Key="Text_ButtonNext">Next</sys:String>
+    <sys:String x:Key="Text_ButtonGetStarted">Get Started</sys:String>
+    <sys:String x:Key="Text_ButtonBack">Back</sys:String>
+    <sys:String x:Key="Text_Guide1">Quick guide 1 of 6</sys:String>
+    <sys:String x:Key="Text_Step1Header">Shake to summon</sys:String>
+    <sys:String x:Key="Text_Step1Desc1">Wiggle your mouse while dragging any item to instantly summon a Pocket right where you need it.</sys:String>
+    <sys:String x:Key="Text_Step1Desc2">Prefer shortcuts?</sys:String>
+    <sys:String x:Key="Text_Step1Desc3">has you covered.</sys:String>
+    <sys:String x:Key="Text_Guide2">Quick guide 2 of 6</sys:String>
+    <sys:String x:Key="Text_Step2Header">Accepts everything</sys:String>
+    <sys:String x:Key="Text_Step2Desc1">Works seamlessly with folders, images, videos, audio files, URLs, and even text snippets.</sys:String>
+    <sys:String x:Key="Text_Guide3">Quick guide 3 of 6</sys:String>
+    <sys:String x:Key="Text_Step3Header">Seamless control</sys:String>
+    <sys:String x:Key="Text_Step3Desc1">Preview, reorder, or remove items directly inside the Pocket so you never lose your focus.</sys:String>
+    <sys:String x:Key="Text_Guide4">Quick guide 4 of 6</sys:String>
+    <sys:String x:Key="Text_Step4Header">Powerful built-in tools</sys:String>
+    <sys:String x:Key="Text_Step4Desc1">Compress to ZIP, resize, convert formats, and instantly open or share items directly from the Pocket.</sys:String>
+    <sys:String x:Key="Text_Guide5">Quick guide 5 of 6</sys:String>
+    <sys:String x:Key="Text_Step5Header">Dragging items out of a Pocket</sys:String>
+    <sys:String x:Key="Text_Step5Desc1">By default, dragging an item out creates a copy in the new location.</sys:String>
+    <sys:String x:Key="Text_Step5Desc2">To move it instead, hold the</sys:String>
+    <sys:String x:Key="Text_Step5Desc3">key while dragging.</sys:String>
+    <sys:String x:Key="Text_Step5Desc4">You can change the default behavior in Settings.</sys:String>
+    <sys:String x:Key="Text_Guide6">Quick guide 6 of 6</sys:String>
+    <sys:String x:Key="Text_Step6Header">Always at your fingertips</sys:String>
+    <sys:String x:Key="Text_Step6Desc1">Don't worry about losing your files - every file dragged into a Pocket is automatically saved when closed, and you can reopen them anytime from the system tray.</sys:String>
+
+
     <!-- Main Window -->
     <sys:String x:Key="Text_DropItemsHere">Drop files here</sys:String>
     <sys:String x:Key="Text_SelectAll">Select all</sys:String>
@@ -246,6 +276,13 @@
     <sys:String x:Key="Text_UpdateUpToDateMsg">You are already using the latest version of PocketDrop.</sys:String>
     <sys:String x:Key="Text_UpdateCheckFailedTitle">Update check failed</sys:String>
     <sys:String x:Key="Text_UpdateCheckFailedMsg">Could not connect to the update server. Please check your internet connection and try again.</sys:String>
+    <sys:String x:Key="Text_DownloadingUpdate">Downloading Update...</sys:String>
+    <sys:String x:Key="Text_UpdateFailedBtn">Update Failed</sys:String>
+    <sys:String x:Key="Text_UpdateErrorTitle">Update Error</sys:String>
+    <sys:String x:Key="Text_UpdateDownloadFailedMsg">Failed to download the update:</sys:String>
+    <sys:String x:Key="Text_NoInstallerFound">No valid installer found for this architecture.</sys:String>
+    <sys:String x:Key="Text_SecurityAlert">Security Alert: The downloaded update failed integrity verification and was deleted to protect your system.</sys:String>
+
 
     <sys:String x:Key="Text_Copyright">Developed by Naofunyan. © 2026&#x0a;Licensed under the GNU GPLv3.</sys:String>
     
@@ -279,10 +316,14 @@
     <sys:String x:Key="Text_LicenseMITBody">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:&#x0a;&#x0a;The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.&#x0a;&#x0a;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</sys:String>
     
     <sys:String x:Key="Text_RateReview">Rate and review on the Microsoft Store</sys:String>
-    
-    <sys:String x:Key="Text_GetHelp">Get help</sys:String>
 
+    <sys:String x:Key="Text_GetHelp">Get help</sys:String>
     <sys:String x:Key="Text_GetHelpDesc">Got feedback? Report a bug, suggest a feature, or just say hi.</sys:String>
+
+    <sys:String x:Key="Text_QuickGuide">Quick Guide</sys:String>
+    <sys:String x:Key="Text_QuickGuideDesc">Revisit the welcome screen and quick start guides.</sys:String>
+    <sys:String x:Key="Text_BtnQuickGuide">Open</sys:String>
+    
 
     <!-- Tray Menu -->
     <sys:String x:Key="Text_TrayAddPocket">Add Pocket</sys:String>

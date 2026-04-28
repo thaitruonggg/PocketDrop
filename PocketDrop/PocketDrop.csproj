@@ -16,9 +16,44 @@
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\PocketDrop.png" />
+    <None Remove="Assets\v1.mp4" />
+    <None Remove="Assets\v1_new.mp4" />
+    <None Remove="Assets\v2.mp4" />
+    <None Remove="Assets\v3.mp4" />
+    <None Remove="Assets\v4.mp4" />
+    <None Remove="Assets\v5.mp4" />
+    <None Remove="Assets\v6.mp4" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<Using Remove="System.Windows.Forms" />
 		<Using Remove="System.Drawing" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\v2.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\v4.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\v1.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\v3.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\v5.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\v6.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
   <ItemGroup>
@@ -33,6 +68,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\PocketDrop.ico" />
+    <Resource Include="Assets\PocketDrop.png" />
   </ItemGroup>
 
 </Project>

@@ -247,6 +247,19 @@ namespace PocketDrop
             // 5. Tell WPF to listen for global Windows messages
             System.Windows.Interop.ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
+            // 6. Welcome Screen First-Run Logic
+            // Because AppGlobals.LoadSettings() runs earlier in the boot sequence, 
+            // HasSeenWelcome is already loaded and ready to check!
+            if (!AppGlobals.HasSeenWelcome)
+            {
+                WelcomeWindow welcome = new WelcomeWindow();
+                welcome.Show();
+
+                // Flip the flag and trigger a global save instantly
+                AppGlobals.HasSeenWelcome = true;
+                AppGlobals.SaveSettings();
+            }
+
             // Tray System - Load the text before adding to the menu
             UpdateTrayMenuLanguage();
 

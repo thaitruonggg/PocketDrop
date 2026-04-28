@@ -454,35 +454,28 @@ namespace PocketDrop
 
         private void ShowUpdateAvailableButton()
         {
-            // 1. Change the text to alert the user
-            CheckUpdateBtn.Content = "Update Available!";
-
-            // 2. Safely swap the style from Blue to the Green one we created
+            // ✨ FIX: Bind dynamically instead of hardcoding
+            CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_UpdateAvailableBtn");
             CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
         }
 
         // Update checker
         private async void CheckUpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Open download page if background scanner found update
             if (AppGlobals.UpdateAvailable)
             {
                 AppHelpers.OpenUrl(AppGlobals.UpdateUrl);
                 return;
             }
 
-            // 2. Run manual version check if no cached result
             CheckUpdateBtn.IsEnabled = false;
-            CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_CheckingUpdate"] ?? "Checking...";
-            // Reset the style back to default before the network check starts
+            // ✨ FIX: Bind dynamically
+            CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_CheckingUpdate");
             CheckUpdateBtn.Style = (Style)FindResource("PrimaryButtonStyle");
 
             try
             {
-                // Query the Releases API (This grabs a list of all your releases, newest first)
                 string url = "https://api.github.com/repos/naofunyan/PocketDrop/releases";
-
-                // ✨ FIX: Use the shared global client!
                 string jsonResponse = await AppHelpers.GlobalClient.GetStringAsync(url);
 
                 using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
@@ -491,9 +484,7 @@ namespace PocketDrop
 
                     if (root.GetArrayLength() > 0)
                     {
-                        // Grab the "tag_name" from the absolute newest release (e.g., "v1.0.1")
                         string latestTag = root[0].GetProperty("tag_name").GetString();
-                        // Strip the "v" from the front so it cleanly matches your internal version logic
                         string latestVersionString = latestTag.TrimStart('v', 'V');
                         string currentVersionString = AppGlobals.GetAppVersion().Replace(" Beta ", "-beta");
                         bool hasUpdate = AppHelpers.IsUpdateAvailable(currentVersionString, latestVersionString);
@@ -502,8 +493,8 @@ namespace PocketDrop
                         {
                             AppGlobals.UpdateAvailable = true;
 
-                            string updateTitle = (string)Application.Current.Resources["Text_UpdateAvailableTitle"] ?? "Update Available";
-                            string updateMsgTemplate = (string)Application.Current.Resources["Text_UpdateAvailableMsg"] ?? "A new version of PocketDrop ({0}) is available!\n\nWould you like to install it now? The app will restart automatically.";
+                            string updateTitle = (string)Application.Current.TryFindResource("Text_UpdateAvailableTitle") ?? "Update Available";
+                            string updateMsgTemplate = (string)Application.Current.TryFindResource("Text_UpdateAvailableMsg") ?? "A new version of PocketDrop ({0}) is available!\n\nWould you like to install it now?";
                             string updateMsg = string.Format(updateMsgTemplate, latestVersionString.Trim());
 
                             MessageBoxResult result = MessageBox.Show(updateMsg, updateTitle, MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -512,11 +503,10 @@ namespace PocketDrop
                             {
                                 try
                                 {
-                                    // 1. Change UI to show it is working
-                                    CheckUpdateBtn.Content = "Downloading Update...";
+                                    // ✨ FIX: Bind downloading state dynamically
+                                    CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_DownloadingUpdate");
                                     CheckUpdateBtn.IsEnabled = false;
 
-                                    // 2. Smart Architecture Asset Selection
                                     string currentArch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString().ToLower();
                                     string downloadUrl = null;
                                     string hashUrl = null;
@@ -529,7 +519,6 @@ namespace PocketDrop
 
                                         if (name.EndsWith(".exe"))
                                         {
-                                            // Prefer an exact architecture match, otherwise fallback to the first .exe found
                                             if (name.Contains(currentArch) || downloadUrl == null)
                                             {
                                                 downloadUrl = assetUrl;
@@ -538,37 +527,35 @@ namespace PocketDrop
                                         }
                                         else if (name.EndsWith(".sha256") || name.Contains("checksum"))
                                         {
-                                            hashUrl = assetUrl; // Found a security signature file!
+                                            hashUrl = assetUrl;
                                         }
                                     }
 
-                                    // 2. Dig into the GitHub JSON to find the actual .exe download link
-                                    if (downloadUrl == null) throw new Exception("No valid installer found for this architecture.");
+                                    if (downloadUrl == null)
+                                    {
+                                        string noInstallerMsg = (string)Application.Current.TryFindResource("Text_NoInstallerFound") ?? "No valid installer found.";
+                                        throw new Exception(noInstallerMsg);
+                                    }
 
-                                    // 3. Use LocalAppData folder
                                     string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                                     string updateFolder = System.IO.Path.Combine(localAppData, "PocketDrop", "Updates");
                                     System.IO.Directory.CreateDirectory(updateFolder);
 
                                     string tempInstallerPath = System.IO.Path.Combine(updateFolder, "PocketDrop_Update.exe");
 
-                                    // ✨ FIX: Use the shared global client to download the payload!
-                                    // 4. Download the .exe to the custom updates folder
                                     byte[] fileBytes = await AppHelpers.GlobalClient.GetByteArrayAsync(downloadUrl);
                                     await System.IO.File.WriteAllBytesAsync(tempInstallerPath, fileBytes);
 
-                                    // 5. Optional Hash Verification (If you uploaded a checksum file)
                                     if (hashUrl != null)
                                     {
                                         string hashFileContent = await AppHelpers.GlobalClient.GetStringAsync(hashUrl);
                                         string expectedHash = "";
 
-                                        // Parse standard linux 'sha256sum' format (hash  filename.exe) or a raw hash string
                                         foreach (var line in hashFileContent.Split('\n'))
                                         {
                                             if (line.ToLower().Contains(exeName) || !line.Contains(" "))
                                             {
-                                                expectedHash = line.Split(' ')[0]; // Grab just the hash string
+                                                expectedHash = line.Split(' ')[0];
                                                 break;
                                             }
                                         }
@@ -576,11 +563,11 @@ namespace PocketDrop
                                         if (!AppHelpers.VerifyFileHash(tempInstallerPath, expectedHash))
                                         {
                                             System.IO.File.Delete(tempInstallerPath);
-                                            throw new Exception("Security Alert: The downloaded update failed integrity verification and was deleted to protect your system.");
+                                            string securityMsg = (string)Application.Current.TryFindResource("Text_SecurityAlert") ?? "Security Alert: Verification failed.";
+                                            throw new Exception(securityMsg);
                                         }
                                     }
 
-                                    // 6. Fire the installer in standard Silent mode (Shows progress, but auto-clicks Next)
                                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                                     {
                                         FileName = tempInstallerPath,
@@ -588,33 +575,35 @@ namespace PocketDrop
                                         UseShellExecute = true
                                     });
 
-                                    // 7. Instantly commit suicide so the installer can overwrite our files!
                                     System.Windows.Application.Current.Shutdown();
                                 }
                                 catch (Exception ex)
                                 {
-                                    MessageBox.Show("Failed to download the update: " + ex.Message, "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                    CheckUpdateBtn.Content = "Update Failed";
+                                    string errorTitle = (string)Application.Current.TryFindResource("Text_UpdateErrorTitle") ?? "Update Error";
+                                    string errorMsgBase = (string)Application.Current.TryFindResource("Text_UpdateDownloadFailedMsg") ?? "Failed to download:";
+
+                                    MessageBox.Show($"{errorMsgBase}\n\n{ex.Message}", errorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                                    // ✨ FIX: Bind fail state dynamically
+                                    CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_UpdateFailedBtn");
                                 }
                             }
                             else
                             {
-                                // If they click No, just show the green button so they can do it later
-                                CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_UpdateAvailableBtn"] ?? "Update Available!";
+                                // ✨ FIX: Safely revert to Update Available if user clicks No
+                                CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_UpdateAvailableBtn");
                                 CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
                             }
                         }
                         else
                         {
-                            // 1. Grab the translation strings
-                            string upToDateTitle = (string)Application.Current.Resources["Text_UpdateUpToDateTitle"] ?? "Up to date";
-                            string upToDateMsg = (string)Application.Current.Resources["Text_UpdateUpToDateMsg"] ?? "You are already using the latest version of PocketDrop.";
+                            string upToDateTitle = (string)Application.Current.TryFindResource("Text_UpdateUpToDateTitle") ?? "Up to date";
+                            string upToDateMsg = (string)Application.Current.TryFindResource("Text_UpdateUpToDateMsg") ?? "You are already using the latest version.";
 
-                            // 2. Show the confirmation popup
                             MessageBox.Show(upToDateMsg, upToDateTitle, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                            // 3. Update the button to show success visually
-                            CheckUpdateBtn.Content = upToDateTitle;
+                            // ✨ FIX: Safely set Up To Date state dynamically
+                            CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_UpdateUpToDateTitle");
                             CheckUpdateBtn.Style = (Style)FindResource("SuccessButtonStyle");
                         }
                     }
@@ -622,19 +611,28 @@ namespace PocketDrop
             }
             catch (Exception ex)
             {
-                string failTitle = (string)Application.Current.Resources["Text_UpdateCheckFailedTitle"] ?? "Update Check Failed";
-                string failMsg = $"Could not connect to GitHub. Reason:\n\n{ex.Message}";
+                string failTitle = (string)Application.Current.TryFindResource("Text_UpdateCheckFailedTitle") ?? "Update Check Failed";
+                string failMsgBase = (string)Application.Current.TryFindResource("Text_UpdateCheckFailedMsg") ?? "Could not connect to GitHub.";
 
-                MessageBox.Show(failMsg, failTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"{failMsgBase}\n\n{ex.Message}", failTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                // Reset the button back to normal ONLY if it failed
-                CheckUpdateBtn.Content = (string)Application.Current.Resources["Text_CheckUpdatesBtn"] ?? "Check for updates";
+                // ✨ FIX: Safely revert to original Check for Updates state dynamically
+                CheckUpdateBtn.SetResourceReference(Button.ContentProperty, "Text_CheckUpdatesBtn");
                 CheckUpdateBtn.Style = (Style)FindResource("PrimaryButtonStyle");
             }
             finally
             {
                 CheckUpdateBtn.IsEnabled = true;
             }
+        }
+
+        private void ShowWelcomeGuide_Click(object sender, RoutedEventArgs e)
+        {
+            // Use .ShowDialog() instead of .Show() so it acts as a modal 
+            // and blocks the Settings window until they finish the guide!
+            WelcomeWindow welcome = new WelcomeWindow();
+            welcome.Owner = this;
+            welcome.ShowDialog();
         }
     }
 }

@@ -2,6 +2,36 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
+    <!-- Welcome Window -->
+    <sys:String x:Key="Text_Welcome">Chào mừng bạn đến với PocketDrop  ( •̀ ω •́ )</sys:String>
+    <sys:String x:Key="Text_ButtonNext">Tiếp theo</sys:String>
+    <sys:String x:Key="Text_ButtonGetStarted">Bắt đầu</sys:String>
+    <sys:String x:Key="Text_ButtonBack">Quay lại</sys:String>
+    <sys:String x:Key="Text_Guide1">Hướng dẫn nhanh (1/6)</sys:String>
+    <sys:String x:Key="Text_Step1Header">Lắc để gọi Pocket</sys:String>
+    <sys:String x:Key="Text_Step1Desc1">Lắc chuột trong khi kéo bất kỳ mục nào để gọi Pocket.</sys:String>
+    <sys:String x:Key="Text_Step1Desc2">Bạn thích dùng phím tắt hơn?</sys:String>
+    <sys:String x:Key="Text_Step1Desc3">luôn sẵn sàng.</sys:String>
+    <sys:String x:Key="Text_Guide2">Hướng dẫn nhanh (2/6)</sys:String>
+    <sys:String x:Key="Text_Step2Header">Thả mọi thứ bạn muốn</sys:String>
+    <sys:String x:Key="Text_Step2Desc1">Hoạt động mượt mà với thư mục, hình ảnh, video, tập tin âm thanh, đường link và cả các đoạn văn bản.</sys:String>
+    <sys:String x:Key="Text_Guide3">Hướng dẫn nhanh (3/6)</sys:String>
+    <sys:String x:Key="Text_Step3Header">Thao tác liền mạch</sys:String>
+    <sys:String x:Key="Text_Step3Desc1">Xem trước, sắp xếp lại, hoặc xóa các mục ngay trong Pocket giúp bạn không bao giờ bị gián đoạn mạch làm việc.</sys:String>
+    <sys:String x:Key="Text_Guide4">Hướng dẫn nhanh (4/6)</sys:String>
+    <sys:String x:Key="Text_Step4Header">Tích hợp sẵn công cụ xử lý</sys:String>
+    <sys:String x:Key="Text_Step4Desc1">Nén thành tệp ZIP, đổi kích thước, chuyển đổi định dạng, và mở hoặc chia sẻ các tập tin tức thì ngay trong Pocket.</sys:String>
+    <sys:String x:Key="Text_Guide5">Hướng dẫn nhanh (5/6)</sys:String>
+    <sys:String x:Key="Text_Step5Header">Kéo tập tin ra khỏi Pocket</sys:String>
+    <sys:String x:Key="Text_Step5Desc1">Mặc định, thao tác kéo thả ra ngoài sẽ tạo một bản sao ở vị trí mới.</sys:String>
+    <sys:String x:Key="Text_Step5Desc2">Để di chuyển mục, hãy giữ phím</sys:String>
+    <sys:String x:Key="Text_Step5Desc3">trong khi kéo.</sys:String>
+    <sys:String x:Key="Text_Step5Desc4">Bạn có thể thay đổi thiết lập này trong phần Cài đặt.</sys:String>
+    <sys:String x:Key="Text_Guide6">Hướng dẫn nhanh (6/6)</sys:String>
+    <sys:String x:Key="Text_Step6Header">Luôn sẵn sàng khi bạn cần</sys:String>
+    <sys:String x:Key="Text_Step6Desc1">Đừng lo mất dữ liệu - mọi tập tin kéo vào Pocket đều được tự động lưu lại khi đóng, và bạn có thể mở lại bất cứ lúc nào từ khay hệ thống.</sys:String>
+    
+
     <!-- Main Window -->
     <sys:String x:Key="Text_DropItemsHere">Thả tập tin vào đây</sys:String>
     <sys:String x:Key="Text_SelectAll">Chọn tất cả</sys:String>
@@ -246,6 +276,12 @@
     <sys:String x:Key="Text_UpdateUpToDateMsg">Bạn đang sử dụng phiên bản PocketDrop mới nhất.</sys:String>
     <sys:String x:Key="Text_UpdateCheckFailedTitle">Lỗi kiểm tra cập nhật</sys:String>
     <sys:String x:Key="Text_UpdateCheckFailedMsg">Lỗi kết nối máy chủ. Vui lòng kiểm tra kết nối mạng của bạn và thử lại.</sys:String>
+    <sys:String x:Key="Text_DownloadingUpdate">Downloading Update...</sys:String>
+    <sys:String x:Key="Text_UpdateFailedBtn">Update Failed</sys:String>
+    <sys:String x:Key="Text_UpdateErrorTitle">Update Error</sys:String>
+    <sys:String x:Key="Text_UpdateDownloadFailedMsg">Failed to download the update:</sys:String>
+    <sys:String x:Key="Text_NoInstallerFound">No valid installer found for this architecture.</sys:String>
+    <sys:String x:Key="Text_SecurityAlert">Security Alert: The downloaded update failed integrity verification and was deleted to protect your system.</sys:String>
 
     <sys:String x:Key="Text_Copyright">Phát triển bởi Naofunyan. © 2026&#x0a;Phát hành theo giấy phép GNU GPLv3.</sys:String>
 
@@ -281,8 +317,11 @@
     <sys:String x:Key="Text_RateReview">Đánh giá trên Microsoft Store</sys:String>
 
     <sys:String x:Key="Text_GetHelp">Trợ giúp</sys:String>
-
     <sys:String x:Key="Text_GetHelpDesc">Báo cáo lỗi, yêu cầu tính năng, hoặc liên hệ nhà phát triển</sys:String>
+
+    <sys:String x:Key="Text_QuickGuide">Hướng dẫn nhanh</sys:String>
+    <sys:String x:Key="Text_QuickGuideDesc">Xem lại màn hình chào mừng và các hướng dẫn nhanh.</sys:String>
+    <sys:String x:Key="Text_BtnQuickGuide">Xem lại</sys:String>
 
     <!-- Tray Menu -->
     <sys:String x:Key="Text_TrayAddPocket">Tạo Pocket</sys:String>

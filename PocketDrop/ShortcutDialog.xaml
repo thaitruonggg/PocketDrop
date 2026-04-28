@@ -69,7 +69,7 @@
     </Window.Resources>
 
 
-    <Border Background="{DynamicResource LayerDefault}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="8" Margin="20">
+    <Border Background="#fafafa" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="8" Margin="20">
         <Border.Effect>
             <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.15" Direction="270" Color="Black"/>
         </Border.Effect>

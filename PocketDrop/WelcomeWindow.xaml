@@ -1,0 +1,381 @@
+﻿<Window x:Class="PocketDrop.WelcomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Welcome to PocketDrop" Height="700" Width="750"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        WindowStartupLocation="CenterScreen" Topmost="True"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        Icon="/Assets/PocketDrop.ico">
+
+    <Window.Resources>
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#dd2c2f"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16,8"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#B8211A"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#901A14"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="KeyboardKeyStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="BorderThickness" Value="1,1,1,3"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+        </Style>
+
+        <Style x:Key="ModernComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4" Margin="2">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#FFF0F0"/>
+                                <Setter Property="Foreground" Value="#D92D20"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ModernComboBoxItemStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" ClickMode="Press"
+                                          IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Border" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="16">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="26"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Path Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                      Data="M 0 0 L 3.5 3.5 L 7 0" Stroke="#555" StrokeThickness="1.5" Fill="Transparent"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#F9F9F9"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <Viewbox Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False">
+                                <Path Data="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM2 12H22M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z" 
+                                      Stroke="#555" StrokeThickness="1.5" StrokeLineJoin="Round" Fill="Transparent"/>
+                            </Viewbox>
+
+                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="32,0,26,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade" VerticalOffset="4">
+                                <Border x:Name="DropDownBorder" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Margin="0,0,8,8">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1" Direction="270" Color="Black"/>
+                                    </Border.Effect>
+                                    <ScrollViewer Margin="4" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryOutlineButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="16">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="14,6,16,6"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#F5F5F5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#EBEBEB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" BorderBrush="#E5E5E5" BorderThickness="1" CornerRadius="8" Margin="15">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.15" Direction="270" Color="Black"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="30,25,30,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Assets/PocketDrop.png" 
+                            Width="24" Height="24" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <TextBlock x:Name="Welcome" Text="{DynamicResource Text_Welcome}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                </StackPanel>
+
+                <ComboBox x:Name="LanguageCombo" Grid.Column="1" Width="130" Height="32" VerticalAlignment="Center" Style="{StaticResource ModernComboBoxStyle}" Cursor="Hand" SelectionChanged="LanguageCombo_SelectionChanged">
+
+                    <ComboBoxItem Tag="English" Content="{DynamicResource Text_LangEnglish}" IsSelected="True"/>
+                    <ComboBoxItem Tag="Vietnamese" Content="{DynamicResource Text_LangVietnamese}"/>
+
+                </ComboBox>
+            </Grid>
+
+            <Grid x:Name="Step1Container" Grid.Row="1" Visibility="Visible" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide1" Text="{DynamicResource Text_Guide1}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+
+                    <TextBlock x:Name="Step1Header" Text="{DynamicResource Text_Step1Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video1" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+
+                    <TextBlock x:Name="Step1Desc1" Text="{DynamicResource Text_Step1Desc1}" 
+                               FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="85,0,85,10"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock x:Name="Step1Desc2" Text="{DynamicResource Text_Step1Desc2}" FontSize="15" Foreground="#666" Margin="0,0,12,0" VerticalAlignment="Center"/>
+
+                        <Border Style="{StaticResource KeyboardKeyStyle}">
+                            <TextBlock Text="Win" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
+                        </Border>
+
+                        <TextBlock Text="+" FontSize="15" Foreground="#666" Margin="0,0,6,0" VerticalAlignment="Center"/>
+
+                        <Border Style="{StaticResource KeyboardKeyStyle}">
+                            <TextBlock Text="Shift" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
+                        </Border>
+
+                        <TextBlock Text="+" FontSize="15" Foreground="#666" Margin="0,0,6,0" VerticalAlignment="Center"/>
+
+                        <Border Style="{StaticResource KeyboardKeyStyle}">
+                            <TextBlock Text="Z" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
+                        </Border>
+
+                        <TextBlock x:Name="Step1Desc3" Text="{DynamicResource Text_Step1Desc3}" FontSize="15" Foreground="#666" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step2Container" Grid.Row="1" Visibility="Collapsed" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide2" Text="{DynamicResource Text_Guide2}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+                    <TextBlock x:Name="Step2Header" Text="{DynamicResource Text_Step2Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video2" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="Step2Desc1" Text="{DynamicResource Text_Step2Desc1}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="85,0,85,10"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step3Container" Grid.Row="1" Visibility="Collapsed" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide3" Text="{DynamicResource Text_Guide3}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+                    <TextBlock x:Name="Step3Header" Text="{DynamicResource Text_Step3Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video3" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="Step3Desc1" Text="{DynamicResource Text_Step3Desc1}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="85,0,85,10"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step4Container" Grid.Row="1" Visibility="Collapsed" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide4" Text="{DynamicResource Text_Guide4}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+                    <TextBlock x:Name="Step4Header" Text="{DynamicResource Text_Step4Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video4" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="Step4Desc1" Text="{DynamicResource Text_Step4Desc1}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="85,0,85,10"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step5Container" Grid.Row="1" Visibility="Collapsed" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide5" Text="{DynamicResource Text_Guide5}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+                    <TextBlock x:Name="Step5Header" Text="{DynamicResource Text_Step5Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video5" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+
+                    <TextBlock x:Name="Step5Desc1" Text="{DynamicResource Text_Step5Desc1}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="60,0,60,10"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="60,0,60,10">
+
+                        <TextBlock x:Name="Step5Desc2" Text="{DynamicResource Text_Step5Desc2}" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,8,0"/>
+
+                        <Border Style="{StaticResource KeyboardKeyStyle}" VerticalAlignment="Center" Margin="0,0,8,0">
+                            <TextBlock Text="Shift" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
+                        </Border>
+
+                        <TextBlock x:Name="Step5Desc3" Text="{DynamicResource Text_Step5Desc3}" FontSize="16" Foreground="#444" VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <TextBlock x:Name="Step5Desc4" Text="{DynamicResource Text_Step5Desc4}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="60,0,60,10"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step6Container" Grid.Row="1" Visibility="Collapsed" Margin="40,10,40,20">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border Background="#FFF0F0" CornerRadius="12" HorizontalAlignment="Center" Padding="12,4" Margin="0,0,0,15">
+                        <TextBlock x:Name="Guide6" Text="{DynamicResource Text_Guide6}" Foreground="#D92D20" FontWeight="SemiBold" FontSize="13"/>
+                    </Border>
+                    <TextBlock x:Name="Step6Header" Text="{DynamicResource Text_Step6Header}" FontSize="28" FontWeight="SemiBold" Foreground="#111" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    <Border Background="#F9F8F6" CornerRadius="8" Width="600" Height="260" Margin="0,0,0,25" ClipToBounds="True">
+
+                        <Border.Clip>
+                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,600,260" />
+                        </Border.Clip>
+
+                        <MediaElement x:Name="Video6" LoadedBehavior="Manual" Loaded="MediaElement_Loaded" MediaEnded="LoopingMediaElement_MediaEnded" UnloadedBehavior="Stop" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="Step6Desc1" Text="{DynamicResource Text_Step6Desc1}" FontSize="16" Foreground="#444" TextAlignment="Center" TextWrapping="Wrap" LineHeight="24" Margin="60,0,60,10"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="2" BorderBrush="#E5E5E5" BorderThickness="0,1,0,0" Padding="30,15">
+                <Grid>
+                    <Button x:Name="BackBtn" Style="{StaticResource SecondaryOutlineButtonStyle}" 
+                            HorizontalAlignment="Left" VerticalAlignment="Center" 
+                            Width="130" Height="40"
+                            Click="BackBtn_Click" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Data="M 10 2 L 2 10 L 10 18 M 2 10 L 18 10" 
+                                  Stroke="#333333" StrokeThickness="1.5" 
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" 
+                                  Width="15" Height="15" Margin="0,0,6,0" Stretch="Uniform" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="ActionBtnBack" Text="{DynamicResource Text_ButtonBack}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,0,1"/>
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Border x:Name="Dot1" Width="24" Height="8" CornerRadius="4" Background="#D92D20" Margin="0,0,6,0"/>
+                        <Border x:Name="Dot2" Width="8" Height="8" CornerRadius="4" Background="#D9D9D9" Margin="0,0,6,0"/>
+                        <Border x:Name="Dot3" Width="8" Height="8" CornerRadius="4" Background="#D9D9D9" Margin="0,0,6,0"/>
+                        <Border x:Name="Dot4" Width="8" Height="8" CornerRadius="4" Background="#D9D9D9" Margin="0,0,6,0"/>
+                        <Border x:Name="Dot5" Width="8" Height="8" CornerRadius="4" Background="#D9D9D9" Margin="0,0,6,0"/>
+                        <Border x:Name="Dot6" Width="8" Height="8" CornerRadius="4" Background="#D9D9D9" Margin="0,0,0,0"/>
+                    </StackPanel>
+
+                    <Button x:Name="ActionBtn" Style="{StaticResource PrimaryButtonStyle}" 
+                            HorizontalAlignment="Right" VerticalAlignment="Center" 
+                            Height="40" MinWidth="130" Click="ActionBtn_Click">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="ActionBtnText" Text="{DynamicResource Text_ButtonNext}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,6,1"/>
+
+                            <Path x:Name="ActionBtnIcon" Data="M 10 2 L 18 10 L 10 18 M 18 10 L 2 10" 
+                                  Stroke="White" StrokeThickness="1.5" 
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" 
+                                  Width="15" Height="15" Stretch="Uniform" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>

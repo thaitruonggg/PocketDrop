@@ -153,7 +153,7 @@
     </Window.RenderTransform>
 
 
-    <Border Background="{DynamicResource MicaBase}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="12" Margin="15">
+    <Border Background="#fafafa" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="1" CornerRadius="12" Margin="15">
         <Border.Effect>
             <DropShadowEffect BlurRadius="24" ShadowDepth="8" Opacity="0.15" Color="Black" Direction="270"/>
         </Border.Effect>
@@ -266,7 +266,7 @@
 
                 <TextBlock x:Name="EmptyStateText" Grid.Row="0" Grid.RowSpan="2" Text="{DynamicResource Text_EmptyPockets}" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}" FontSize="14" Margin="20"/>
 
-                <ListBox x:Name="HistoryListBox" Grid.Row="0" SelectionMode="Extended" SelectionChanged="HistoryListBox_SelectionChanged" Background="Transparent" BorderThickness="0" Visibility="Collapsed" Margin="5,10,5,5" Padding="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                <ListBox x:Name="HistoryListBox" Grid.Row="0" SelectionMode="Extended" SelectionChanged="HistoryListBox_SelectionChanged" Background="Transparent" BorderThickness="0" Visibility="Collapsed" Margin="5,35,5,5" Padding="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemContainerStyle="{StaticResource HistoryItemStyle}" 
                          ItemTemplate="{StaticResource HistoryItemTemplate}" />
 
