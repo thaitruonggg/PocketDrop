@@ -1,12 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="MicaBase" Color="#F7F3F3F3"/>
+    <SolidColorBrush x:Key="MicaBase" Color="#e8ecf1"/>
     <SolidColorBrush x:Key="LayerDefault" Color="#f0f4f9"/>
     <SolidColorBrush x:Key="LayerAlt" Color="#F7F9F9F9"/>
 
     <SolidColorBrush x:Key="StrokeCardDefault" Color="#33000000"/>
     <SolidColorBrush x:Key="StrokeControlDefault" Color="#29000000"/>
+
+    <SolidColorBrush x:Key="CardBase" Color="#fafafa"/>
+    <SolidColorBrush x:Key="ComboBox" Color="#fafafa"/>
 
     <SolidColorBrush x:Key="TextPrimary" Color="#FF1A1A1A"/>
     <SolidColorBrush x:Key="TextSecondary" Color="#FF1A1A1A"/>

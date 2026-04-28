@@ -10,7 +10,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="White">
+        <Grid Grid.Row="0" Background="{DynamicResource MicaBase}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="*"/>
@@ -21,7 +21,7 @@
             <TextBlock x:Name="MessageText" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,10,20,10" FontSize="12"/>
         </Grid>
 
-        <Border Grid.Row="1" Background="#FFF0F0F0" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0">
+        <Border Grid.Row="1" Background="{DynamicResource LayerAlt}" BorderBrush="{DynamicResource StrokeCardDefault}" BorderThickness="0,1,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,15,0" VerticalAlignment="Center">
                 <Button x:Name="BtnYes" Content="{DynamicResource Text_BtnYes}" Width="75" Height="24" Margin="0,0,10,0" Click="BtnYes_Click"/>
                 <Button x:Name="BtnNo" Content="{DynamicResource Text_BtnNo}" Width="75" Height="24" Click="BtnNo_Click"/>

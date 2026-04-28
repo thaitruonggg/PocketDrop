@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Apps" Height="550" Width="600"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Background="#fafafa" FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        Background="{DynamicResource MicaBase}" FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
         Icon="Assets/PocketDrop.ico">
 
     <Window.Resources>
@@ -33,9 +33,11 @@
                                 <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="#005FB8"/>
                                 <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
                             </Trigger>
+
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource TextSecondary}"/>
                             </Trigger>
+
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="IsChecked" Value="True"/>
@@ -44,6 +46,56 @@
                                 <Setter TargetName="CheckBoxBorder" Property="Background" Value="#0053A0"/>
                                 <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="#0053A0"/>
                             </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SaveButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#005FB8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4" x:Name="BtnBorder">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#0053A0"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BtnBorder" Property="Background" Value="#00488A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource StrokeControlDefault}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource LayerAlt}"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -98,8 +150,8 @@
             <TextBlock Text="{DynamicResource Text_CannotFindApp}" FontSize="13" Foreground="{DynamicResource AccentText}" Cursor="Hand" TextDecorations="Underline" VerticalAlignment="Center" HorizontalAlignment="Left" MouseLeftButtonDown="ManualBrowse_Click"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="{DynamicResource Text_Cancel}" Width="100" Height="32" Margin="0,0,10,0" Click="Cancel_Click" Cursor="Hand" Foreground="{DynamicResource TextPrimary}" Background="Transparent" BorderBrush="{DynamicResource StrokeControlDefault}"/>
-                <Button Content="{DynamicResource Text_Save}" Width="100" Height="32" Click="Save_Click" Cursor="Hand" Foreground="White" Background="#005FB8" BorderThickness="0"/>
+                <Button Content="{DynamicResource Text_Cancel}" Width="100" Height="32" Margin="0,0,10,0" Click="Cancel_Click" Style="{StaticResource CancelButtonStyle}"/>
+                <Button Content="{DynamicResource Text_Save}" Width="100" Height="32" Click="Save_Click" Style="{StaticResource SaveButtonStyle}"/>
             </StackPanel>
         </Grid>
     </Grid>
