@@ -18,26 +18,16 @@ namespace PocketDrop
 {
     public partial class ShortcutDialog : Window
     {
-        // ================================================ //
-        // 1. NATIVE WINDOWS APIS (P/INVOKE)
-        // ================================================ //
-
-        // OS API for the Conflict Tester
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
 
         // ================================================ //
-        // 2. STATE & VARIABLES
+        // 1. STATE & VARIABLES
         // ================================================ //
 
         public uint SelectedVK { get; private set; }
         public string SelectedLetter { get; private set; }
         public uint SelectedModifiers { get; private set; }
 
-        // Track chronological order of physical key presses
+        // Track key press order chronologically
         private List<string> _pressedModifiers = new List<string>();
         private List<string> _displayOrder = new List<string>();
 
@@ -47,7 +37,7 @@ namespace PocketDrop
         private uint _defaultModifiers;
 
         // ================================================ //
-        // 3. LIFECYCLE (STARTUP)
+        // 2. LIFECYCLE (STARTUP)
         // ================================================ //
 
         public ShortcutDialog(string title, string currentLetter, uint currentMods, string defaultLetter, uint defaultMods)
@@ -70,7 +60,7 @@ namespace PocketDrop
 
 
         // ================================================ //
-        // 4. KEYBOARD INTERCEPTION ENGINE
+        // 3. KEYBOARD INTERCEPTION ENGINE
         // ================================================ //
 
         private void SetKey(string letter, uint mods, List<string> orderedMods = null)
@@ -186,7 +176,7 @@ namespace PocketDrop
 
 
         // ================================================ //
-        // 5. UI ACTIONS & COMMANDS
+        // 4. UI ACTIONS & COMMANDS
         // ================================================ //
 
         private void Reset_Click(object sender, MouseButtonEventArgs e)
@@ -218,7 +208,7 @@ namespace PocketDrop
             }
 
             // Check for hotkey conflicts by registering dummy test ID with OS
-            bool success = RegisterHotKey(IntPtr.Zero, 9999, SelectedModifiers, SelectedVK);
+            bool success = AppHelpers.RegisterHotKey(IntPtr.Zero, 9999, SelectedModifiers, SelectedVK);
             if (!success)
             {
                 string msg = (string)Application.Current.Resources["Text_MsgConflictDesc"];
@@ -228,7 +218,7 @@ namespace PocketDrop
             }
 
             // Unregister test hotkey and close dialog on success
-            UnregisterHotKey(IntPtr.Zero, 9999);
+            AppHelpers.UnregisterHotKey(IntPtr.Zero, 9999);
 
             this.DialogResult = true;
             this.Close();
@@ -242,7 +232,7 @@ namespace PocketDrop
 
 
         // ================================================ //
-        // 6. UI DYNAMIC RENDERING
+        // 5. UI DYNAMIC RENDERING
         // ================================================ //
 
         private void RenderKeycaps()
