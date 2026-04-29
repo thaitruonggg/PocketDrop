@@ -90,7 +90,7 @@
         </Style>
 
         <Style x:Key="Win11ComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Background" Value="White"/>
+            <Setter Property="Background" Value="{DynamicResource CardBase}"/>
             <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource StrokeControlDefault}"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -117,7 +117,7 @@
                             </ToggleButton>
                             <ContentPresenter IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" HorizontalAlignment="Left" />
                             <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                <Border Background="White" BorderThickness="1" BorderBrush="{DynamicResource StrokeControlDefault}" CornerRadius="4" Margin="0,4,0,0" MinWidth="{TemplateBinding ActualWidth}">
+                                <Border Background="{DynamicResource CardBase}" BorderThickness="1" BorderBrush="{DynamicResource StrokeControlDefault}" CornerRadius="4" Margin="0,4,0,0" MinWidth="{TemplateBinding ActualWidth}">
                                     <ScrollViewer Margin="0,4">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
@@ -159,7 +159,7 @@
 
                     <StackPanel Grid.Row="0" Grid.Column="0">
                         <TextBlock Text="{DynamicResource Text_Width}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,0,6" FontWeight="SemiBold"/>
-                        <Border Background="White" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4">
+                        <Border Background="{DynamicResource CardBase}" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4">
                             <TextBox x:Name="WidthInput" Padding="8,6" FontSize="14" Background="Transparent" Foreground="{DynamicResource TextPrimary}" BorderThickness="0" PreviewTextInput="NumberValidation"/>
                         </Border>
                     </StackPanel>
@@ -168,7 +168,7 @@
 
                     <StackPanel Grid.Row="0" Grid.Column="2">
                         <TextBlock Text="{DynamicResource Text_Height}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,0,6" FontWeight="SemiBold"/>
-                        <Border Background="White" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4">
+                        <Border Background="{DynamicResource CardBase}" BorderBrush="{DynamicResource StrokeControlDefault}" BorderThickness="1" CornerRadius="4">
                             <TextBox x:Name="HeightInput" Padding="8,6" FontSize="14" Background="Transparent" Foreground="{DynamicResource TextPrimary}" BorderThickness="0" PreviewTextInput="NumberValidation"/>
                         </Border>
                     </StackPanel>

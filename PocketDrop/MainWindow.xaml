@@ -192,6 +192,50 @@
 
         </Style>
 
+        <Style x:Key="ModernProgressBar" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="#dd2c2f"/>
+            <Setter Property="Background" Value="{DynamicResource StrokeControlDefault}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3" ClipToBounds="True">
+                            <Grid>
+                                <Border x:Name="PART_Track">
+                                    <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="3" HorizontalAlignment="Left"/>
+                                </Border>
+
+                                <Border x:Name="IndeterminatePill" Background="{TemplateBinding Foreground}" CornerRadius="3" HorizontalAlignment="Left" Width="60" Visibility="Collapsed">
+                                    <Border.RenderTransform>
+                                        <TranslateTransform x:Name="PillTransform" X="-60"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsIndeterminate" Value="True">
+                                <Setter TargetName="PART_Indicator" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="IndeterminatePill" Property="Visibility" Value="Visible"/>
+
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard x:Name="IndeterminateAnim">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="X" From="-60" To="160" Duration="0:0:1.2" RepeatBehavior="Forever"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="IndeterminateAnim"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
     <Window.Triggers>
@@ -331,8 +375,14 @@
                 </Grid>
 
                 <Grid Grid.Row="1" Margin="12,0">
-                    <TextBlock x:Name="StatusText" Text="{DynamicResource Text_DropItemsHere}" FontSize="16" Foreground="{DynamicResource TextSecondary}"
+                    <StackPanel x:Name="StatusContainer" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <TextBlock x:Name="StatusText" Text="{DynamicResource Text_DropItemsHere}" FontSize="16" Foreground="{DynamicResource TextSecondary}"
                                FontWeight="Medium" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
+
+                        <ProgressBar x:Name="StatusProgressBar" Style="{StaticResource ModernProgressBar}" Width="160" Minimum="0" Maximum="100" Visibility="Collapsed" Margin="0,15,0,0"/>
+
+                    </StackPanel>
                     <Grid x:Name="FileIconContainer" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="120" UseLayoutRounding="True">
                         <Grid x:Name="StackContainer"/>
                     </Grid>

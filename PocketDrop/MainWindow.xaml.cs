@@ -212,7 +212,7 @@ namespace PocketDrop
                     }
 
                     // Refresh UI
-                    StatusText.Visibility = Visibility.Collapsed;
+                    if (StatusContainer != null) StatusContainer.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
                     UpdateStackPreview();
 
@@ -279,7 +279,7 @@ namespace PocketDrop
                             }
                         }
 
-                        StatusText.Visibility = Visibility.Collapsed;
+                        if (StatusContainer != null) StatusContainer.Visibility = Visibility.Collapsed;
                         FileIconContainer.Visibility = Visibility.Visible;
                         UpdateStackPreview();
 
@@ -325,7 +325,7 @@ namespace PocketDrop
                         if (!AppGlobals.SessionHistoryPaths.Contains(textItem.FilePath))
                             AppGlobals.SessionHistory.Add(textItem);
 
-                        StatusText.Visibility = Visibility.Collapsed;
+                        if (StatusContainer != null) StatusContainer.Visibility = Visibility.Collapsed;
                         FileIconContainer.Visibility = Visibility.Visible;
                         UpdateStackPreview();
                         UpdateItemCountDisplay(PocketedItems.Count);
@@ -434,7 +434,7 @@ namespace PocketDrop
 
                     PocketedItems.AddRange(processedItems);
 
-                    StatusText.Visibility = Visibility.Collapsed;
+                    if (StatusContainer != null) StatusContainer.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
                     UpdateStackPreview();
 
@@ -501,7 +501,7 @@ namespace PocketDrop
                     }
 
                     // Refresh UI
-                    StatusText.Visibility = Visibility.Collapsed;
+                    if (StatusContainer != null) StatusContainer.Visibility = Visibility.Collapsed;
                     FileIconContainer.Visibility = Visibility.Visible;
                     UpdateStackPreview();
                     UpdateItemCountDisplay(PocketedItems.Count);
@@ -803,7 +803,11 @@ namespace PocketDrop
                     }
                     else
                     {
-                        StatusText.Visibility = Visibility.Visible;
+                        if (StatusContainer != null)
+                        {
+                            StatusContainer.Visibility = Visibility.Visible;
+                            StatusProgressBar.Visibility = Visibility.Collapsed;
+                        }
                         FileIconContainer.Visibility = Visibility.Collapsed;
                         StackContainer.Children.Clear();
                         ExpandButton.IsChecked = false;
@@ -1320,10 +1324,14 @@ namespace PocketDrop
                     {
                         // Show loading UI
                         if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-                        if (StatusText != null)
+                        if (StatusContainer != null)
                         {
-                            StatusText.Text = (string)Application.Current.Resources["Text_CompressingShare"];
-                            StatusText.Visibility = Visibility.Visible;
+                            StatusText.Text = (string)Application.Current.TryFindResource("Text_CompressingShare") ?? "Compressing...";
+                            StatusProgressBar.Visibility = Visibility.Visible;
+                            StatusProgressBar.IsIndeterminate = false;
+                            StatusProgressBar.Maximum = itemsToShare.Count;
+                            StatusProgressBar.Value = 0;
+                            StatusContainer.Visibility = Visibility.Visible;
                         }
 
                         // Await ZIP completion before proceeding
@@ -1344,7 +1352,11 @@ namespace PocketDrop
                     finally
                     {
                         // Clean up UI
-                        if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+                        if (StatusContainer != null)
+                        {
+                            StatusContainer.Visibility = Visibility.Collapsed;
+                            StatusProgressBar.Visibility = Visibility.Collapsed;
+                        }
                         if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
                     }
                 }
@@ -1421,10 +1433,14 @@ namespace PocketDrop
                 if (ExpandButton != null) ExpandButton.IsChecked = false;
 
                 if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-                if (StatusText != null)
+                if (StatusContainer != null)
                 {
-                    StatusText.Text = (string)Application.Current.Resources["Text_CompressingShare"] ?? "Compressing files...";
-                    StatusText.Visibility = Visibility.Visible;
+                    StatusText.Text = (string)Application.Current.TryFindResource("Text_CompressingShare") ?? "Compressing files...";
+                    StatusProgressBar.Visibility = Visibility.Visible;
+                    StatusProgressBar.IsIndeterminate = false;
+                    StatusProgressBar.Maximum = itemsToCompress.Count;
+                    StatusProgressBar.Value = 0;
+                    StatusContainer.Visibility = Visibility.Visible;
                 }
 
                 // 3. Compress in the background
@@ -1434,6 +1450,8 @@ namespace PocketDrop
                     {
                         // Delete existing ZIP before creating new one
                         if (File.Exists(zipPath)) File.Delete(zipPath);
+
+                        int processedCount = 0;
 
                         using (FileStream zipToOpen = new FileStream(zipPath, FileMode.Create))
                         using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
@@ -1450,6 +1468,10 @@ namespace PocketDrop
                                 {
                                     archive.CreateEntryFromFile(item.FilePath, item.FileName);
                                 }
+
+                                // Update the progress bar
+                                int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                                Application.Current.Dispatcher.Invoke(() => StatusProgressBar.Value = currentProgress);
                             }
                         }
                     }
@@ -1463,7 +1485,11 @@ namespace PocketDrop
                 // Restore the UI if the Pocket stays open after compression
                 if (!AppGlobals.CloseWhenCompress)
                 {
-                    if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+                    if (StatusContainer != null)
+                    {
+                        StatusContainer.Visibility = Visibility.Collapsed;
+                        StatusProgressBar.Visibility = Visibility.Collapsed;
+                    }
                     if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
                 }
 
@@ -1552,13 +1578,18 @@ namespace PocketDrop
             // 1. Show loading status
             if (ExpandButton != null) ExpandButton.IsChecked = false;
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-            if (StatusText != null)
+            if (StatusContainer != null)
             {
                 StatusText.Text = (string)Application.Current.TryFindResource("Text_StrippingMetadata") ?? "Cleaning images...";
-                StatusText.Visibility = Visibility.Visible;
+                StatusProgressBar.Visibility = Visibility.Visible;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusProgressBar.Maximum = imagesToProcess.Count;
+                StatusProgressBar.Value = 0;
+                StatusContainer.Visibility = Visibility.Visible;
             }
 
             int successCount = 0;
+            int processedCount = 0;
 
             // 2. Run on a background thread so the UI doesn't freeze
             await System.Threading.Tasks.Task.Run(() =>
@@ -1585,11 +1616,20 @@ namespace PocketDrop
                         ex.Data.Add("PocketDrop Context", $"Could not strip EXIF from {img.FileName}");
                         SentrySdk.CaptureException(ex);
                     }
+                    finally
+                    {
+                        int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                        Application.Current.Dispatcher.Invoke(() => StatusProgressBar.Value = currentProgress);
+                    }
                 }
             });
 
             // 3. Restore UI
-            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (StatusContainer != null)
+            {
+                StatusContainer.Visibility = Visibility.Collapsed;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+            }
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
 
             // 4. Update the success message
@@ -1613,14 +1653,22 @@ namespace PocketDrop
 
             if (ExpandButton != null) ExpandButton.IsChecked = false;
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-            if (StatusText != null)
+            if (StatusContainer != null)
             {
                 string statusTemplate = (string)Application.Current.TryFindResource("Text_ConvertingFormat") ?? "Converting to {0}...";
                 StatusText.Text = string.Format(statusTemplate, extName);
-                StatusText.Visibility = Visibility.Visible;
+
+                // Set up the progress bar for real-time tracking
+                StatusProgressBar.Visibility = Visibility.Visible;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusProgressBar.Maximum = imagesToProcess.Count;
+                StatusProgressBar.Value = 0;
+
+                StatusContainer.Visibility = Visibility.Visible;
             }
 
             int successCount = 0;
+            int processedCount = 0;
 
             // Processing in parallel
             await System.Threading.Tasks.Task.Run(() =>
@@ -1649,6 +1697,15 @@ namespace PocketDrop
                         ex.Data.Add("PocketDrop Context", $"Could not convert {img.FileName}");
                         SentrySdk.CaptureException(ex);
                     }
+                    finally
+                    {
+                        // Update the progress bar safely on the UI thread after every single image
+                        int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                        Application.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            StatusProgressBar.Value = currentProgress;
+                        });
+                    }
                 });
             });
 
@@ -1666,7 +1723,11 @@ namespace PocketDrop
                 }
             }
 
-            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (StatusContainer != null)
+            {
+                StatusContainer.Visibility = Visibility.Collapsed;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+            }
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
 
             if (successCount > 0)
@@ -1689,14 +1750,19 @@ namespace PocketDrop
 
             if (ExpandButton != null) ExpandButton.IsChecked = false;
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-            if (StatusText != null)
+            if (StatusContainer != null)
             {
                 StatusText.Text = (string)Application.Current.TryFindResource("Text_RotatingImages") ?? "Rotating images...";
-                StatusText.Visibility = Visibility.Visible;
+                StatusProgressBar.Visibility = Visibility.Visible;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusProgressBar.Maximum = imagesToProcess.Count;
+                StatusProgressBar.Value = 0;
+                StatusContainer.Visibility = Visibility.Visible;
             }
 
             string rotatedSuffix = (string)Application.Current.TryFindResource("Text_RotatedSuffix") ?? "_Rotated";
             int successCount = 0;
+            int processedCount = 0;
 
             // Processing in parallel
             await System.Threading.Tasks.Task.Run(() =>
@@ -1722,6 +1788,11 @@ namespace PocketDrop
                         ex.Data.Add("PocketDrop Context", $"Could not rotate {img.FileName}");
                         SentrySdk.CaptureException(ex);
                     }
+                    finally
+                    {
+                        int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                        Application.Current.Dispatcher.InvokeAsync(() => StatusProgressBar.Value = currentProgress);
+                    }
                 });
             });
 
@@ -1743,7 +1814,11 @@ namespace PocketDrop
                 }
             }
 
-            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (StatusContainer != null)
+            {
+                StatusContainer.Visibility = Visibility.Collapsed;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+            }
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
 
             if (successCount > 0)
@@ -1773,15 +1848,20 @@ namespace PocketDrop
             // 2. Prepare the UI
             if (ExpandButton != null) ExpandButton.IsChecked = false;
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-            if (StatusText != null)
+            if (StatusContainer != null)
             {
                 StatusText.Text = (string)Application.Current.TryFindResource("Text_ResizingImages") ?? "Resizing images...";
-                StatusText.Visibility = Visibility.Visible;
+                StatusProgressBar.Visibility = Visibility.Visible;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusProgressBar.Maximum = imagesToProcess.Count;
+                StatusProgressBar.Value = 0;
+                StatusContainer.Visibility = Visibility.Visible;
             }
 
             string resizedSuffix = (string)Application.Current.TryFindResource("Text_ResizedSuffix") ?? "_Resized";
 
             int successCount = 0;
+            int processedCount = 0;
 
             // 3. Process the images in parallel
             await System.Threading.Tasks.Task.Run(() =>
@@ -1809,6 +1889,11 @@ namespace PocketDrop
                         ex.Data.Add("PocketDrop Context", $"Could not resize {img.FileName}");
                         SentrySdk.CaptureException(ex);
                     }
+                    finally
+                    {
+                        int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                        Application.Current.Dispatcher.InvokeAsync(() => StatusProgressBar.Value = currentProgress);
+                    }
                 });
             });
 
@@ -1824,7 +1909,11 @@ namespace PocketDrop
                 }
             }
 
-            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (StatusContainer != null)
+            {
+                StatusContainer.Visibility = Visibility.Collapsed;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+            }
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
 
             if (successCount > 0)
@@ -1844,10 +1933,12 @@ namespace PocketDrop
 
             if (ExpandButton != null) ExpandButton.IsChecked = false;
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Collapsed;
-            if (StatusText != null)
+            if (StatusContainer != null)
             {
                 StatusText.Text = (string)Application.Current.TryFindResource("Text_CreatingPdf") ?? "Creating PDF document...";
-                StatusText.Visibility = Visibility.Visible;
+                StatusProgressBar.Visibility = Visibility.Visible;
+                StatusProgressBar.IsIndeterminate = true; // Slides back and forth
+                StatusContainer.Visibility = Visibility.Visible;
             }
 
             string baseFileName = (string)Application.Current.TryFindResource("Text_DefaultPdfName") ?? "MergedDocument";
@@ -1901,7 +1992,11 @@ namespace PocketDrop
                 MessageBox.Show(string.Format(msgTemplate, imagesToProcess.Count), title, MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-            if (StatusText != null) StatusText.Visibility = Visibility.Collapsed;
+            if (StatusContainer != null)
+            {
+                StatusContainer.Visibility = Visibility.Collapsed;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+            }
             if (FileIconContainer != null) FileIconContainer.Visibility = Visibility.Visible;
         }
 
@@ -2198,20 +2293,18 @@ namespace PocketDrop
             // Run the heavy compression on a background thread
             await System.Threading.Tasks.Task.Run(() =>
             {
+                int processedCount = 0;
+
                 using (var archive = System.IO.Compression.ZipFile.Open(zipPath, System.IO.Compression.ZipArchiveMode.Create))
                 {
                     foreach (var item in items)
                     {
-                        if (Directory.Exists(item.FilePath))
-                        {
-                            // Folder: Add the folder recursively
-                            AddDirectoryToZip(archive, item.FilePath, item.FileName);
-                        }
-                        else if (File.Exists(item.FilePath))
-                        {
-                            // Standard file: Add it to the root of the zip
-                            archive.CreateEntryFromFile(item.FilePath, item.FileName);
-                        }
+                        if (Directory.Exists(item.FilePath)) AddDirectoryToZip(archive, item.FilePath, item.FileName);
+                        else if (File.Exists(item.FilePath)) archive.CreateEntryFromFile(item.FilePath, item.FileName);
+
+                        // Update the progress bar
+                        int currentProgress = System.Threading.Interlocked.Increment(ref processedCount);
+                        Application.Current.Dispatcher.InvokeAsync(() => StatusProgressBar.Value = currentProgress);
                     }
                 }
             });
@@ -2269,7 +2362,11 @@ namespace PocketDrop
                 else
                 {
                     // Reset it to the "Drop files here" state
-                    StatusText.Visibility = Visibility.Visible;
+                    if (StatusContainer != null)
+                    {
+                        StatusContainer.Visibility = Visibility.Visible;
+                        StatusProgressBar.Visibility = Visibility.Collapsed;
+                    }
                     FileIconContainer.Visibility = Visibility.Collapsed;
                     StackContainer.Children.Clear();
                     if (ExpandButton != null) ExpandButton.IsChecked = false;
@@ -2298,10 +2395,14 @@ namespace PocketDrop
             if (PopupCountLabelText != null) PopupCountLabelText.SetResourceReference(TextBlock.TextProperty, resourceKey);
 
             // Safely reset the empty state
-            if (count == 0 && StatusText != null)
+            if (count == 0 && StatusContainer != null)
             {
                 StatusText.SetResourceReference(TextBlock.TextProperty, "Text_DropItemsHere");
-                StatusText.Visibility = Visibility.Visible;
+
+                // Show the container but hide the progress bar
+                StatusContainer.Visibility = Visibility.Visible;
+                StatusProgressBar.Visibility = Visibility.Collapsed;
+
                 FileIconContainer.Visibility = Visibility.Collapsed;
             }
         }
