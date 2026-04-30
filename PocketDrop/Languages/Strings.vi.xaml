@@ -199,6 +199,10 @@
     <sys:String x:Key="Text_Clear">Xóa</sys:String>
     <sys:String x:Key="Text_Save">Lưu</sys:String>
     <sys:String x:Key="Text_MsgInvalidShortcutTitle">Phím tắt không hợp lệ</sys:String>
+    <sys:String x:Key="Text_ShortcutRule1">Chỉ các phím tắt bắt đầu bằng</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleMods">Windows, Ctrl, Alt,</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleOr">hoặc</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleShift">Shift mới hợp lệ.</sys:String>
     <sys:String x:Key="Text_MsgNeedModifier">Phím tắt cần phải có ít nhất một phím Windows, Ctrl, Alt hoặc Shift.</sys:String>
     <sys:String x:Key="Text_MsgNeedValidKey">Hãy thiết lập một phím tắt hợp lệ trước khi lưu.</sys:String>
     <sys:String x:Key="Text_MsgConflictTitle">Phím tắt này đã được sử dụng</sys:String>

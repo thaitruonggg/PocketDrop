@@ -199,6 +199,10 @@
     <sys:String x:Key="Text_Clear">Clear</sys:String>
     <sys:String x:Key="Text_Save">Save</sys:String>
     <sys:String x:Key="Text_MsgInvalidShortcutTitle">Invalid shortcut</sys:String>
+    <sys:String x:Key="Text_ShortcutRule1">Only shortcuts that start with</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleMods">Windows, Ctrl, Alt,</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleOr">or</sys:String>
+    <sys:String x:Key="Text_ShortcutRuleShift">Shift are valid.</sys:String>
     <sys:String x:Key="Text_MsgNeedModifier">Shortcuts must include at least one modifier key (Windows, Ctrl, Alt, or Shift).</sys:String>
     <sys:String x:Key="Text_MsgNeedValidKey">Please press a valid key combination before saving.</sys:String>
     <sys:String x:Key="Text_MsgConflictTitle">Conflict detected</sys:String>

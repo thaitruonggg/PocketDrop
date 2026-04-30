@@ -84,7 +84,10 @@
                 <TextBlock x:Name="TitleText" Text="{DynamicResource Text_ChangeShortcut}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
 
                 <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,40">
-                    <Run Text="{DynamicResource Text_ShortcutRule1}"/><Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Text="{DynamicResource Text_ShortcutRuleMods}"/><Run Text="{DynamicResource Text_ShortcutRuleOr}"/><Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Text="{DynamicResource Text_ShortcutRuleShift}"/>
+                    <Run Text="{DynamicResource Text_ShortcutRule1}"/>
+                    <Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Text="{DynamicResource Text_ShortcutRuleMods}"/>
+                    <Run Text="{DynamicResource Text_ShortcutRuleOr}"/>
+                    <Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Text="{DynamicResource Text_ShortcutRuleShift}"/>
                 </TextBlock>
 
                 <StackPanel x:Name="DialogKeysContainer" Orientation="Horizontal" HorizontalAlignment="Center" MinHeight="44"/>
