@@ -294,7 +294,7 @@
     <sys:String x:Key="Text_PrivacyP2">PocketDrop cam kết không thu thập, lưu trữ hay chia sẻ dữ liệu cá nhân của người dùng. Để hoạt động, ứng dụng cần truy cập một số dữ liệu trên máy như tập tin, thư mục, bộ nhớ tạm và thông tin thiết bị, nhưng tất cả đều được xử lý cục bộ. Dữ liệu của bạn sẽ luôn nằm trên thiết bị, tuyệt đối không bị gửi đi hay chia sẻ với bên thứ ba. PocketDrop chỉ kết nối mạng khi cần kiểm tra phiên bản mới từ GitHub.</sys:String>
     <sys:String x:Key="Text_PrivacyP3">PocketDrop thu thập các báo cáo sự cố và treo ứng dụng ẩn danh để cải thiện độ ổn định. Dữ liệu này không thể định danh, không chứa thông tin cá nhân và không bao giờ được chia sẻ với bên thứ ba.</sys:String>
     <sys:String x:Key="Text_PrivacyP4">Chính sách bảo mật này có thể được cập nhật tùy từng thời điểm. Bạn nên kiểm tra trang này định kỳ để nắm bắt các thay đổi mới nhất.</sys:String>
-    <sys:String x:Key="Text_PrivacyDate">Cập nhật lần cuối: Ngày 08 tháng 04 năm 2026</sys:String>
+    <sys:String x:Key="Text_PrivacyDate">Cập nhật lần cuối: Ngày 07 tháng 05 năm 2026</sys:String>
 
     <sys:String x:Key="Text_ThirdParty">Giấy phép bên thứ ba</sys:String>
     <sys:String x:Key="Text_LicenseIntro">PocketDrop được xây dựng dựa trên các phần mềm mã nguồn mở và tài nguyên sau đây:</sys:String>

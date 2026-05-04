@@ -295,7 +295,7 @@
     <sys:String x:Key="Text_PrivacyP2">PocketDrop does not collect, store, or share your personal information or data. The app accesses certain local data - including files and folders on your device, clipboard contents, and basic device information - solely to provide its core functionality. This data never leaves your device and is not transmitted to, collected by, or shared with any third parties. The only routine network activity the app performs is a standard ping to GitHub to check for new version releases.</sys:String>
     <sys:String x:Key="Text_PrivacyP3">PocketDrop collects anonymous crash and hang reports to improve app stability. This data is non-identifiable and contains no personal information, and is never shared with third parties.</sys:String>
     <sys:String x:Key="Text_PrivacyP4">This Privacy Policy may be updated from time to time. You are advised to review this page periodically for any changes.</sys:String>
-    <sys:String x:Key="Text_PrivacyDate">Last updated: April 08, 2026</sys:String>
+    <sys:String x:Key="Text_PrivacyDate">Last updated: May 07, 2026</sys:String>
     
     <sys:String x:Key="Text_ThirdParty">Third-Party Licenses</sys:String>
     <sys:String x:Key="Text_LicenseIntro">PocketDrop is made possible by the following open-source software and assets:</sys:String>

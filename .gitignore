@@ -21,3 +21,11 @@ Output/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Windows Application Packaging Project files
+PocketDropPackage/AppPackages/
+PocketDropPackage/BundleArtifacts/
+PocketDropPackage/bin/
+PocketDropPackage/obj/
+*.wapproj.user
+*.assets.cache

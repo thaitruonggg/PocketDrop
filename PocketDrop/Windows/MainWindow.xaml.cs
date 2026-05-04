@@ -31,6 +31,7 @@ using Windows.Storage;
 using WinRT;
 using static PocketDrop.AppHelpers;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using Sentry;
 
 namespace PocketDrop
 {
