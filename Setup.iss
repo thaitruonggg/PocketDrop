@@ -4,7 +4,7 @@
 #endif
 
 ; Define your version once here, and it updates everywhere!
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.1.1"
 
 [Setup]
 ; App Information
