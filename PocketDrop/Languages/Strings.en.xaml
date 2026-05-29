@@ -48,13 +48,12 @@
     <sys:String x:Key="Text_LargeDropMsg">You are about to process {0} items.&#x0a;&#x0a;This may take a moment depending on your hardware. Continue?</sys:String>
     <sys:String x:Key="Text_LargePasteTitle">Mass file detected</sys:String>
     <sys:String x:Key="Text_LargePasteMsg">You are about to paste {0} items.&#x0a;&#x0a;This may take a moment depending on your hardware. Continue?</sys:String>
-
     <sys:String x:Key="Text_BtnYes">Yes</sys:String>
     <sys:String x:Key="Text_BtnNo">No</sys:String>
+    
     <!-- Main Window - More Menu -->
     <sys:String x:Key="Text_MenuOpen">Open...</sys:String>
     <sys:String x:Key="Text_MenuOpenWith">Open with...</sys:String>
-
     <sys:String x:Key="Text_MenuShare">Share with...</sys:String>
     <sys:String x:Key="Text_CompressingShare">Compressing...</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorTitle">Share action failed</sys:String>
@@ -68,7 +67,6 @@
     <sys:String x:Key="Text_ShareErrorDesc">Share failed to prepare the files.</sys:String>
     <sys:String x:Key="Text_ShareFailText">Failed to prepare files:</sys:String>
     <sys:String x:Key="Text_Reason">Reason:</sys:String>
-
     <sys:String x:Key="Text_MenuCompressZip">Compress to ZIP...</sys:String>
     <sys:String x:Key="Text_SaveZipTitle">Save ZIP archive</sys:String>
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
@@ -79,17 +77,14 @@
     <sys:String x:Key="Text_MenuImagesHeader">Images</sys:String>
     <sys:String x:Key="Text_NoImagesTitle">Invalid selection</sys:String>
     <sys:String x:Key="Text_NoImagesDesc">Please select at least one valid image file to continue.</sys:String>
-       
     <sys:String x:Key="Text_MenuImageRemoveMetadata">Remove metadata</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Cleaning images...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_MetadataSuccessMsg">Successfully cleaned {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
-
     <sys:String x:Key="Text_MenuImageConvertFormat">Convert format</sys:String>
     <sys:String x:Key="Text_ConvertingFormat">Converting to {0}...</sys:String>
     <sys:String x:Key="Text_FormatSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_FormatSuccessMsg">Successfully converted {0} images to {1}!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
-
     <sys:String x:Key="Text_MenuImageRotate">Rotate image</sys:String>
     <sys:String x:Key="Text_RotateRight">Rotate Right</sys:String>
     <sys:String x:Key="Text_RotateLeft">Rotate Left</sys:String>
@@ -97,13 +92,11 @@
     <sys:String x:Key="Text_RotatedSuffix">_Rotated</sys:String>
     <sys:String x:Key="Text_RotateSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_RotateSuccessMsg">Successfully rotated {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
-
     <sys:String x:Key="Text_MenuImageCreatePdf">Create PDF</sys:String>
     <sys:String x:Key="Text_CreatingPdf">Creating PDF document...</sys:String>
     <sys:String x:Key="Text_DefaultPdfName">Merged_Document</sys:String>
     <sys:String x:Key="Text_PdfSuccessTitle">Success</sys:String>
     <sys:String x:Key="Text_PdfSuccessMsg">Successfully created a {0}-page PDF document!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
-
     <sys:String x:Key="Text_MenuImageResize">Resize</sys:String>
     <sys:String x:Key="Text_ResizeImagesTitle">Resize images</sys:String>
     <sys:String x:Key="Text_ResizeImagesDesc">Configure your target dimensions and settings.</sys:String>
@@ -124,7 +117,6 @@
     <sys:String x:Key="Text_ResizeSuccessMsg">Successfully resized {0} images!&#x0a;&#x0a;Your files are ready in the Pocket. Drag them out to save.</sys:String>
     <sys:String x:Key="Text_InvalidInputTitle">Invalid input</sys:String>
     <sys:String x:Key="Text_InvalidInputMsg">Please enter at least one valid number.</sys:String>
-
     <sys:String x:Key="Text_MenuClearItems">Clear all</sys:String>
     <sys:String x:Key="Text_MenuSettings">Settings</sys:String>
 
@@ -133,7 +125,6 @@
     <sys:String x:Key="Text_MyPocketsTitle">My Pockets</sys:String>
     <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Your files appear here&#x0a;when you close Pockets.</sys:String>
     <sys:String x:Key="Text_KeepWindowOpenTooltip">Keep window open</sys:String>
-
     <sys:String x:Key="Text_SidebarNew">New</sys:String>
     <sys:String x:Key="Text_AddPocketTooltip">Add new Pocket</sys:String>
     <sys:String x:Key="Text_SidebarClear">Clear</sys:String>
@@ -144,16 +135,13 @@
     <sys:String x:Key="Text_TabPinnedTooltip">Pinned files</sys:String>
     <sys:String x:Key="Text_SidebarSettings">Settings</sys:String>
     <sys:String x:Key="Text_SettingsTooltip">Settings</sys:String>
-
     <sys:String x:Key="Text_ClearAllPocketsTitle">Clear all Pockets?</sys:String>
     <sys:String x:Key="Text_ClearAllPocketsDesc">This will close all Pockets and clear the list.</sys:String>
     <sys:String x:Key="Text_Cancel">Cancel</sys:String>
     <sys:String x:Key="Text_Delete">Delete</sys:String>
     <sys:String x:Key="Text_DeleteSelected">Delete selected</sys:String>
-
     <sys:String x:Key="Text_ErrorTitle">Error</sys:String>
     <sys:String x:Key="Text_OpenFileError">Could not open the file:</sys:String>
-
     <sys:String x:Key="Text_SortDefault">Default</sys:String>
     <sys:String x:Key="Text_SortDefaultTooltip">Sort: Default order</sys:String>
     <sys:String x:Key="Text_ToastRestoredDefault">Default Sort</sys:String>
@@ -164,6 +152,7 @@
     <sys:String x:Key="Text_SortZtoATooltip">Sort: Reverse alphabetical</sys:String>
     <sys:String x:Key="Text_ToastSortedZtoA">Sorted Z to A</sys:String>
 
+    
     <!-- Settings Window -->
     <sys:String x:Key="Text_SettingsTitle">Settings</sys:String>
     <sys:String x:Key="Text_StartupErrorTitle">Permission error</sys:String>
@@ -187,11 +176,11 @@
 
     <!-- Settings Window - Pocket Activation -->
     <sys:String x:Key="Text_ShortcutHeader">Pocket Activation</sys:String>
-    
     <sys:String x:Key="Text_NewPocketShortcut">Create a new Pocket</sys:String>
     <sys:String x:Key="Text_NewPocketShortcutDesc">Customize the keyboard shortcut for this action.</sys:String>
     <sys:String x:Key="Text_ClipboardShortcut">Create a new Pocket from the clipboard</sys:String>
     <sys:String x:Key="Text_ClipboardShortcutDesc">Customize the keyboard shortcut for this action.</sys:String>
+    
     <!-- Settings Window - Pocket Activation - Shortcut Dialog -->
     <sys:String x:Key="Text_EditShortcutTitle">Edit shortcut</sys:String>
     <sys:String x:Key="Text_ChangeShortcut">New activation shortcut</sys:String>
@@ -209,13 +198,11 @@
     <sys:String x:Key="Text_MsgConflictDesc">This combination is currently in use by another app or reserved by Windows.&#x0a;&#x0a;Please choose a different shortcut.</sys:String>
     <sys:String x:Key="Text_ShortcutErrorTitle">Shortcut error</sys:String>
     <sys:String x:Key="Text_ShortcutErrorMsg">Windows blocked this shortcut!&#x0a;&#x0a;This usually means another background app (like Snipping Tool, PowerToys, or a graphics overlay) is already holding this key hostage.&#x0a;&#x0a;Please try a different letter.</sys:String>
-
     <sys:String x:Key="Text_ShakeMouse">Shake to open a new Pocket</sys:String>
     <sys:String x:Key="Text_ShakeMouseDesc">Wiggle your mouse left and right while dragging files to instantly open a Pocket.</sys:String>
     <sys:String x:Key="Text_ShakeDistance">Shake sensitivity</sys:String>
     <sys:String x:Key="Text_ShakeDistanceDesc">Adjust how far you need to wiggle your mouse to open a Pocket.</sys:String>
     <sys:String x:Key="Text_GameModeCheck">Disable Pockets in Game Mode</sys:String>
-    
     <sys:String x:Key="Text_PocketPlacement">Pocket placement</sys:String>
     <sys:String x:Key="Text_PocketPlacementDesc">Choose where new Pockets appear on your screen.</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Near mouse pointer</sys:String>
@@ -227,12 +214,12 @@
     <sys:String x:Key="Text_PlacementTopRight">Top right corner</sys:String>
     <sys:String x:Key="Text_PlacementBottomLeft">Bottom left corner</sys:String>
     <sys:String x:Key="Text_PlacementBottomRight">Bottom right corner</sys:String>
-
     <sys:String x:Key="Text_ExcludedApps">App exceptions</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Prevent mouse wiggles from opening Pockets while you're using these apps.</sys:String>
     <sys:String x:Key="Text_CurrentlyExcluded">Current app exceptions:</sys:String>
     <sys:String x:Key="Text_NoAppsExcluded">You haven't added any apps yet.</sys:String>
     <sys:String x:Key="Text_ManageApps">Manage apps</sys:String>
+    
     <!-- Settings Window - Pocket Activation - App Picker Dialog -->
     <sys:String x:Key="Text_SelectAppsTitle">Select apps</sys:String>
     <sys:String x:Key="Text_SelectAppsHeader">Select apps to exclude</sys:String>
@@ -242,35 +229,27 @@
 
     <!-- Settings Window - Pocket Interaction -->
     <sys:String x:Key="Text_PocketPreferences">Pocket Interaction</sys:String>
-
     <sys:String x:Key="Text_CopyItems">Copy files when dropped</sys:String>
     <sys:String x:Key="Text_CopyItemsDesc">Files dropped into Pockets are copied, not moved.</sys:String>
     <sys:String x:Key="Text_CopyItemsHint">By default, PocketDrop keeps your original items safe. When you drag an item out, it simply creates a copy in the new location. If you’d rather completely move the item there instead, just disable this setting.</sys:String>
-
     <sys:String x:Key="Text_ItemsLayoutMode">Detail view layout</sys:String>
     <sys:String x:Key="Text_ItemsLayoutModeDesc">Choose how files are arranged when you expand a Pocket.</sys:String>
     <sys:String x:Key="Text_LayoutGrid">Grid view</sys:String>
     <sys:String x:Key="Text_LayoutList">List view</sys:String>
-
     <sys:String x:Key="Text_AutoCompressShare">Auto compress folders when shared</sys:String>
     <sys:String x:Key="Text_AutoCompressShareDesc">Zips folders into a single file before passing them to the Windows Share UI.</sys:String>
-
     <sys:String x:Key="Text_CloseEmptied">Close Pockets when empty</sys:String>
     <sys:String x:Key="Text_CloseEmptiedDesc">Automatically close a Pocket once all files have been dragged out.</sys:String>
-
     <sys:String x:Key="Text_CloseOpenWith">Close Pocket after opening files</sys:String>
     <sys:String x:Key="Text_CloseOpenWithDesc">Close the Pocket automatically after you open a file using the Open or Open with menu.</sys:String>
-    
     <sys:String x:Key="Text_CloseShare">Close pocket after sharing</sys:String>
     <sys:String x:Key="Text_CloseShareDesc">Automatically closes the Pocket when you share items.</sys:String>
-
     <sys:String x:Key="Text_CloseCompress">Close Pocket after compress ZIP</sys:String>
     <sys:String x:Key="Text_CloseCompressDesc">Automatically closes the Pocket when you use the 'Compress to ZIP' action.</sys:String>
 
     <!-- Settings Window - About -->
     <sys:String x:Key="Text_AboutHeader">About</sys:String>
     <sys:String x:Key="Text_Close">Close</sys:String>
-
     <sys:String x:Key="Text_UpdateAvailableTitle">Update available</sys:String>
     <sys:String x:Key="Text_UpdateAvailableMsg">A new version of PocketDrop ({0}) is available!&#x0a;&#x0a;Would you like to download it now?</sys:String>
     <sys:String x:Key="Text_CheckingUpdate">Checking...</sys:String>
@@ -286,44 +265,31 @@
     <sys:String x:Key="Text_UpdateDownloadFailedMsg">Failed to download the update:</sys:String>
     <sys:String x:Key="Text_NoInstallerFound">No valid installer found for this architecture.</sys:String>
     <sys:String x:Key="Text_SecurityAlert">Security Alert: The downloaded update failed integrity verification and was deleted to protect your system.</sys:String>
-
-
     <sys:String x:Key="Text_Copyright">Developed by Naofunyan. © 2026&#x0a;Licensed under the GNU GPLv3.</sys:String>
-    
     <sys:String x:Key="Text_PrivacyPolicy">Privacy Policy</sys:String>
     <sys:String x:Key="Text_PrivacyP1">PocketDrop is a free, open-source app provided "as is", without any express or implied warranty. The author is not liable for any damages arising from the use of this software.</sys:String>
     <sys:String x:Key="Text_PrivacyP2">PocketDrop does not collect, store, or share your personal information or data. The app accesses certain local data - including files and folders on your device, clipboard contents, and basic device information - solely to provide its core functionality. This data never leaves your device and is not transmitted to, collected by, or shared with any third parties. The only routine network activity the app performs is a standard ping to GitHub to check for new version releases.</sys:String>
     <sys:String x:Key="Text_PrivacyP3">PocketDrop collects anonymous crash and hang reports to improve app stability. This data is non-identifiable and contains no personal information, and is never shared with third parties.</sys:String>
     <sys:String x:Key="Text_PrivacyP4">This Privacy Policy may be updated from time to time. You are advised to review this page periodically for any changes.</sys:String>
     <sys:String x:Key="Text_PrivacyDate">Last updated: May 11, 2026</sys:String>
-    
     <sys:String x:Key="Text_ThirdParty">Third-Party Licenses</sys:String>
     <sys:String x:Key="Text_LicenseIntro">PocketDrop is made possible by the following open-source software and assets:</sys:String>
-    
     <sys:String x:Key="Text_LicenseFeatherIcons">Feather Icons</sys:String>
     <sys:String x:Key="Text_LicenseFeatherIconsDesc">Copyright (c) 2013-2023 Cole Bemis&#x0a;Licensed under the MIT License.</sys:String>
-
     <sys:String x:Key="Text_LicenseWindowsApi">Windows API Code Pack</sys:String>
     <sys:String x:Key="Text_LicenseCSWinRT">CSWinRT (C# / WinRT)</sys:String>
     <sys:String x:Key="Text_LicenseMicrosoftDesc">Copyright (c) Microsoft Corporation&#x0a;Licensed under the MIT License.</sys:String>
-
     <sys:String x:Key="Text_LicenseSentry">Sentry .NET SDK</sys:String>
     <sys:String x:Key="Text_LicenseSentryDesc">Copyright (c) 2008-2024 Functional Software, Inc. dba Sentry&#x0a;Licensed under the MIT License.</sys:String>
-
     <sys:String x:Key="Text_LicenseSkiaSharp">SkiaSharp</sys:String>
     <sys:String x:Key="Text_LicenseSkiaSharpDesc">A cross-platform 2D graphics API based on Google's Skia Graphics Library. Licensed under the MIT License.</sys:String>
-
     <sys:String x:Key="Text_LicensePdfSharp">PDFsharp</sys:String>
     <sys:String x:Key="Text_LicensePdfSharpDesc">A .NET library for creating and processing PDF documents. Licensed under the MIT License.</sys:String>
-
     <sys:String x:Key="Text_LicenseMITTitle">The MIT License (MIT)</sys:String>
     <sys:String x:Key="Text_LicenseMITBody">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:&#x0a;&#x0a;The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.&#x0a;&#x0a;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</sys:String>
-    
     <sys:String x:Key="Text_RateReview">Rate and review on the Microsoft Store</sys:String>
-
     <sys:String x:Key="Text_GetHelp">Get help</sys:String>
     <sys:String x:Key="Text_GetHelpDesc">Got feedback? Report a bug, suggest a feature, or just say hi.</sys:String>
-
     <sys:String x:Key="Text_QuickGuide">Quick Guide</sys:String>
     <sys:String x:Key="Text_QuickGuideDesc">Revisit the welcome screen and quick start guides.</sys:String>
     <sys:String x:Key="Text_BtnQuickGuide">Open</sys:String>
@@ -336,7 +302,6 @@
     <sys:String x:Key="Text_TraySettings">Settings</sys:String>
     <sys:String x:Key="Text_TrayReportBug">Report bug</sys:String>
     <sys:String x:Key="Text_TrayQuit">Quit PocketDrop</sys:String>
-
     <sys:String x:Key="Text_SessionHistoryTitle">Session History</sys:String>
     <sys:String x:Key="Text_SessionHistoryMsg">Your session history currently holds {0} items.</sys:String>
 
@@ -345,6 +310,4 @@
     <sys:String x:Key="Text_DuplicateInstallMsg">You have both the GitHub and Microsoft Store versions of PocketDrop installed.
 
 Only one can run at a time - please uninstall one to avoid conflicts.</sys:String>
-
-
 </ResourceDictionary>

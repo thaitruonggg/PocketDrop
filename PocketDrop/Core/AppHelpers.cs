@@ -83,12 +83,12 @@ namespace PocketDrop
                         {
                             key.DeleteValue("PocketDrop", false);
                         }
-                        return true; // Success
+                        return true;
                     }
                 }
             }
             catch { }
-            return false; // Failed
+            return false;
         }
 
         // Version check
@@ -107,7 +107,7 @@ namespace PocketDrop
 
         public static void OpenUrl(string url)
         {
-            // Only allow known-safe URI schemes — reject anything else silently
+            // Only allow known-safe URI schemes
             if (string.IsNullOrWhiteSpace(url) ||
                 (!url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
                  !url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
@@ -153,9 +153,8 @@ namespace PocketDrop
         // File size calculation
         public static string FormatBytes(long bytes)
         {
-            // Guard against zero and negative inputs to avoid Math.Log errors
+            // Guard against zero and negative inputs
             if (bytes <= 0) return "0 B";
-
             string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
             int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
@@ -212,7 +211,7 @@ namespace PocketDrop
             return finalDisplayName;
         }
 
-        // Security Utilities
+        // Security utilities
         public static bool VerifyFileHash(string filePath, string expectedHash)
         {
             // Do not skip hash check if no hash file exists on GitHub
@@ -296,22 +295,14 @@ namespace PocketDrop
         // 4. NATIVE WINDOWS APIS
         // ================================================ //
 
-        // Per-monitor DPI: get the exact DPI scaling for any physical screen coordinate,
-        // regardless of which monitor the app window is currently sitting on.
         [DllImport("user32.dll")]
         private static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
         private const uint MONITOR_DEFAULTTONEAREST = 2;
 
-        // MDT_EFFECTIVE_DPI = 0 — returns the DPI Windows actually applies to that monitor.
         [DllImport("shcore.dll")]
         private static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, out uint dpiX, out uint dpiY);
         private const int MDT_EFFECTIVE_DPI = 0;
 
-        /// <summary>
-        /// Returns the WPF scale factors (relative to 96 dpi) for the monitor
-        /// that contains the given raw physical-pixel screen coordinate.
-        /// Falls back to 1.0 / 1.0 on any failure.
-        /// </summary>
         public static (double scaleX, double scaleY) GetDpiForPoint(int physicalX, int physicalY)
         {
             try
@@ -376,8 +367,6 @@ namespace PocketDrop
 
                 GetWindowRect(hwnd, out RECT rect);
 
-                // A maximized window does NOT cover the taskbar so its rect won't match Screen.Bounds.
-                // A borderless fullscreen window covers the entire screen including the taskbar area.
                 foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
                 {
                     var b = screen.Bounds;
@@ -531,7 +520,6 @@ namespace PocketDrop
                 }
             }
             catch { }
-
             return false;
         }        
     }

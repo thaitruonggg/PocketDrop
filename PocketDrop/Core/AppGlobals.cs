@@ -20,8 +20,6 @@ namespace PocketDrop
 
         // Track all files dropped in the current session
         public static ObservableRangeCollection<PocketItem> SessionHistory = new ObservableRangeCollection<PocketItem>();
-
-        // O(1) Fast-Lookup Cache
         public static System.Collections.Generic.HashSet<string> SessionHistoryPaths = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         // Keep the hash set in sync with the file list
@@ -114,7 +112,6 @@ namespace PocketDrop
                     ClipboardKeyVK = Convert.ToUInt32(key.GetValue("ClipboardKeyVK", 0x58));
                     PocketModifiers = Convert.ToUInt32(key.GetValue("PocketModifiers", MOD_WIN | MOD_SHIFT));
                     ClipboardModifiers = Convert.ToUInt32(key.GetValue("ClipboardModifiers", MOD_WIN | MOD_SHIFT));
-
                     AppTheme = Math.Clamp(Convert.ToInt32(key.GetValue("AppTheme", 0)), 0, 2);
                     AppLanguage = key.GetValue("AppLanguage", "English").ToString();
                     HasSeenWelcome = Convert.ToBoolean(key.GetValue("HasSeenWelcome", false));

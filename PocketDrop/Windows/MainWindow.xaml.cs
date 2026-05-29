@@ -74,7 +74,7 @@ namespace PocketDrop
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // Thread-safe icon cache with concurrency guard
+        // Thread-safe icon cache
         private static System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource> _iconCache = new System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource>(StringComparer.OrdinalIgnoreCase);
         private static readonly System.Threading.SemaphoreSlim _iconThrottle = new System.Threading.SemaphoreSlim(4, 4);
 
@@ -89,6 +89,7 @@ namespace PocketDrop
         private bool _insertAbove = false;
         private DropLineAdorner _currentAdorner = null;
 
+
         // ================================================ //
         // 2. LIFECYCLE (STARTUP & SHUTDOWN)
         // ================================================ //
@@ -97,7 +98,7 @@ namespace PocketDrop
             InitializeComponent();
             this.DataContext = this;
 
-            // Start hidden � shake to reveal
+            // Start hidden shake to reveal
             this.Opacity = 0;
             this.IsHitTestVisible = false;
 
@@ -110,10 +111,10 @@ namespace PocketDrop
                 _mouseTimer.Start();
             }
 
-            // Clean up heavy temp files from previous sessions
+            // Clean up temp files from previous sessions
             System.Threading.Tasks.Task.Run(() => CleanupOldShareZips());
 
-            // Capture menu close immediately, bypassing the fade-out delay
+            // Capture menu close, bypassing the fade-out delay
             if (MoreButton.ContextMenu != null)
             {
                 var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(ContextMenu.IsOpenProperty, typeof(ContextMenu));
@@ -127,11 +128,10 @@ namespace PocketDrop
             }
         }
 
-        // Hide from Alt+Tab - this window is a floating tool, not an app window
+        // Hide from Alt+Tab
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            // Defer to avoid interfering with the initial Show() sequence.
             Dispatcher.BeginInvoke(() =>
             {
                 var helper = new System.Windows.Interop.WindowInteropHelper(this);
@@ -144,7 +144,6 @@ namespace PocketDrop
         public void ForceClose()
         {
             IsGhost = true;
-
             bool isLastWindow = Application.Current.Windows.OfType<MainWindow>().Count() <= 1;
             HidePocketDrop(!isLastWindow);
         }
@@ -278,7 +277,7 @@ namespace PocketDrop
                         // Write the file to disk before requesting its icon from Windows
                         File.WriteAllText(filePath, $"[InternetShortcut]\nURL={uriResult.AbsoluteUri}");
 
-                        // Get the native WPF BitmapSource on a dedicated STA thread (Shell COM requirement)
+                        // Get the native WPF BitmapSource on a dedicated STA thread
                         BitmapSource transparentIcon = null;
                         try
                         {

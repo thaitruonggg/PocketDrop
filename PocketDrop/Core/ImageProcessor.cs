@@ -65,7 +65,7 @@ namespace PocketDrop
         public static string ConvertFormat(string inputPath, string targetExt, string outputFolder)
         {
             string originalExt = Path.GetExtension(inputPath).ToLower();
-            if (originalExt == targetExt) return null; // Already the correct format
+            if (originalExt == targetExt) return null;
 
             string filename = Path.GetFileNameWithoutExtension(inputPath);
             string newFileName = $"{filename}{targetExt}";
@@ -287,7 +287,6 @@ namespace PocketDrop
                         scaleW = (int)Math.Ceiling(originalW * ratio);
                         scaleH = (int)Math.Ceiling(originalH * ratio);
 
-                        // Safety Net: Ensure the scaled image is NEVER smaller than the target crop box
                         if (mode == ImageResizeMode.Fill)
                         {
                             scaleW = Math.Max(scaleW, (int)targetBoxW);

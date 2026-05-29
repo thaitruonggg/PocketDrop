@@ -48,13 +48,12 @@
     <sys:String x:Key="Text_LargeDropMsg">Bạn sắp xử lý {0} tập tin.&#x0a;&#x0a;Quá trình này có thể mất một lúc tùy thuộc vào cấu hình máy của bạn. Tiếp tục chứ?</sys:String>
     <sys:String x:Key="Text_LargePasteTitle">Dán tập tin số lượng lớn</sys:String>
     <sys:String x:Key="Text_LargePasteMsg">Bạn sắp dán {0} tập tin.&#x0a;&#x0a;Quá trình này có thể mất một lúc tùy thuộc vào cấu hình máy của bạn. Tiếp tục chứ?</sys:String>
-
     <sys:String x:Key="Text_BtnYes">Đồng ý</sys:String>
     <sys:String x:Key="Text_BtnNo">Không</sys:String>
+    
     <!-- Main Window - More Menu -->
     <sys:String x:Key="Text_MenuOpen">Mở...</sys:String>
     <sys:String x:Key="Text_MenuOpenWith">Mở bằng...</sys:String>
-
     <sys:String x:Key="Text_MenuShare">Chia sẻ qua...</sys:String>
     <sys:String x:Key="Text_CompressingShare">Đang nén thư mục...</sys:String>
     <sys:String x:Key="Text_ShareFolderErrorTitle">Chia sẻ thất bại</sys:String>
@@ -68,7 +67,6 @@
     <sys:String x:Key="Text_ShareErrorDesc">Không thể chuẩn bị tập tin để chia sẻ.</sys:String>
     <sys:String x:Key="Text_ShareFailText">Không thể chuẩn bị tập tin:</sys:String>
     <sys:String x:Key="Text_Reason">Lý do:</sys:String>
-
     <sys:String x:Key="Text_MenuCompressZip">Nén thành ZIP...</sys:String>
     <sys:String x:Key="Text_SaveZipTitle">Lưu dưới dạng ZIP</sys:String>
     <sys:String x:Key="Text_SaveZipFileName">PocketDrop_Archive</sys:String>
@@ -79,17 +77,14 @@
     <sys:String x:Key="Text_MenuImagesHeader">Hình ảnh</sys:String>
     <sys:String x:Key="Text_NoImagesTitle">Lựa chọn không hợp lệ</sys:String>
     <sys:String x:Key="Text_NoImagesDesc">Vui lòng chọn ít nhất một tập tin hình ảnh hợp lệ để tiếp tục.</sys:String>
-
     <sys:String x:Key="Text_MenuImageRemoveMetadata">Xóa siêu dữ liệu</sys:String>
     <sys:String x:Key="Text_StrippingMetadata">Đang làm sạch hình ảnh...</sys:String>
     <sys:String x:Key="Text_MetadataSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_MetadataSuccessMsg">Đã làm sạch thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
-    
     <sys:String x:Key="Text_MenuImageConvertFormat">Chuyển đổi định dạng</sys:String>
     <sys:String x:Key="Text_ConvertingFormat">Đang chuyển đổi sang {0}...</sys:String>
     <sys:String x:Key="Text_FormatSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_FormatSuccessMsg">Đã chuyển đổi thành công {0} hình ảnh sang {1}!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
-
     <sys:String x:Key="Text_MenuImageRotate">Xoay hình ảnh</sys:String>
     <sys:String x:Key="Text_RotateRight">Xoay phải</sys:String>
     <sys:String x:Key="Text_RotateLeft">Xoay trái</sys:String>
@@ -97,13 +92,11 @@
     <sys:String x:Key="Text_RotatedSuffix">_Mới</sys:String>
     <sys:String x:Key="Text_RotateSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_RotateSuccessMsg">Đã xoay thành công {0} hình ảnh!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
-
     <sys:String x:Key="Text_MenuImageCreatePdf">Tạo PDF</sys:String>
     <sys:String x:Key="Text_CreatingPdf">Đang tạo tài liệu PDF...</sys:String>
     <sys:String x:Key="Text_DefaultPdfName">PDF_da_gop</sys:String>
     <sys:String x:Key="Text_PdfSuccessTitle">Thành công</sys:String>
     <sys:String x:Key="Text_PdfSuccessMsg">Đã tạo thành công tài liệu PDF gồm {0} trang!&#x0a;&#x0a;Chúng hiện đã sẵn sàng trong Pocket của bạn. Chỉ cần kéo chúng ra để lưu lại.</sys:String>
-
     <sys:String x:Key="Text_MenuImageResize">Thay đổi kích thước</sys:String>
     <sys:String x:Key="Text_ResizingImages">Đang thay đổi kích thước...</sys:String>
     <sys:String x:Key="Text_ResizedSuffix">_Mới</sys:String>
@@ -124,7 +117,6 @@
     <sys:String x:Key="Text_ResizeBtn">Áp dụng</sys:String>
     <sys:String x:Key="Text_InvalidInputTitle">Đầu vào không hợp lệ</sys:String>
     <sys:String x:Key="Text_InvalidInputMsg">Vui lòng nhập ít nhất một giá trị hợp lệ.</sys:String>
-
     <sys:String x:Key="Text_MenuClearItems">Xóa tất cả tập tin</sys:String>
     <sys:String x:Key="Text_MenuSettings">Cài đặt</sys:String>
 
@@ -133,7 +125,6 @@
     <sys:String x:Key="Text_MyPocketsTitle">Các Pocket của bạn</sys:String>
     <sys:String x:Key="Text_EmptyPockets" xml:space="preserve">Các tập tin của bạn sẽ xuất hiện&#x0a;ở đây khi bạn đóng các Pocket.</sys:String>
     <sys:String x:Key="Text_KeepWindowOpenTooltip">Ghim cửa sổ</sys:String>
-    
     <sys:String x:Key="Text_SidebarNew">Tạo mới</sys:String>
     <sys:String x:Key="Text_AddPocketTooltip">Thêm Pocket mới</sys:String>
     <sys:String x:Key="Text_SidebarClear">Xóa hết</sys:String>
@@ -144,16 +135,13 @@
     <sys:String x:Key="Text_TabPinnedTooltip">Các nội dung đã ghim</sys:String>
     <sys:String x:Key="Text_SidebarSettings">Cài đặt</sys:String>
     <sys:String x:Key="Text_SettingsTooltip">Cài đặt</sys:String>
-
     <sys:String x:Key="Text_ClearAllPocketsTitle">Xóa tất cả Pocket?</sys:String>
     <sys:String x:Key="Text_ClearAllPocketsDesc">Thao tác này sẽ đóng tất cả Pocket và xóa các tập tin được lưu ở đây.</sys:String>
     <sys:String x:Key="Text_Cancel">Hủy</sys:String>
     <sys:String x:Key="Text_Delete">Xóa</sys:String>
     <sys:String x:Key="Text_DeleteSelected">Xóa các nội dung đã chọn</sys:String>
-
     <sys:String x:Key="Text_ErrorTitle">Lỗi</sys:String>
     <sys:String x:Key="Text_OpenFileError">Không thể mở tập tin:</sys:String>
-
     <sys:String x:Key="Text_SortDefault">Mặc định</sys:String>
     <sys:String x:Key="Text_SortDefaultTooltip">Sắp xếp: Thứ tự mặc định</sys:String>
     <sys:String x:Key="Text_ToastRestoredDefault">Sắp xếp theo mặc định</sys:String>
@@ -187,11 +175,11 @@
 
     <!-- Settings Window - Pocket Activation -->
     <sys:String x:Key="Text_ShortcutHeader">Kích hoạt Pocket</sys:String>
-
     <sys:String x:Key="Text_NewPocketShortcut">Tạo một Pocket mới</sys:String>
     <sys:String x:Key="Text_NewPocketShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt cho hành động này.</sys:String>
     <sys:String x:Key="Text_ClipboardShortcut">Tạo một Pocket mới từ clipboard</sys:String>
     <sys:String x:Key="Text_ClipboardShortcutDesc">Ấn biểu tượng chỉnh sửa để tùy chỉnh phím tắt cho hành động này.</sys:String>
+    
     <!-- Settings Window - Pocket Activation - Shortcut Dialog -->
     <sys:String x:Key="Text_EditShortcutTitle">Tùy chỉnh phím tắt</sys:String>
     <sys:String x:Key="Text_ChangeShortcut">Phím tắt kích hoạt mới</sys:String>
@@ -209,13 +197,11 @@
     <sys:String x:Key="Text_MsgConflictDesc">Tổ hợp phím này hiện đang được ứng dụng khác sử dụng hoặc do Windows thiết lập sẵn.&#x0a;&#x0a;Vui lòng chọn một phím tắt khác.</sys:String>
     <sys:String x:Key="Text_ShortcutErrorTitle">Lỗi phím tắt</sys:String>
     <sys:String x:Key="Text_ShortcutErrorMsg">Windows đã chặn phím tắt này!&#x0a;&#x0a;Có vẻ như một ứng dụng chạy ngầm khác (như Snipping Tool, PowerToys, hoặc trình quay màn hình) đang chiếm phím này rồi.&#x0a;&#x0a;Bạn hãy thử chọn một phím khác nhé.</sys:String>
-
     <sys:String x:Key="Text_ShakeMouse">Lắc chuột để mở Pocket mới</sys:String>
     <sys:String x:Key="Text_ShakeMouseDesc">Lắc chuột sang trái và phải trong khi kéo tệp để mở Pocket mới.</sys:String>
     <sys:String x:Key="Text_ShakeDistance">Độ nhạy lắc chuột</sys:String>
     <sys:String x:Key="Text_ShakeDistanceDesc">Tuỳ chỉnh khoảng cách lắc chuột để mở Pocket.</sys:String>
     <sys:String x:Key="Text_GameModeCheck">Không mở Pocket khi Chế độ Trò chơi đang bật</sys:String>
-
     <sys:String x:Key="Text_PocketPlacement">Vị trí mở Pocket</sys:String>
     <sys:String x:Key="Text_PocketPlacementDesc">Chọn vị trí xuất hiện của Pocket mới trên màn hình.</sys:String>
     <sys:String x:Key="Text_PlacementMouse">Gần con trỏ chuột</sys:String>
@@ -227,12 +213,12 @@
     <sys:String x:Key="Text_PlacementTopRight">Góc trên bên phải</sys:String>
     <sys:String x:Key="Text_PlacementBottomLeft">Góc dưới bên trái</sys:String>
     <sys:String x:Key="Text_PlacementBottomRight">Góc dưới bên phải</sys:String>
-
     <sys:String x:Key="Text_ExcludedApps">Các ứng dụng ngoại lệ</sys:String>
     <sys:String x:Key="Text_ExcludedAppsDesc">Tắt tính năng lắc chuột mở Pocket đối với các ứng dụng này.</sys:String>
     <sys:String x:Key="Text_CurrentlyExcluded">Các ứng dụng trong danh sách ngoại lệ:</sys:String>
     <sys:String x:Key="Text_NoAppsExcluded">Chưa có ứng dụng nào trong danh sách ngoại lệ.</sys:String>
     <sys:String x:Key="Text_ManageApps">Quản lý ứng dụng</sys:String>
+    
     <!-- Settings Window - Pocket Activation - App Picker Dialog -->
     <sys:String x:Key="Text_SelectAppsTitle">Chọn ứng dụng</sys:String>
     <sys:String x:Key="Text_SelectAppsHeader">Chọn ứng dụng ngoại lệ</sys:String>
@@ -242,35 +228,27 @@
 
     <!-- Settings Window - Pocket Interaction -->
     <sys:String x:Key="Text_PocketPreferences">Tương tác với Pocket</sys:String>
-
     <sys:String x:Key="Text_CopyItems">Sao chép tập tin khi thả</sys:String>
     <sys:String x:Key="Text_CopyItemsDesc">Các tập tin thả vào Pocket sẽ được sao chép thay vì di chuyển hoàn toàn</sys:String>
     <sys:String x:Key="Text_CopyItemsHint">Mặc định, PockerDrop sẽ giữ nguyên tập tin gốc của bạn. Khi bạn kéo tập tin ra khỏi Pocket, ứng dụng chỉ tạo một bản sao tại vị trí mới. Nếu bạn muốn di chuyển hoàn toàn tập tin đến vị trí mới, hãy tắt cài đặt này.</sys:String>
-
     <sys:String x:Key="Text_ItemsLayoutMode">Tùy chỉnh bố cục xem chi tiết</sys:String>
     <sys:String x:Key="Text_ItemsLayoutModeDesc">Chọn cách các tập tin được sắp xếp khi bạn mở rộng Pocket.</sys:String>
     <sys:String x:Key="Text_LayoutGrid">Dạng lưới</sys:String>
     <sys:String x:Key="Text_LayoutList">Dạng danh sách</sys:String>
-
     <sys:String x:Key="Text_AutoCompressShare">Tự động nén thư mục khi chia sẻ</sys:String>
     <sys:String x:Key="Text_AutoCompressShareDesc">Nén thư mục thành một tập tin duy nhất trước khi bắt đầu quá trình Chia sẻ</sys:String>
-
     <sys:String x:Key="Text_CloseEmptied">Đóng Pocket khi trống</sys:String>
     <sys:String x:Key="Text_CloseEmptiedDesc">Tự động đóng Pocket sau khi đã kéo hết tập tin ra ngoài.</sys:String>
-
     <sys:String x:Key="Text_CloseOpenWith">Đóng Pocket sau khi mở tập tin</sys:String>
     <sys:String x:Key="Text_CloseOpenWithDesc">Tự động đóng Pocket khi bạn mở tập tin qua menu "Mở"</sys:String>
-
     <sys:String x:Key="Text_CloseShare">Đóng Pocket sau khi chia sẻ</sys:String>
     <sys:String x:Key="Text_CloseShareDesc">Tự động đóng Pocket khi bạn chia sẻ tập tin qua menu "Chia sẻ"</sys:String>
-
     <sys:String x:Key="Text_CloseCompress">Đóng Pocket sau khi nén thành ZIP</sys:String>
     <sys:String x:Key="Text_CloseCompressDesc">Tự động đóng Pocket khi bạn nén tập tin thành ZIP</sys:String>
 
     <!-- Settings Window - About -->
     <sys:String x:Key="Text_AboutHeader">Giới thiệu</sys:String>
     <sys:String x:Key="Text_Close">Đóng</sys:String>
-
     <sys:String x:Key="Text_UpdateAvailableTitle">Đã có bản cập nhật</sys:String>
     <sys:String x:Key="Text_UpdateAvailableMsg">Đã có phiên bản mới của PocketDrop ({0})!&#x0a;&#x0a;Bạn có muốn tải xuống ngay bây giờ không?</sys:String>
     <sys:String x:Key="Text_CheckingUpdate">Đang kiểm tra...</sys:String>
@@ -286,47 +264,36 @@
     <sys:String x:Key="Text_UpdateDownloadFailedMsg">Failed to download the update:</sys:String>
     <sys:String x:Key="Text_NoInstallerFound">No valid installer found for this architecture.</sys:String>
     <sys:String x:Key="Text_SecurityAlert">Security Alert: The downloaded update failed integrity verification and was deleted to protect your system.</sys:String>
-
     <sys:String x:Key="Text_Copyright">Phát triển bởi Naofunyan. © 2026&#x0a;Phát hành theo giấy phép GNU GPLv3.</sys:String>
-
     <sys:String x:Key="Text_PrivacyPolicy">Chính sách bảo mật</sys:String>
     <sys:String x:Key="Text_PrivacyP1">PocketDrop là một ứng dụng mã nguồn mở. Ứng dụng này được cung cấp hoàn toàn miễn phí và được sử dụng theo tình trạng 'nguyên bản' mà không kèm theo bất kỳ cam kết nào. Tác giả sẽ không chịu trách nhiệm đối với bất kỳ khiếu nại, thiệt hại hoặc trách nhiệm pháp lý nào phát sinh từ việc sử dụng hoặc các giao dịch liên quan đến phần mềm này.</sys:String>
     <sys:String x:Key="Text_PrivacyP2">PocketDrop cam kết không thu thập, lưu trữ hay chia sẻ dữ liệu cá nhân của người dùng. Để hoạt động, ứng dụng cần truy cập một số dữ liệu trên máy như tập tin, thư mục, bộ nhớ tạm và thông tin thiết bị, nhưng tất cả đều được xử lý cục bộ. Dữ liệu của bạn sẽ luôn nằm trên thiết bị, tuyệt đối không bị gửi đi hay chia sẻ với bên thứ ba. PocketDrop chỉ kết nối mạng khi cần kiểm tra phiên bản mới từ GitHub.</sys:String>
     <sys:String x:Key="Text_PrivacyP3">PocketDrop thu thập các báo cáo sự cố và treo ứng dụng ẩn danh để cải thiện độ ổn định. Dữ liệu này không thể định danh, không chứa thông tin cá nhân và không bao giờ được chia sẻ với bên thứ ba.</sys:String>
     <sys:String x:Key="Text_PrivacyP4">Chính sách bảo mật này có thể được cập nhật tùy từng thời điểm. Bạn nên kiểm tra trang này định kỳ để nắm bắt các thay đổi mới nhất.</sys:String>
     <sys:String x:Key="Text_PrivacyDate">Cập nhật lần cuối: Ngày 11 tháng 05 năm 2026</sys:String>
-
     <sys:String x:Key="Text_ThirdParty">Giấy phép bên thứ ba</sys:String>
     <sys:String x:Key="Text_LicenseIntro">PocketDrop được xây dựng dựa trên các phần mềm mã nguồn mở và tài nguyên sau đây:</sys:String>
-
     <sys:String x:Key="Text_LicenseFeatherIcons">Feather Icons</sys:String>
     <sys:String x:Key="Text_LicenseFeatherIconsDesc">Bản quyền (c) 2013-2023 Cole Bemis&#x0a;Phát hành theo Giấy phép MIT.</sys:String>
-
     <sys:String x:Key="Text_LicenseWindowsApi">Windows API Code Pack</sys:String>
     <sys:String x:Key="Text_LicenseCSWinRT">CSWinRT (C# / WinRT)</sys:String>
     <sys:String x:Key="Text_LicenseMicrosoftDesc">Bản quyền (c) Microsoft Corporation&#x0a;Phát hành theo Giấy phép MIT.</sys:String>
-
     <sys:String x:Key="Text_LicenseSentry">Sentry .NET SDK</sys:String>
     <sys:String x:Key="Text_LicenseSentryDesc">Bản quyền (c) 2008-2024 Functional Software, Inc. dba Sentry&#x0a;Phát hành theo Giấy phép MIT.</sys:String>
-
     <sys:String x:Key="Text_LicenseSkiaSharp">SkiaSharp</sys:String>
     <sys:String x:Key="Text_LicenseSkiaSharpDesc">API đồ họa 2D đa nền tảng dựa trên Thư viện đồ họa Skia của Google. Phát hành theo Giấy phép MIT.</sys:String>
-
     <sys:String x:Key="Text_LicensePdfSharp">PDFsharp</sys:String>
     <sys:String x:Key="Text_LicensePdfSharpDesc">Thư viện .NET để tạo và xử lý tài liệu PDF. Phát hành theo Giấy phép MIT.</sys:String>
-
     <sys:String x:Key="Text_LicenseMITTitle">Giấy phép MIT (MIT License)</sys:String>
     <sys:String x:Key="Text_LicenseMITBody">Quyền cho phép theo đây được cấp, miễn phí, cho bất kỳ ai có được bản sao của phần mềm này và các tệp tài liệu liên quan (&quot;Phần mềm&quot;), để xử lý Phần mềm mà không bị hạn chế, bao gồm nhưng không giới hạn ở các quyền sử dụng, sao chép, sửa đổi, hợp nhất, công bố, phân phối, cấp phép con, và/hoặc bán các bản sao của Phần mềm, và cho phép những người được cung cấp Phần mềm được làm như vậy, tuân theo các điều kiện sau:&#x0a;&#x0a;Thông báo bản quyền trên và thông báo cho phép này phải được bao gồm trong tất cả các bản sao hoặc các phần quan trọng của Phần mềm.&#x0a;&#x0a;PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN TRẠNG", KHÔNG CÓ BẤT KỲ ĐẢM BẢO NÀO, DÙ ĐƯỢC DIỄN ĐẠT RÕ RÀNG HAY NGỤ Ý, BAO GỒM NHƯNG KHÔNG GIỚI HẠN Ở CÁC ĐẢM BẢO VỀ KHẢ NĂNG THƯƠNG MẠI, SỰ PHÙ HỢP CHO MỘT MỤC ĐÍCH CỤ THỂ VÀ SỰ KHÔNG VI PHẠM. TRONG MỌI TRƯỜNG HỢP, CÁC TÁC GIẢ HOẶC CHỦ SỞ HỮU BẢN QUYỀN SẼ KHÔNG CHỊU TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ KHIẾU NẠI, THIỆT HẠI HOẶC TRÁCH NHIỆM PHÁP LÝ NÀO KHÁC, DÙ LÀ TRONG MỘT HÀNH ĐỘNG HỢP ĐỒNG, SAI PHẠM DÂN SỰ HOẶC PHÁT SINH TỪ, DO HOẶC CÓ LIÊN QUAN ĐẾN PHẦN MỀM HOẶC VIỆC SỬ DỤNG HOẶC CÁC GIAO DỊCH KHÁC TRONG PHẦN MỀM.</sys:String>
-   
     <sys:String x:Key="Text_RateReview">Đánh giá trên Microsoft Store</sys:String>
-
     <sys:String x:Key="Text_GetHelp">Trợ giúp</sys:String>
     <sys:String x:Key="Text_GetHelpDesc">Báo cáo lỗi, yêu cầu tính năng, hoặc liên hệ nhà phát triển</sys:String>
-
     <sys:String x:Key="Text_QuickGuide">Hướng dẫn nhanh</sys:String>
     <sys:String x:Key="Text_QuickGuideDesc">Xem lại màn hình chào mừng và các hướng dẫn nhanh.</sys:String>
     <sys:String x:Key="Text_BtnQuickGuide">Xem lại</sys:String>
 
+    
     <!-- Tray Menu -->
     <sys:String x:Key="Text_TrayAddPocket">Tạo Pocket</sys:String>
     <sys:String x:Key="Text_TrayAddClipboard">Tạo Pocket từ Clipboard</sys:String>
@@ -334,14 +301,13 @@
     <sys:String x:Key="Text_TraySettings">Cài đặt</sys:String>
     <sys:String x:Key="Text_TrayReportBug">Báo cáo lỗi</sys:String>
     <sys:String x:Key="Text_TrayQuit">Thoát PocketDrop</sys:String>
-
     <sys:String x:Key="Text_SessionHistoryTitle">Lịch sử hoạt động</sys:String>
     <sys:String x:Key="Text_SessionHistoryMsg">Hiện đang có {0} mục trong lịch sử hoạt động.</sys:String>
 
+    
     <!-- Duplicate Installation Warning -->
     <sys:String x:Key="Text_DuplicateInstallTitle">Phát hiện cài đặt trùng lặp</sys:String>
     <sys:String x:Key="Text_DuplicateInstallMsg">Bạn đang cài đặt cả hai phiên bản GitHub và Microsoft Store của PocketDrop.
 
 Chỉ có thể chạy một phiên bản cùng lúc - vui lòng gỡ cài đặt một bản để tránh xung đột.</sys:String>
-
 </ResourceDictionary>

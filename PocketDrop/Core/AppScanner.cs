@@ -65,7 +65,6 @@ namespace PocketDrop
                             }
 
                             // Reject paths outside known safe installation directories
-                            // This blocks UNC paths (\\server\...), user-writable locations, and path traversal
                             if (!string.IsNullOrEmpty(exePath))
                             {
                                 bool isSafePath =
