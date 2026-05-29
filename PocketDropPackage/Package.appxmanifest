@@ -9,7 +9,7 @@
   <Identity
     Name="Naofunyan.29853AFB3B949"
     Publisher="CN=E631998D-5CCA-4673-9860-9884582AB52C"
-    Version="1.0.0.0" />
+    Version="1.1.1.0" />
 
   <Properties>
     <DisplayName>PocketDrop</DisplayName>
