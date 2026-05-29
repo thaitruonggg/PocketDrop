@@ -296,6 +296,38 @@ namespace PocketDrop
         // 4. NATIVE WINDOWS APIS
         // ================================================ //
 
+        // Per-monitor DPI: get the exact DPI scaling for any physical screen coordinate,
+        // regardless of which monitor the app window is currently sitting on.
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+        private const uint MONITOR_DEFAULTTONEAREST = 2;
+
+        // MDT_EFFECTIVE_DPI = 0 — returns the DPI Windows actually applies to that monitor.
+        [DllImport("shcore.dll")]
+        private static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, out uint dpiX, out uint dpiY);
+        private const int MDT_EFFECTIVE_DPI = 0;
+
+        /// <summary>
+        /// Returns the WPF scale factors (relative to 96 dpi) for the monitor
+        /// that contains the given raw physical-pixel screen coordinate.
+        /// Falls back to 1.0 / 1.0 on any failure.
+        /// </summary>
+        public static (double scaleX, double scaleY) GetDpiForPoint(int physicalX, int physicalY)
+        {
+            try
+            {
+                var pt = new POINT { X = physicalX, Y = physicalY };
+                IntPtr hMon = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+                if (hMon != IntPtr.Zero &&
+                    GetDpiForMonitor(hMon, MDT_EFFECTIVE_DPI, out uint dpix, out uint dpiy) == 0)
+                {
+                    return (dpix / 96.0, dpiy / 96.0);
+                }
+            }
+            catch { }
+            return (1.0, 1.0);
+        }
+
         // Game mode detection
         [System.Runtime.InteropServices.DllImport("shell32.dll")]
         private static extern int SHQueryUserNotificationState(out int pquns);

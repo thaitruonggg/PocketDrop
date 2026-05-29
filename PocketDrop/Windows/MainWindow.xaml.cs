@@ -1,4 +1,4 @@
-﻿// PocketDrop
+// PocketDrop
 // Copyright (C) 2026 Naofunyan
 //
 // This program is free software: you can redistribute it and/or modify
@@ -914,24 +914,10 @@ namespace PocketDrop
             var screen = System.Windows.Forms.Screen.FromPoint(new System.Drawing.Point(rawCursorX, rawCursorY));
             var rawWorkArea = screen.WorkingArea;
 
-            // Calculate Windows DPI display scaling
-            double dpiX = 1.0;
-            double dpiY = 1.0;
-            PresentationSource source = PresentationSource.FromVisual(this);
-            if (source != null && source.CompositionTarget != null)
-            {
-                dpiX = source.CompositionTarget.TransformToDevice.M11;
-                dpiY = source.CompositionTarget.TransformToDevice.M22;
-            }
-            else
-            {
-                // Add failsafe for window not yet fully loaded
-                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                {
-                    dpiX = g.DpiX / 96.0;
-                    dpiY = g.DpiY / 96.0;
-                }
-            }
+            // Query the DPI of the TARGET monitor (the one the cursor is on), not the window's
+            // current monitor. PresentationSource.FromVisual(this) would return the wrong DPI when
+            // the window lives on a different monitor than where the pocket is being summoned.
+            var (dpiX, dpiY) = AppHelpers.GetDpiForPoint(rawCursorX, rawCursorY);
 
             // 2. Convert physical pixels to WPF logical units
             double workAreaLeft = rawWorkArea.Left / dpiX;
